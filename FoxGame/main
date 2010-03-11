@@ -1,0 +1,92 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+#   main.py: the main game.
+#
+# Copyright 2010 <Michele Orrù>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
+
+
+__author__ = 'Michele Orrù'
+__mail__ = 'maker.py@gmail.com'
+__appname__ = 'foxlearner'
+__version__ = 0.1
+__date__ = '15-02-2010'
+__license__ = 'GPLv2'
+
+from optparse import OptionParser
+from sys import exit
+
+parser = OptionParser(usage='%prog [interface] [algorthm] [options]',
+                      version='%prog {0}'.format(__version__))
+
+parser.add_option('-v', '--verbose', dest='verbose',
+                  default=False, action='store_true',
+                  help='lots of debug messages')
+parser.add_option('-i', '--iface', dest='interface',
+                  default='pygame', action='store',
+                  metavar='INTERFACE', help='select game interface')
+parser.add_option('--fox', dest='fox',
+                  default='traditional', action='store',
+                  metavar='ALGORITHM', help='select ai algorithm for the fox')
+parser.add_option('--hare', dest='hare',
+                  metavar='INPUT', help='select an input for the hare')
+parser.add_option('--nfoxes', dest='foxes_num',
+                  type='int', default=1,
+                  metavar='NUM', help='select the number of foxes in the game')
+parser.add_option('-r', '--record', dest='record',
+                  default='', action='store',
+                  metavar='FILE', help='record gameplay')
+
+(options, args) = parser.parse_args()
+
+# make FOX class
+if options.fox == 'none':
+    FoxMotor = None
+#if options.fox == 'traditional':
+#    from foxgame.tradlib import FoxMotor
+#elif options.fox == 'ann':
+#   provide a neuralnetwork algorithm for the fox (Otacon22?)
+#elif options.fox == 'q-learn':
+#    provide a q-learn algorithm for the fox      (il_sorcio?)
+#elif options.fox == 'fuzzy':
+#    provide a fuzzylogic algorithm for the fox   (maker?)
+else:
+    print 'error: unknown algorithm for the fox.'
+    exit(1)
+
+# make HARE class
+#elif options.hare == 'traditional':
+#   from tradlib import HareMotor
+#else:
+HareMotor = None
+
+if options.interface == 'pygame':
+     import foxgame.pygamei as game
+#elif options.interface == 'ncurses':
+#    import foxgame.ncgamei as game
+#elif options.interface == 'none':
+#    import foxgame.nogamei as game
+else:
+    print 'error: unknown game interface.'
+    exit(1)
+
+
+
+game.main(foxnum=options.foxes_num,
+          fox_algorithm=FoxMotor,
+          hare_algorithm=HareMotor)

@@ -1,0 +1,2 @@
+
+class FoxMotor: pass

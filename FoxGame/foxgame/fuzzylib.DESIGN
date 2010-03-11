@@ -1,0 +1,39 @@
+
+alla fuzzylib sono forniti valori riguardanti
+ posizione della lepre,
+ la sua velocità,
+ la sua accelerazione.
+
+La volpe deve essere in grado in base a questi dati di muoversi seguendo queste
+regole.
+ se la lepre è molto lontana allora accellera in linea retta
+ se la lepre è lontana/poco vicina allora procedi in linea retta.
+ se la lepre è vicina segui le sue tracks e rallenta.
+
+CLASSE FUZZY
+la classe fuzzy viene invocata con
+cls.__name__  => il nome simbolico da dare alla classe,
+funzione      => può essere l-r, triangolare o trapezoidale
+i limiti      => sottoforma di dizionario, sono strettamente dipendenti dalla funzione.
+
+ha i seguenti attributi:
+ self.__pow__(self, n)       , usata per la variabile linguistica very [VERY]
+ self.__contains__(self, n)  , return True if self.funct(x) != 0
+ self.__or__(self, other)    , usare diversi commenti e mostrare diverse funzioni. Per ora: usa max()
+ self.__and__(self, other)   , usare diversi commenti e mostrare diverse funzioni. Per ora: usa min()
+ self.__eq__(self, other)    , return self.funct is other.funct and self._limits = other.limits
+ self.__not__(self)          , return fuzzy().funct(x) = 1-self.funct(x)
+
+
+NUMERI FUZZY
+trinagle, l-r, e trapize sono delle funzioni esterne
+                         che vengono assegnate alla classe con self.funct
+
+VARIABILI LINGUISTICHE
+ il file provvede a fornire delle funzioni esterne.
+       very   -> return self**2
+       little -> return sqrt(self)
+
+
+
+
