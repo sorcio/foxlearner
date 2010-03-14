@@ -96,13 +96,21 @@ class Circle(object):
     Something on the board.
     """
 
-    def __init__(self, pos, radius, color):
-        """
-        An object on the board is identified by the position and its color.
-        """
+    # an object on the board is identified by:
+    radius = None # its radius
+    color = None  # its color
+
+    # .. and its position
+    def __init__(self, pos):
         self.pos = pos
-        self.radius = radius
-        self.color = color
+
+    def distance(self, other):
+        """
+        Return the discance between two circles.
+        """
+        dist = hypot(self.pos[0]+other.pos[0], self.pos[1]+other.pos[1]) - (
+               self.radius + other.radius)
+        return dist if dist > 0 else 0
 
 
 class MovingPawn(Circle):
@@ -121,6 +129,13 @@ class MovingPawn(Circle):
         self.priv_data = priv_data
         self.pos = pos
 
+
+    def __eq__(self, other):
+        """
+        Return True if other and self are *the same pawn*,
+        False otherwise.
+        """
+        return other is self
 
     def _update_acc(self, d):
         """
@@ -152,8 +167,6 @@ class MovingPawn(Circle):
                         max(self.baccel, self.brake) / hypot(hor, vert))
         else:
             self.acc = Vector(0, 0)
-
-
 
     def tick(self, time):
         """
@@ -233,21 +246,21 @@ class BasicGame(object):
         """
         Return a random point.
         """
-        return Vector(randrange(self._size.x), randrange(self._size.y))
+        return tuple(randrange(x) for x in self._size)
 
     @property
-    def _objects(self):
+    def objects(self):
         """
         Return all the objects present on the board.
         """
-        return list(self.foxes) + [self.hare, self.carrot]
+        return self.foxes + [self.hare, self.carrot]
 
     def _collision(self, pawn1, pawn2):
         """
         Find if there's a collision between obj1 and obj2:
          so just checks if their distance < sum of radius.
         """
-        return pawn1.pos.distance(pawn2.pos) < pawn1.radius + pawn2.radius
+        return pawn1.distance(pawn2) > 0
 
     @property
     def collision(self):
@@ -261,8 +274,9 @@ class BasicGame(object):
         self.hare.pos = self._randompoint()
 
         while any(x.distance(y) < mindist
-                  for y in self._objects
-                  for x in self._objects):
+                  for y in self.objects
+                  for x in self.objects
+                  if x != y):
             for f in self.foxes:
                 f.pos = self._randompoint()
 

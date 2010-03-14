@@ -76,7 +76,7 @@ class Game(foxgame.BasicGame):
     """
 
     def __init__(self, fox_algorithm, hare_algorithm, foxnum,
-                 state='ready', size):
+                 size, state='ready'):
         """
         Set up the game window.
         """
