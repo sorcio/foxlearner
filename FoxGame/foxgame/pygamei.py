@@ -80,25 +80,25 @@ class Game(foxgame.BasicGame):
         """
         Set up the game window.
         """
-        self._size = foxgame.Vector(size)
+        self.size = foxgame.Vector(size)
 
         Fox.move = fox_algorithm or usermove
         Hare.move = hare_algorithm or usermove
 
-        self.foxes =(Fox(self._size), ) * foxnum
-        self.hare = Hare(self._size)
+        self.foxes =(Fox(self.size), ) * foxnum
+        self.hare = Hare(self.size)
 
         self._clock = pygame.time.Clock()
 
         # Setting up screen
-        self._screen = pygame.display.set_mode(tuple(self._size),
+        self._screen = pygame.display.set_mode(tuple(self.size),
                                                pygame.DOUBLEBUF |
                                                pygame.HWSURFACE)
         # pygame.display.set_capiton('FoxGame!')
         self._screen.fill((50, 50, 50))
 
         # Setting up arena
-        arena = pygame.Rect(0, 0, *self._size)
+        arena = pygame.Rect(0, 0, *self.size)
         arena.center = self._screen.get_rect().center
         self._arena = self._screen.subsurface(arena)
 
@@ -132,19 +132,19 @@ class Game(foxgame.BasicGame):
         self._arena.fill((0, 0, 0))
 
         # Background grid
-        for x, y in zip(xrange(200, self._size.x, 200),
-                        xrange(200, self._size.y, 200)):
+        for x, y in zip(xrange(200, self.size.x, 200),
+                        xrange(200, self.size.y, 200)):
             pygame.draw.line(self._arena, (100, ) * 3,
-                             (x, 0), (x, self._size.y), 1)
+                             (x, 0), (x, self.size.y), 1)
             pygame.draw.line(self._arena, (100, ) * 3,
-                             (0, y), (self._size.x, y), 1)
+                             (0, y), (self.size.x, y), 1)
 
         # Drawing pawns
         self.draw_tracks()
         self.carrot.draw()
 
         for fox in self.foxes:
-            aacircle(screen, *fox.pos, r=hypot(self._size / 5, color=(100, )*3))
+            aacircle(screen, *fox.pos, r=hypot(self.size / 5, color=(100, )*3))
             for deg in xrange(225, 3600, 450):
                 rad = radians(deg // 10)
                 # XXX
@@ -159,7 +159,7 @@ class Game(foxgame.BasicGame):
         title = pygame.font.Font(None, 100).render('FoxGame!',
                                                    True, (0, 0, 255)
                                                    ).get_rect().copy()
-        title.center = self._size / 2
+        title.center = self.size / 2
 
         # Creating subtitle
         subtitle = pygame.font.Font(None, 50).render(

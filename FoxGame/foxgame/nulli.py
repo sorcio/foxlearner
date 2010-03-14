@@ -22,7 +22,7 @@ class Game(foxgame.BasicGame):
         """
         Set up attributes.
         """
-        self._size = size
+        self.size = size
         self.state = state
         self._clock = None
 

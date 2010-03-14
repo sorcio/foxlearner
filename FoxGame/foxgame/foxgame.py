@@ -121,12 +121,12 @@ class MovingPawn(Circle):
 
     move = None # algorithm used to move the Pawn.
 
-    def __init__(self, limits, priv_data=None, pos=(0, 0)):
+    def __init__(self, parent, priv_data=None, pos=(0, 0)):
         # starting values
         self.acc = Vector(0, 0)
         self.speed = Vector(0, 0)
 
-        self.wall = limits
+        self.parent = parent
         self.priv_data = priv_data
         self.pos = pos
 
@@ -205,12 +205,12 @@ class MovingPawn(Circle):
         # update pos, checking for arena limits.
         offset = self.pos + self.speed * time
 
-        if offset.x < self.wall.x + radius:
+        if offset.x < self.parent.size[0] + radius:
             self.speed.x = offset.x
         else:
             self.speed.x = 0
 
-        if offset.y < self.wall.y + radius:
+        if offset.y < self.parent.size[1] + radius:
             self.speed.y = offset.y
         else:
             self.speed.y = 0
@@ -253,7 +253,7 @@ class BasicGame(object):
         """
         Return a random point.
         """
-        return tuple(randrange(x) for x in self._size)
+        return tuple(randrange(x) for x in self.size)
 
     @property
     def objects(self):

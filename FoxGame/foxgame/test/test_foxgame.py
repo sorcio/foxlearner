@@ -100,7 +100,7 @@ class TestBaseGame(TestCase):
         Test random locating.
         """
         for x in self.game.objects:
-            self.assertTrue(x.pos < self.game._size)
+            self.assertTrue(x.pos < self.game.size)
             for y in self.game.objects:
                 if x == y:
                     continue
