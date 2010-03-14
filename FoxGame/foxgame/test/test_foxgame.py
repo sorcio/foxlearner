@@ -58,6 +58,17 @@ class TestVector(TestCase):
         self.assertEqual(p1.distance(p2), triplet[2])
 
 
+class TestPawn(TestCase):
+    """
+    Some tests for moving pawns:
+    check especially speed, acceleration and position.
+    """
+
+    def setUp(self):
+        pass
+
+
+
 from foxgame.nulli import Game as NullGame
 from foxgame.foxgame import BasicFox, BasicHare
 
@@ -89,6 +100,7 @@ class TestBaseGame(TestCase):
         Test random locating.
         """
         for x in self.game.objects:
+            self.assertTrue(x.pos < self.game._size)
             for y in self.game.objects:
                 if x == y:
                     continue

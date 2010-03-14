@@ -5,6 +5,10 @@ from collections import namedtuple
 from random import randrange
 
 
+# A user input can be defined by 4 constants.
+UP, DOWN, LEFT, RIGHT = (1 << x for x in range(4))
+
+
 class Vector(object):
     """
     A point identified on a cartesian plane.
@@ -88,9 +92,6 @@ class Vector(object):
         return abs(self - other)
 
 
-
-
-
 class Circle(object):
     """
     Something on the board.
@@ -144,14 +145,14 @@ class MovingPawn(Circle):
         if d == 0:  # stop
             if self.speed > 0:   # moving forward
                 return -self.brake
-            elif self.speed < 0: # moving backward
+            if self.speed < 0:   # moving backward
                 return self.brake
             else:                # already stopped
                 return 0
         else:       # move
             if d * speed >= 0:   # in the same direction
                 return dir * acc
-            elif d * speed < 0:  # in the opposite direction
+            if d * speed < 0:    # in the opposite direction
                 return dir * self.brake
 
 
@@ -160,11 +161,17 @@ class MovingPawn(Circle):
         Move to the position given by direction.
         """
 
-        hor = self._update_acc(dir.left - dir.right)
-        vert = self._update_acc(dir.up - dir.down)
-        if hor != 0 and vert != 0:
-            self.acc = Vector(hor, vert) * (
-                        max(self.baccel, self.brake) / hypot(hor, vert))
+        # Skip opposite inputs
+        if dir & (UP | DOWN):
+            dir &= ~(UP | DOWN)
+        if dir & (LEFT | RIGHT):
+            dir &= ~(LEFT | RIGHT)
+
+        horz = self._update_acc(dir & ~(UP | DOWN))
+        vert = self._update_acc(dir & ~(LEFT | RIGHT))
+        if horz != 0 and vert != 0:
+            self.acc = Vector(horz, vert) * (
+                        max(self.baccel, self.brake) / hypot(horz, vert))
         else:
             self.acc = Vector(0, 0)
 
@@ -173,7 +180,7 @@ class MovingPawn(Circle):
         Update speed and pos according to time.
         """
         # update speed
-        speedup = self.peed + self.acc * time
+        speedup = self.speed + self.acc * time
 
         if speedup:
             if abs(speedup) < self.bspeed:
@@ -181,12 +188,12 @@ class MovingPawn(Circle):
             else:
                 speed_norm = self.bspeed / abs(speedup)
 
-            if speedup.x*self.speed.x > 0:
+            if speedup.x * self.speed.x > 0:
                 self.speed.x = speedup.x * speed_norm
             else:
                 self.speed.x = 0
 
-            if sp_y*self.speed.y > 0:
+            if sp_y * self.speed.y > 0:
                 self.speed.y = speedup.y * speed_norm
             else:
                 self.speed.y = 0
