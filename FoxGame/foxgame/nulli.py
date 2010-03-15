@@ -1,16 +1,26 @@
 import foxgame
 
+def rawmove(cls, keypress):
+    """
+    Move the pawn using manual inputs from stdin.
+    """
+    pass
+
+
 class Fox(foxgame.BasicFox):
     radius = 20
     color = None
+
 
 class Hare(foxgame.BasicHare):
     radius = 15
     color = None
 
+
 class Carrot(foxgame.BasicCarrot):
     radius = 10
     color = None
+
 
 class Game(foxgame.BasicGame):
     """

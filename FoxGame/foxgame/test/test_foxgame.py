@@ -58,30 +58,21 @@ class TestVector(TestCase):
         self.assertEqual(p1.distance(p2), triplet[2])
 
 
-class TestPawn(TestCase):
-    """
-    Some tests for moving pawns:
-    check especially speed, acceleration and position.
-    """
-
-    def setUp(self):
-        pass
-
-
-
 from foxgame.nulli import Game as NullGame
 from foxgame.foxgame import BasicFox, BasicHare
 
 class TestBaseGame(TestCase):
     """
-    Test the Basic Game Interface.
+    Test the Basic Game Interface:
+      locating, collisions, ...;
+      speed, accelerations, position, ....
     """
 
     def setUp(self):
         """
         Set up a basic Game instance
         """
-        self.foxnum = 10
+        self.foxnum = randrange(1, 15)
         self.mindist = 10
         self.game = NullGame(BasicFox, BasicHare,
                              self.foxnum, size=(300, 300))
@@ -119,4 +110,11 @@ class TestBaseGame(TestCase):
         self.assertEqual(ffox.pos, self.game.hare.pos)
         self.assertTrue(self.game._collision(self.game.hare, ffox))
         self.assertTrue(self.game.collision)
+
+    def test_drive(self):
+        """
+        Test pawns' updating speed module.
+        """
+        pass
+
 

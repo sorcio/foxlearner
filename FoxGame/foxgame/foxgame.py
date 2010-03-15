@@ -5,10 +5,6 @@ from collections import namedtuple
 from random import randrange
 
 
-# A user input can be defined by 4 constants.
-UP, DOWN, LEFT, RIGHT = (1 << x for x in range(4))
-
-
 class Vector(object):
     """
     A point identified on a cartesian plane.
@@ -90,6 +86,11 @@ class Vector(object):
         Return the distance between two vectors.
         """
         return abs(self - other)
+
+
+# A user input can be identified by its coordinates on the cartesian plane,
+# so a direction is just a Vector object with values in range(-1, +1)
+Direction = namedtuple('Diretion', 'x, y')
 
 
 class Circle(object):
@@ -205,12 +206,12 @@ class MovingPawn(Circle):
         # update pos, checking for arena limits.
         offset = self.pos + self.speed * time
 
-        if offset.x < self.parent.size[0] + radius:
+        if 0 < offset.x < self.parent.size[0] + radius:
             self.speed.x = offset.x
         else:
             self.speed.x = 0
 
-        if offset.y < self.parent.size[1] + radius:
+        if 0 < offset.y < self.parent.size[1] + radius:
             self.speed.y = offset.y
         else:
             self.speed.y = 0

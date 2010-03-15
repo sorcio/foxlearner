@@ -58,19 +58,10 @@
 
 5- Component loading
    Python makes this easy: a module (or a package) for each component
-   implementation. Simple interface: refer to component modules only by name,
-   then check some versioning module variable.
+   implementation. Simple interface: refer to component modules only by name.
    <Launcher>:
     - launcher called with --ui=bubbles
     - dynamically import 'bubbles'
-    - check module.foxgame_UI_version
-    - interfaces described in this doc are version (major=1, minor=0)
-   Other variable: foxgame_Ctl_version, foxgame_GL_version
-   Compatibility constraints on version:
-    - all major numbers must be the same (major = breaking change)
-    - GL_version.minor >= Ctl_version.minor
-    - GL_version.minor >= UI_version.minor
-    - filter chain: calling Ctl_version.minor > answering Ctl_version.minor
 
 
 6- Controllers configuration
@@ -80,7 +71,8 @@
    by using module state (quick and dirty) or by providing callable factory
    classes (often overkill but allows for better control).
    Two type of filters: preprocess and postprocess.
-   Preprocess filters (prefilters):
+
+    Preprocess filters (prefilters):
     - may be stateful (but usually aren't)
     - are called at every controller update
     - are executed one after another, i.e.:
@@ -93,7 +85,7 @@
       e.g.: a filter may compute direction/distance of the prey wrt the fox
             and output it in a new variable. Then a second filter may read
             direction value and discretize it (N, NE, E, ...)
-    
+
     Postprocess filters (postfilters):
      - may be stateful (and usually are)
      - are called at every controller update
@@ -102,4 +94,4 @@
        for filter in postfilters:
            result = filter.process(result)
      - call order as specified at configuration time
-     
+
