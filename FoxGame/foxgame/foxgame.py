@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 from __future__ import division
 from math import hypot
 from collections import namedtuple
@@ -88,9 +88,57 @@ class Vector(object):
         return abs(self - other)
 
 
-# A user input can be identified by its coordinates on the cartesian plane,
-# so a direction is just a Vector object with values in range(-1, +1)
-Direction = namedtuple('Diretion', 'x, y')
+class Direction(object):
+    """
+    A Direction object identifies a general direction using just two ints,
+    with values in range(-1, +1):
+     +1 -> positive shift
+     -1 -> negative shift
+      0 -> void
+    """
+
+    def __init__(self, h, v):
+        self.hor = h
+        self.vert = v
+
+    def __repr__(self):
+        """
+        Print the direction using cool utf-8 characters.
+        """
+        dirs = {
+                ( 1,  0): u'↑', # up
+                (-1,  0): u'↓', # down
+                ( 1,  1): u'→', # right
+                (-1, -1): u'←', # left
+                ( 1,  1): u'↗', # up and right
+                ( 1, -1): u'↖', # up and left
+                (-1,  1): u'↘', # down and right
+                (-1, -1): u'↙', # down and left
+                ( 0,  0): u' '  # empty
+               }
+        return dirs[self.hor, self.vert]
+
+    def __setattr__(self, name, value):
+        """
+        Check if value is in range [-1, +1], then assegn it to name.
+        """
+        if value not in xrange(-1, 2):
+            raise ValueError('Direction.{0} must be -1, 0, or 1.'
+                             'Got {1} instead.'.format(name, value))
+        self.__dict__[name] = value
+
+    def __eq__(self, other):
+        return all(x == y for x, y in zip(self, other))
+
+    def __nonzero__(self):
+        return self != (0, 0)
+
+    def __contains__(self, elt):
+        return elt in (self.hor, self.vert)
+
+    def __iter__(self):
+        yield self.hor
+        yield self.vert
 
 
 class Circle(object):
@@ -98,9 +146,9 @@ class Circle(object):
     Something on the board.
     """
 
-    # an object on the board is identified by:
-    radius = None # its radius
-    color = None  # its color
+    # an object on the board is identified by these constants:
+    radius = None
+    color = None
 
     # .. and its position
     def __init__(self, pos):

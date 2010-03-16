@@ -58,6 +58,34 @@ class TestVector(TestCase):
         self.assertEqual(p1.distance(p2), triplet[2])
 
 
+from foxgame.foxgame import Direction
+
+class TestDirection(TestCase):
+    """
+    Test the Direction class, and check also if utf-8 is ok.
+    """
+
+    def setUp(self):
+        self.dir = Direction(randrange(-1, +2), randrange(-1, +2))
+
+    def test_range(self):
+        """
+        Sure that Directions only accepts value in range [-1; +1].
+        """
+        def randassign():
+            for x in (randrange(2, 10), randrange(-10, -1)):
+                self.dir.hor = x
+                self.dir.vert = x
+        self.assertRaises(ValueError, randassign)
+        self.assertRaises(ValueError, lambda: Direction(2, 2))
+
+    def test_operators(self):
+        dir = Direction(1, 0)
+        self.assertEqual(dir, (1, 0))
+        self.assertTrue(dir)
+        self.assertTrue(1 in dir)
+
+
 from foxgame.nulli import Game as NullGame
 from foxgame.foxgame import BasicFox, BasicHare
 
