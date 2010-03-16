@@ -91,7 +91,7 @@ class Vector(object):
 class Direction(object):
     """
     A Direction object identifies a general direction using just two ints,
-    with values in range(-1, +1):
+    with values in range [-1, +1]:
      +1 -> positive shift
      -1 -> negative shift
       0 -> void
@@ -102,41 +102,49 @@ class Direction(object):
         self.vert = v
 
     def __repr__(self):
+        return '<Direction object ({0}, {1})>'.format(self.hor, self.vert)
+
+    def __str__(self):
         """
-        Print the direction using cool utf-8 characters.
+        Print the direction using cool Unicode characters.
         """
         dirs = {
-                ( 1,  0): u'↑', # up
-                (-1,  0): u'↓', # down
-                ( 1,  1): u'→', # right
-                (-1, -1): u'←', # left
-                ( 1,  1): u'↗', # up and right
-                ( 1, -1): u'↖', # up and left
-                (-1,  1): u'↘', # down and right
-                (-1, -1): u'↙', # down and left
-                ( 0,  0): u' '  # empty
-               }
+                ( 1,  0): '↑', # up
+                (-1,  0): '↓', # down
+                ( 0,  1): '→', # right
+                ( 0, -1): '←', # left
+                ( 1,  1): '↗', # up and right
+                ( 1, -1): '↖', # up and left
+                (-1,  1): '↘', # down and right
+                (-1, -1): '↙', # down and left
+                ( 0,  0): ' '  # empty
+        }
         return dirs[self.hor, self.vert]
 
     def __setattr__(self, name, value):
         """
-        Check if value is in range [-1, +1], then assegn it to name.
+        Check if value is in range [-1, +1], then assign it to name.
         """
-        if value not in xrange(-1, 2):
+        if value not in range(-1, 2):
             raise ValueError('Direction.{0} must be -1, 0, or 1.'
                              'Got {1} instead.'.format(name, value))
         self.__dict__[name] = value
 
     def __eq__(self, other):
-        return all(x == y for x, y in zip(self, other))
+        fh,fv = self
+        sh, sv = other
+        return fh == sh and fv == sv
+
+    def __ne__(self, other):
+        return not self == other
 
     def __nonzero__(self):
         return self != (0, 0)
 
-    def __contains__(self, elt):
-        return elt in (self.hor, self.vert)
-
     def __iter__(self):
+        """
+        May useful for conversion in tuple.
+        """
         yield self.hor
         yield self.vert
 
@@ -159,7 +167,7 @@ class Circle(object):
         Return the discance between two circles.
         """
         dist = hypot(self.pos[0]+other.pos[0], self.pos[1]+other.pos[1]) - (
-               self.radius + other.radius)
+                     (self.radius + other.radius))
         return dist if dist > 0 else 0
 
 
