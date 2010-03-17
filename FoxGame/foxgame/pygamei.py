@@ -119,11 +119,11 @@ class Game(foxgame.BasicGame):
         aacircle(self._arena, *pawn.pos, r=pawn.radius, color=pawn.color)
 
     def _draw_tracks(self):
-        for pawn in self.foxes + [self.hare]:
+        for pawn in self.foxes + (self.hare,):
             pawn.update_track()
             trackslen = len(pawn._tracks)
             for i, track in enumerate(pawn._tracks):
-                self._draw(GameObject(track, pawn.radius - 1,
+                self._draw(foxgame.GameObject(track, pawn.radius - 1,
                                       pawn.color +(100 * i / trackslen)))
 
     def _paint_gamefield(self):
@@ -142,7 +142,7 @@ class Game(foxgame.BasicGame):
                              (0, y), (self.size.x, y), 1)
 
         # Drawing pawns
-        self.draw_tracks()
+        self._draw_tracks()
         self.carrot.draw()
 
         for fox in self.foxes:
@@ -214,47 +214,49 @@ class Game(foxgame.BasicGame):
          It handles time, check for collisions, redraw the screen,
          and binds keyboard events.
         """
-        keys = set()
+        while True:
+            keys = set()
 
-        self._clock.tick(60)
+            self._clock.tick(60)
 
-        # handle user input.
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                keys.add(event.key)
-            elif event.type == pygame.KEYUP:
-                keys.remove(event.key)
+            # handle user input.
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    keys.add(event.key)
+                elif event.type == pygame.KEYUP:
+                    keys.remove(event.key)
 
-        for key in keys:
-            if key in self._bindkeys:
-                self._bindkeys[key]()
+            for key in keys:
+                if key in self._bindkeys:
+                    self._bindkeys[key]()
 
-        self.hare.move(keys)
-        for fox in self.foxes:
-            fox.move(keys)
+            self.hare.move(keys)
+            for fox in self.foxes:
+                fox.move(keys)
 
-        # updating time
-        time = self._clock.get_time() / 1000
-        self._clock.tick(time)
-        for obj in self._objects:
-            obj.tick(time)
+            # updating time
+            time = self._clock.get_time() / 1000
+            self._clock.tick(time)
 
-        # redrawing screen
-        self._paint_gamefield()
+            #for obj in self._objects:
+            #    obj.tick(time)
 
-        # check for collisions
-        if self.collision:
-            # draw a blank circle
-            blankc = foxgame.GameObject(
-                       pos = self.foxes[0].pos,
-                       radius=(self.hare.radius + self.foxes[0].radius) * 2,
-                       color = (255, 255, 255))
-            self._draw(brankc)
-            foxgame.state = states.ENDED
-        if self._collision(self.hare, self.carrot):
-            self.onEatCarrot()
+            # redrawing screen
+            self._paint_gamefield()
 
-	pygame.display.flip()
+            # check for collisions
+            if self.collision:
+                # draw a blank circle
+                blankc = foxgame.GameObject(
+                          pos = self.foxes[0].pos,
+                          radius=(self.hare.radius + self.foxes[0].radius) * 2,
+                          color = (255, 255, 255))
+                self._draw(brankc)
+                foxgame.state = states.ENDED
+            if self._collision(self.hare, self.carrot):
+                self.onEatCarrot()
+
+            pygame.display.flip()
 
 
     _bindkeys = {

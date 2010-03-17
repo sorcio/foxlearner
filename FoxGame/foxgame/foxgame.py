@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-import states
 from __future__ import division
 from math import hypot
 from collections import namedtuple
 from random import randrange
 from types import Vector, Direction
+import states
 
 class Circle(object):
     """
@@ -68,22 +68,21 @@ class MovingPawn(Circle):
                 return dir * self.brake
 
 
-    def _drive(self, dir):
+    def _drive(self, direction):
         """
         Move to the position given by direction.
         """
 
         # Skip opposite inputs
-        if dir & (UP | DOWN):
-            dir &= ~(UP | DOWN)
-        if dir & (LEFT | RIGHT):
-            dir &= ~(LEFT | RIGHT)
-
-        horz = self._update_acc(dir & ~(UP | DOWN))
-        vert = self._update_acc(dir & ~(LEFT | RIGHT))
-        if horz != 0 and vert != 0:
-            self.acc = Vector(horz, vert) * (
-                        max(self.baccel, self.brake) / hypot(horz, vert))
+        #if dir & (UP | DOWN):
+        #    dir &= ~(UP | DOWN)
+        #if dir & (LEFT | RIGHT):
+        #    dir &= ~(LEFT | RIGHT)
+        hor  = self._update_acc(direction.hor)
+        vert = self._update_acc(direction.vert)
+        if hor != 0 and vert != 0:
+            self.acc = Vector(hor, vert) * (
+                        max(self.baccel, self.brake) / hypot(hor, vert))
         else:
             self.acc = Vector(0, 0)
 
