@@ -5,7 +5,7 @@ import states
 from math import hypot
 from collections import namedtuple
 from random import randrange
-from types import Vector, Direction
+from structures import Vector, Direction
 
 class Circle(object):
     """
@@ -143,7 +143,6 @@ class BasicCarrot(Circle):
     """
     A carrot.
     """
-
     def __init__(self, parent, pos):
         self.parent = parent
         self.pos = pos

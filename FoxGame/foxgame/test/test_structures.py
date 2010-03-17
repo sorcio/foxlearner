@@ -3,8 +3,7 @@ from __future__ import division
 from unittest import TestCase
 from random import randrange
 
-
-from foxgame.types import Vector
+from foxgame.structures import Vector, Direction
 from operator import sub
 from math import hypot
 
@@ -58,8 +57,6 @@ class TestVector(TestCase):
 
         self.assertEqual(p1.distance(p2), triplet[2])
 
-
-from foxgame.types import Direction
 
 class TestDirection(TestCase):
     """

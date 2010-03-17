@@ -85,18 +85,6 @@ class Vector(object):
         return abs(self - other)
 
 
-dirs = {
-        ( 1,  0): '↑', # up
-        (-1,  0): '↓', # down
-        ( 0,  1): '→', # right
-        ( 0, -1): '←', # left
-        ( 1,  1): '↗', # up and right
-        ( 1, -1): '↖', # up and left
-        (-1,  1): '↘', # down and right
-        (-1, -1): '↙', # down and left
-        ( 0,  0): ' '  # empty
-}
-
 class Direction(object):
     """
     A Direction object identifies a general direction using just two ints,

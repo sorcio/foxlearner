@@ -9,6 +9,7 @@ import states
 from math import sin, cos, radians, hypot
 from sys import exit
 from pygame.gfxdraw import line, aacircle, filled_circle
+from structures import Direction
 
 def usermove(cls, keypress):
     """
@@ -87,8 +88,8 @@ class Game(foxgame.BasicGame):
         Fox.move = fox_algorithm or usermove
         Hare.move = hare_algorithm or usermove
 
-        self.foxes =(Fox(self.size), ) * foxnum
-        self.hare = Hare(self.size)
+        self.foxes = (Fox(self.size), ) * foxnum
+        self.hare  = Hare(self.size)
 
         self._clock = pygame.time.Clock()
 
@@ -118,8 +119,9 @@ class Game(foxgame.BasicGame):
         """
         Draw a GameObject with circular shape on the screen.
         """
-        filled_circle(arena, pawn.pos[0], pawn.pos[1], pawn.radius, pawn.color)
-        aacircle(arena, pawn.pos[0], pawn.pos[1], pawn.radius, pawn.color)
+        args = arena, pawn.pos[0], pawn.pos[1], pawn.radius, pawn.color
+        filled_circle(*args)
+        aacircle(*args)
 
     def _draw_tracks(self):
         for pawn in self.foxes + (self.hare,):
@@ -213,6 +215,14 @@ class Game(foxgame.BasicGame):
     def update_config(self):
         pass
 
+    keytable = {111: Direction.UP,
+                113: Direction.LEFT,
+                114: Direction.RIGHT,
+                116: Direction.DOWN}
+
+    def key_to_dir(self, key):
+        return self.keytable[key]
+
     def run(self):
         """
         App's mainloop.
@@ -221,46 +231,49 @@ class Game(foxgame.BasicGame):
         """
         keys = set()
 
-        self._clock.tick(60)
+        while True:
+            self._clock.tick(60)
 
-        # handle user input.
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                keys.add(event.key)
-            elif event.type == pygame.KEYUP:
-                keys.remove(event.key)
+            # handle user input.
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    keys.add(event.scancode)
+                elif event.type == pygame.KEYUP:
+                    keys.remove(event.scancode)
 
-        for key in keys:
-            if key in self._bindkeys:
-                self._bindkeys[key](self)
+            for key in keys:
+                print str(Direction(*self.key_to_dir(key)))
+            #    if key in self._bindkeys:
+            #        self._bindkeys[key](self)
 
-        self.hare.move(keys)
-        for fox in self.foxes:
-            fox.move(keys)
 
-        # updating time
-        time = self._clock.get_time() / 1000
-        self._clock.tick(time)
+            self.hare.move(keys)
+            for fox in self.foxes:
+                fox.move(keys)
 
-        #for obj in self._objects:
-        #    obj.tick(time)
+            # updating time
+            time = self._clock.get_time() / 1000
+            self._clock.tick(time)
 
-        # redrawing screen
-        self._paint_gamefield()
+            #for obj in self._objects:
+            #    obj.tick(time)
 
-        # check for collisions
-        if self.collision:
-            # draw a blank circle
-            blankc = foxgame.GameObject(
-                      pos = self.foxes[0].pos,
-                      radius=(self.hare.radius + self.foxes[0].radius) * 2,
-                      color = (255, 255, 255))
-            self._draw(brankc)
-            foxgame.state = states.ENDED
-        if self._collision(self.hare, self.carrot):
-            self.onEatCarrot()
+            # redrawing screen
+            self._paint_gamefield()
 
-        #pygame.display.flip()
+            # check for collisions
+            if self.collision:
+                # draw a blank circle
+                blankc = foxgame.GameObject(pos=self.foxes[0].pos,
+                                            radius=(self.hare.radius +
+                                                    self.foxes[0].radius) * 2,
+                                            color=(255, 255, 255))
+                self._draw(blankc)
+                foxgame.state = states.ENDED
+            if self._collision(self.hare, self.carrot):
+                self.onEatCarrot()
+
+            pygame.display.flip()
 
 
     _bindkeys = {
@@ -280,6 +293,5 @@ def main(foxnum, fox_algorithm, hare_algorithm):
 
     # starting game.
     game = Game(fox_algorithm, hare_algorithm, foxnum, size)
-    while True:
-        game.run()
+    game.run()
 
