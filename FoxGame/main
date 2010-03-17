@@ -41,7 +41,7 @@ parser.add_option('-i', '--iface', dest='interface',
                   default='pygame', action='store',
                   metavar='INTERFACE', help='select game interface')
 parser.add_option('--fox', dest='fox',
-                  default='traditional', action='store',
+                  default='none', action='store',
                   metavar='ALGORITHM', help='select ai algorithm for the fox')
 parser.add_option('--hare', dest='hare',
                   metavar='INPUT', help='select an input for the hare')
@@ -87,6 +87,4 @@ else:
 
 
 
-game.main(foxnum=options.foxes_num,
-          fox_algorithm=FoxMotor,
-          hare_algorithm=HareMotor)
+game.main(options.foxes_num, FoxMotor, HareMotor)
