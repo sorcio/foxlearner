@@ -14,10 +14,7 @@ class Circle(object):
     # an object on the board is identified by these constants:
     radius = None
     color = None
-
-    # .. and its position
-    def __init__(self, pos):
-        self.pos = pos
+    # .. and position
 
     def distance(self, other):
         """
@@ -74,11 +71,6 @@ class MovingPawn(Circle):
         Move to the position given by direction.
         """
 
-        # Skip opposite inputs
-        #if dir & (UP | DOWN):
-        #    dir &= ~(UP | DOWN)
-        #if dir & (LEFT | RIGHT):
-        #    dir &= ~(LEFT | RIGHT)
         hor  = self._update_acc(direction.hor)
         vert = self._update_acc(direction.vert)
         if hor != 0 and vert != 0:
@@ -151,7 +143,10 @@ class BasicCarrot(Circle):
     """
     A carrot.
     """
-    pass
+
+    def __init__(self, parent, pos):
+        self.parent = parent
+        self.pos = pos
 
 
 class BasicGame(object):

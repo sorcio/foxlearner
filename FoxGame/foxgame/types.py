@@ -143,7 +143,7 @@ class Direction(object):
         Check if value is in range [-1, +1], then assign it to name.
         """
         if value not in range(-1, 2):
-            raise ValueError('Direction.{0} must be -1, 0, or 1.'
+            raise ValueError('Direction.{0} must be either -1, 0, or 1.'
                              'Got {1} instead.'.format(name, value))
         self.__dict__[name] = value
 

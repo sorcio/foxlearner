@@ -42,5 +42,5 @@ class Game(foxgame.BasicGame):
         self.foxes = [Fox(self) for x in xrange(foxnum)]
         self.hare = Hare(self)
 
-        self.carrot = Carrot(self._randompoint())
+        self.carrot = Carrot(self, self._randompoint())
 

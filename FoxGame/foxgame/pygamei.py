@@ -6,7 +6,7 @@
 import foxgame
 import pygame
 import states
-from math import sin, cos, radians
+from math import sin, cos, radians, hypot
 from sys import exit
 from pygame.gfxdraw import line, aacircle, filled_circle
 
@@ -35,7 +35,7 @@ class Carrot(foxgame.BasicCarrot):
     radius = 10
 
     def draw(self):
-        return Game._draw_circle(self)
+        return Game._draw_circle(self.parent.arena, self)
 
 
 class Fox(foxgame.BasicFox):
@@ -69,7 +69,7 @@ class Hare(foxgame.BasicHare):
         self._tracks.append(self.pos)
 
     def draw(self):
-        return Game._draw_circle(self)
+        return Game._draw_circle(self.parent.arena, self)
 
 class Game(foxgame.BasicGame):
     """
@@ -102,7 +102,7 @@ class Game(foxgame.BasicGame):
         # Setting up arena
         arena = pygame.Rect(0, 0, *self.size)
         arena.center = self._screen.get_rect().center
-        self._arena = self._screen.subsurface(arena)
+        self.arena = self._screen.subsurface(arena)
 
         # Place the first carrot
         self.place_carrot()
@@ -114,12 +114,12 @@ class Game(foxgame.BasicGame):
         pass
 
     @staticmethod
-    def _draw_circle(pawn):
+    def _draw_circle(arena, pawn):
         """
         Draw a GameObject with circular shape on the screen.
         """
-        filled_circle(self._arena, *pawn.pos, r=pawn.radius, color=pawn.color)
-        aacircle(self._arena, *pawn.pos, r=pawn.radius, color=pawn.color)
+        filled_circle(arena, pawn.pos[0], pawn.pos[1], pawn.radius, pawn.color)
+        aacircle(arena, pawn.pos[0], pawn.pos[1], pawn.radius, pawn.color)
 
     def _draw_tracks(self):
         for pawn in self.foxes + (self.hare,):
@@ -133,16 +133,16 @@ class Game(foxgame.BasicGame):
         """
         Draw the board.
         """
-        # Fill self._arena of black
-        self._arena.fill((0, 0, 0))
+        # Fill self.arena of black
+        self.arena.fill((0, 0, 0))
 
         # Background grid
         for x, y in zip(xrange(200, self.size.x, 200),
                         xrange(200, self.size.y, 200)):
 
-            pygame.draw.line(self._arena, (100, ) * 3,
+            pygame.draw.line(self.arena, (100, ) * 3,
                              (x, 0), (x, self.size.y), 1)
-            pygame.draw.line(self._arena, (100, ) * 3,
+            pygame.draw.line(self.arena, (100, ) * 3,
                              (0, y), (self.size.x, y), 1)
 
         # Drawing pawns
@@ -150,12 +150,13 @@ class Game(foxgame.BasicGame):
         self.carrot.draw()
 
         for fox in self.foxes:
-            aacircle(screen, *fox.pos, r=hypot(self.size / 5, color=(100, )*3))
+            aacircle(self.arena, fox.pos[0], fox.pos[1],
+                     int(hypot(*self.size)/5), (100, )*3)
             for deg in xrange(225, 3600, 450):
                 rad = radians(deg // 10)
                 # XXX
-                end = fox.pos.x + cos(rad) * 1000, fox.pos.y + sin(rad) * 1000
-                pygame.draw.line(screen, (100, ) * 3, fox.pos, end, 1)
+                end = fox.pos[0] + cos(rad) * 1000, fox.pos[1] + sin(rad) * 1000
+                pygame.draw.line(self.arena, (100, ) * 3, fox.pos, end, 1)
 
     def welcome(self):
         """
@@ -165,7 +166,7 @@ class Game(foxgame.BasicGame):
         title = pygame.font.Font(None, 100).render('FoxGame!',
                                                    True, (0, 0, 255)
                                                    ).get_rect().copy()
-        title.center = self.size / 2
+        title.center = tuple(self.size / 2)
 
         # Creating subtitle
         subtitle = pygame.font.Font(None, 50).render(
@@ -183,7 +184,7 @@ class Game(foxgame.BasicGame):
         Game paused: wait for space to continue the game.
         """
         event = None
-        while pygame.K_SPACE not in (event.type()
+        while pygame.K_SPACE not in (event.type
                                      for event in pygame.event.get()):
             # XXX
             pass
@@ -207,7 +208,7 @@ class Game(foxgame.BasicGame):
         """
         Place a carrot to the arena in a random point.
         """
-        self.carrot = Carrot(self._randompoint())
+        self.carrot = Carrot(self, self._randompoint())
 
     def update_config(self):
         pass
@@ -231,7 +232,7 @@ class Game(foxgame.BasicGame):
 
         for key in keys:
             if key in self._bindkeys:
-                self._bindkeys[key]()
+                self._bindkeys[key](self)
 
         self.hare.move(keys)
         for fox in self.foxes:
@@ -279,5 +280,6 @@ def main(foxnum, fox_algorithm, hare_algorithm):
 
     # starting game.
     game = Game(fox_algorithm, hare_algorithm, foxnum, size)
-    game.run()
+    while True:
+        game.run()
 
