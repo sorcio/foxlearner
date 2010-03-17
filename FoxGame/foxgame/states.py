@@ -6,5 +6,7 @@ NONE    = 'none'
 READY   = 'ready'
 # Game is running
 RUNNING = 'running'
+# Game paused
+PAUSE   = 'pause'
 # Game over!
 ENDED   = 'ended'

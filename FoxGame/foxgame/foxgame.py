@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
+
+import states
 from math import hypot
 from collections import namedtuple
 from random import randrange
 from types import Vector, Direction
-import states
 
 class Circle(object):
     """
@@ -199,3 +200,5 @@ class BasicGame(object):
             for f in self.foxes:
                 f.pos = self._randompoint()
 
+    def onEatCarrot(self):
+        pass
