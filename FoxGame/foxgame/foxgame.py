@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import states
 from __future__ import division
 from math import hypot
 from collections import namedtuple
@@ -157,6 +158,9 @@ class BasicGame(object):
     """
     A basic, abstract game interface.
     """
+
+    # Game state, NONE when not initialized
+    state = states.NONE
 
     def _randompoint(self):
         """

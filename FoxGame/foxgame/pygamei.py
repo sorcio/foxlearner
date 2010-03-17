@@ -5,6 +5,7 @@
 #from __future__ import division
 import foxgame
 import pygame
+import states
 from math import sin, cos, radians
 from sys import exit
 from pygame.gfxdraw import line, aacircle, filled_circle
@@ -15,7 +16,7 @@ def usermove(cls, keypress):
     """
     # XXX: improve.
     # creating directions
-    d = foxgame.Direction(0, 0, 0, 0)
+    d = foxgame.Direction(0, 0)
     for key in keypress:
         if key == pygame.K_UP:
             d.up = key
@@ -76,11 +77,12 @@ class Game(foxgame.BasicGame):
     """
 
     def __init__(self, fox_algorithm, hare_algorithm, foxnum,
-                 size, state='ready'):
+                 size, state=states.READY):
         """
         Set up the game window.
         """
-        self.size = foxgame.Vector(size)
+
+        self.size = foxgame.Vector(*size)
 
         Fox.move = fox_algorithm or usermove
         Hare.move = hare_algorithm or usermove
@@ -105,7 +107,7 @@ class Game(foxgame.BasicGame):
         # Place the first carrot
         self.place_carrot()
 
-        self.state = 'ready'
+        foxgame.state = state
 
 
     @staticmethod
@@ -170,7 +172,7 @@ class Game(foxgame.BasicGame):
         subtitle.top = title.bottom
 
         # changing gamestate
-        self.state = 'running'
+        foxgame.state = states.RUNNING
 
     def wait(self):
         """
@@ -182,7 +184,7 @@ class Game(foxgame.BasicGame):
             # XXX
             pass
         else:
-            game.state = 'running'
+            foxgame.state = states.RUNNING
 
     def ask_newplay(self):
         """
@@ -201,9 +203,7 @@ class Game(foxgame.BasicGame):
         """
         Place a carrot to the arena in a random point.
         """
-        self.carrot = Carrot(pos=self._randompoint(),
-                             radius=10,
-                             color=(220, 140, 0))
+        self.carrot = Carrot(pos=self._randompoint())
 
     def update_config(self):
         pass
@@ -250,9 +250,12 @@ class Game(foxgame.BasicGame):
                        radius=(self.hare.radius + self.foxes[0].radius) * 2,
                        color = (255, 255, 255))
             self._draw(brankc)
-            self.state = 'ended'
+            foxgame.state = states.ENDED
         if self._collision(self.hare, self.carrot):
             self.onEatCarrot()
+
+	pygame.display.flip()
+
 
     _bindkeys = {
                  pygame.K_ESCAPE : quit,
@@ -260,7 +263,7 @@ class Game(foxgame.BasicGame):
     }
 
 
-def main(foxnum, falgorithm, halgorithm):
+def main(foxnum, fox_algorithm, hare_algorithm):
     """
     App's mainloop.
     """
@@ -270,5 +273,6 @@ def main(foxnum, falgorithm, halgorithm):
     size = 800, 600
 
     # starting game.
-    pass
+    game = Game(fox_algorithm, hare_algorithm, foxnum, size)
+    game.run()
 
