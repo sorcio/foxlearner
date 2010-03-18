@@ -89,7 +89,7 @@ class Game(foxgame.BasicGame):
         Hare.move = hare_algorithm or usermove
 
         self.foxes = (Fox(self.size), ) * foxnum
-        self.hare  = Hare(self.size)
+        self.hare = Hare(self.size)
 
         self._clock = pygame.time.Clock()
 
@@ -109,6 +109,7 @@ class Game(foxgame.BasicGame):
         self.place_carrot()
 
         foxgame.state = state
+        pygame.display.set_caption('FoxGame!')
 
 
     def _draw(self, item):
@@ -177,9 +178,11 @@ class Game(foxgame.BasicGame):
                                               ).get_rect().copy()
         subtitle.centerx = title.centerx
         subtitle.top = title.bottom
+        self._screen.flip()
 
         # changing gamestate
-        foxgame.state = states.RUNNING
+        foxgame.state = states.WAITING
+
 
     def wait(self):
         """
@@ -215,14 +218,6 @@ class Game(foxgame.BasicGame):
     def update_config(self):
         pass
 
-    keytable = {111: Direction.UP,
-                113: Direction.LEFT,
-                114: Direction.RIGHT,
-                116: Direction.DOWN}
-
-    def key_to_dir(self, key):
-        return self.keytable[key]
-
     def run(self):
         """
         App's mainloop.
@@ -231,45 +226,41 @@ class Game(foxgame.BasicGame):
         """
         keys = set()
 
-        while True:
-            self._clock.tick(60)
+        self._clock.tick(60)
 
-            # handle user input.
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    keys.add(event.scancode)
-                elif event.type == pygame.KEYUP:
-                    keys.remove(event.scancode)
+        # handle user input.
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                keys.add(event.type)
+            elif event.type == pygame.KEYUP:
+                keys.remove(event.type)
 
-            for key in keys:
-                print str(Direction(*self.key_to_dir(key)))
-            #    if key in self._bindkeys:
-            #        self._bindkeys[key](self)
+            if event.type in self._bindkeys:
+                self._bindkeys[key.type](self)
 
+        self.hare.move(keys)
+        for fox in self.foxes:
+            fox.move(keys)
 
-            self.hare.move(keys)
-            for fox in self.foxes:
-                fox.move(keys)
+        # updating time
+        time = self._clock.get_time() / 1000
+        self._clock.tick(time)
 
-            # updating time
-            time = self._clock.get_time() / 1000
-            self._clock.tick(time)
+        # for obj in self._objects:
+        #    obj.tick(time)
 
-            #for obj in self._objects:
-            #    obj.tick(time)
+        # redrawing screen
+        self._paint_gamefield()
 
-            # redrawing screen
-            self._paint_gamefield()
-
-            # check for collisions
-            if self.collision:
-                # draw a blank circle
-                blankc = foxgame.GameObject(pos=self.foxes[0].pos,
-                                            radius=(self.hare.radius +
-                                                    self.foxes[0].radius) * 2,
+        # check for collisions
+        if self.collision:
+            # draw a blank circle
+            blankc = foxgame.Circle(pos=self.foxes[0].pos,
+                                    radius=(self.hare.radius +
+                                            self.foxes[0].radius) * 2,
                                             color=(255, 255, 255))
-                self._draw(blankc)
-                foxgame.state = states.ENDED
+            self._draw(blankc)
+            foxgame.state = states.ENDED
             if self._collision(self.hare, self.carrot):
                 self.onEatCarrot()
 
@@ -293,5 +284,9 @@ def main(foxnum, fox_algorithm, hare_algorithm):
 
     # starting game.
     game = Game(fox_algorithm, hare_algorithm, foxnum, size)
-    game.run()
+    # starting app's mainloop
+    while True:
+        game.welcome()
+        game.wait()
+        game.run()
 

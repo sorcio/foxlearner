@@ -3,6 +3,7 @@
 # Gamestate constants
 NONE    = 'none'
 READY   = 'ready'
-RUNNING = 'running'
-PAUSE   = 'pause'
-ENDED   = 'ended'
+RUNNING = 'run'
+WAITING = 'wait'
+PAUSED  = 'pause'
+ENDED   = 'end'

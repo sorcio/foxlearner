@@ -28,7 +28,7 @@ class TestVector(TestCase):
         self.assertNotEqual(self.p1, self.p2)
         self.assertEqual(Vector(*self.fcoords), self.p1)
 
-    def test_operator(self):
+    def test_operators(self):
         """
         Test sum, difference, multiplication and division between two Vectors.
         """

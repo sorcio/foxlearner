@@ -101,6 +101,7 @@ class Direction(object):
     UPLEFT    = ( 1, -1)
     DOWNRIGHT = (-1,  1)
     DOWNLEFT  = (-1, -1)
+    VOID      = ( 0,  0)
 
     def __init__(self, h, v):
         self.hor = h
@@ -114,14 +115,14 @@ class Direction(object):
         Print the direction using cool Unicode characters.
         """
         dirs = {
-                ( 1,  0): '↑', # up
-                (-1,  0): '↓', # down
-                ( 0,  1): '→', # right
-                ( 0, -1): '←', # left
-                ( 1,  1): '↗', # up and right
-                ( 1, -1): '↖', # up and left
-                (-1,  1): '↘', # down and right
-                (-1, -1): '↙', # down and left
+                self.UP       : '↑',
+                self.DOWN     : '↓',
+                self.RIGHT    : '→',
+                self.LEFT     : '←',
+                self.UPRIGHT  : '↗',
+                self.UPLEFT   : '↖',
+                self.DOWNRIGHT: '↘',
+                self.DOWNLEFT : '↙',
                 ( 0,  0): ' '  # empty
         }
         return dirs[self.hor, self.vert]
@@ -144,7 +145,7 @@ class Direction(object):
         return not self == other
 
     def __nonzero__(self):
-        return self != (0, 0)
+        return self != self.VOID
 
     def __iter__(self):
         """

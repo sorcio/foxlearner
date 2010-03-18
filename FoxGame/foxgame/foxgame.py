@@ -16,6 +16,11 @@ class Circle(object):
     color = None
     # .. and position
 
+    def __init__(self, parent, pos=(0, 0)):
+        # parent is the Game class which contains the Cicle
+        self.parent = parent
+        self.pos = pos
+
     def distance(self, other):
         """
         Return the discance between two circles.
@@ -31,15 +36,11 @@ class MovingPawn(Circle):
     """
     move = None # algorithm used to move the Pawn.
 
-    def __init__(self, parent, priv_data=None, pos=(0, 0)):
-        # starting values
+    def __init__(self, *args):
+        Circle.__init__(self, *args)
+
         self.acc = Vector(0, 0)
         self.speed = Vector(0, 0)
-
-        self.parent = parent
-        self.priv_data = priv_data
-        self.pos = pos
-
 
     def __eq__(self, other):
         """
@@ -143,10 +144,7 @@ class BasicCarrot(Circle):
     """
     A carrot.
     """
-    def __init__(self, parent, pos):
-        self.parent = parent
-        self.pos = pos
-
+    pass
 
 class BasicGame(object):
     """
