@@ -5,6 +5,7 @@
     : check whether pygame.Game class is correct
     : write the main function for the pygame interface
     : check whethr main file can cantrol each possible feature in the game
+- write pygamei using pygame.Sprite class for the fox and the hare           -
 - code pre/post filters and controllers                                      -
     : follow DESIGN file.
 - write lots and lots of tests, about physis of game                         -
