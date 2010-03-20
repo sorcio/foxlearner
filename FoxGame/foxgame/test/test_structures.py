@@ -18,7 +18,6 @@ class TestVector(TestCase):
         self.fcoords = randrange(100), randrange(50, 100)
         self.scoords = randrange(100), randrange(50)
         self.p1, self.p2 = Vector(*self.fcoords), Vector(*self.scoords)
-        #print self.p1, self.p2
 
     def test_bool(self):
         self.assertTrue(Vector(1, 2))
@@ -57,10 +56,9 @@ class TestVector(TestCase):
 
         self.assertEqual(p1.distance(p2), triplet[2])
 
-
 class TestDirection(TestCase):
     """
-    Test the Direction class, and check also if utf-8 is ok.
+    Test the Direction class and its constants.
     """
 
     def test_range(self):
@@ -68,21 +66,28 @@ class TestDirection(TestCase):
         Sure that Directions only accepts value in range [-1; +1].
         """
         try:
-            dir = Direction(0, 0)
+            dir = Direction(Direction.NULL)
             dir.hor = 1
             dir.vert = -1
         except ValueError, e:
             self.fail(e)
         self.assertRaises(ValueError, Direction, 2, 2)
 
+    def test_neg(self):
+        dir = Direction(Direction.UP)
+        self.assertEqual(-dir, Direction.DOWN)
+        self.asssertNotEqual(-dir, dir)
+        self.assertNotEqual(-dir, Direction.NULL)
+        self.assertEqual(-Direction(Direction.NULL), Direction.NULL)
+ 
     def test_eq(self):
-        dir = Direction(1, 0)
-        self.assertEqual(dir, (1, 0))
+        dir = Direction(Direction.UP)
+        self.assertEqual(dir, Direction.UP)
         self.assertEqual(dir, dir)
-        self.assertNotEqual(dir, Direction(0, 1))
+        self.assertNotEqual(dir, Direction(Direction.DOWN))
 
     def test_bool(self):
-        self.assertTrue(Direction(1, -1))
-        self.assertFalse(Direction(0, 0))
+        self.assertTrue(Direction(Direction.DOWNLEFT))
+        self.assertFalse(Direction(Direction.NULL)
 
 

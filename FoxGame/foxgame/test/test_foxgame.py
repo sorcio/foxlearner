@@ -5,10 +5,12 @@ from random import randrange
 
 
 
-from foxgame.nulli import Game as NullGame
-from foxgame.foxgame import BasicFox, BasicHare
+from foxgame.UI.simulator import Game as NullGame
+from foxgame.foxgame import Fox, Hare
 
-class TestBaseGame(TestCase):
+
+# TODO:this class shuold be _almost_ rewritten
+class TestBaseGame(): # TestCase 
     """
     Test the Basic Game Interface:
       locating, collisions, ...;
@@ -27,7 +29,7 @@ class TestBaseGame(TestCase):
 
     def test_foxes(self):
         """
-        Sure that foxes on the game are *different* foxes.
+        Ensure that foxes on the game are *different* foxes.
         """
         self.assertEqual(len([x for x in self.game.foxes
                                for y in self.game.foxes if x == y]),

@@ -127,6 +127,12 @@ class Direction(object):
         }
         return dirs[self.hor, self.vert]
 
+    def __neg__(self):
+	"""
+	Return the opposite position of self.
+	"""
+	return Direction(-self.hor, -self.vert)
+	
     def __setattr__(self, name, value):
         """
         Check if value is in range [-1, +1], then assign it to name.

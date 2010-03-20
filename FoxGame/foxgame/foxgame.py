@@ -5,9 +5,9 @@ import states
 from math import hypot
 from collections import namedtuple
 from random import randrange
-from structures import Vector, Direction
+from foxgame.structures import Vector, Direction
 
-class Circle(object):
+class GameObject(object):
     """
     Something on the board.
     """
@@ -30,14 +30,14 @@ class Circle(object):
         return dist if dist > 0 else 0
 
 
-class MovingPawn(Circle):
+class MovingPawn(GameObject):
     """
     A moving Circle.
     """
     move = None # algorithm used to move the Pawn.
 
     def __init__(self, *args):
-        Circle.__init__(self, *args)
+        super(GameObject, self).__init__(*args)
 
         self.acc = Vector(0, 0)
         self.speed = Vector(0, 0)
@@ -140,7 +140,7 @@ class BasicHare(MovingPawn):
     # carrots eaten
     carrots = 0
 
-class BasicCarrot(Circle):
+class BasicCarrot(MovingPawn):
     """
     A carrot.
     """
@@ -150,9 +150,6 @@ class BasicGame(object):
     """
     A basic, abstract game interface.
     """
-
-    # Game state, NONE when not initialized
-    state = states.NONE
 
     def _randompoint(self):
         """
@@ -191,6 +188,3 @@ class BasicGame(object):
                   if x != y):
             for f in self.foxes:
                 f.pos = self._randompoint()
-
-    def onEatCarrot(self):
-        pass
