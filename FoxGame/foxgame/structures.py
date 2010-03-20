@@ -101,7 +101,7 @@ class Direction(object):
     UPLEFT    = ( 1, -1)
     DOWNRIGHT = (-1,  1)
     DOWNLEFT  = (-1, -1)
-    VOID      = ( 0,  0)
+    NULL      = ( 0,  0)
 
     def __init__(self, h, v):
         self.hor = h
@@ -123,7 +123,7 @@ class Direction(object):
                 self.UPLEFT   : '↖',
                 self.DOWNRIGHT: '↘',
                 self.DOWNLEFT : '↙',
-                ( 0,  0): ' '  # empty
+                self.NULL     : ' '  
         }
         return dirs[self.hor, self.vert]
 
@@ -131,13 +131,13 @@ class Direction(object):
         """
         Check if value is in range [-1, +1], then assign it to name.
         """
-        if value not in range(-1, 2):
+        if value not in (-1, 0, 1):
             raise ValueError('Direction.{0} must be either -1, 0, or 1.'
                              'Got {1} instead.'.format(name, value))
         self.__dict__[name] = value
 
     def __eq__(self, other):
-        fh,fv = self
+        fh, fv = self
         sh, sv = other
         return fh == sh and fv == sv
 
@@ -151,5 +151,5 @@ class Direction(object):
         """
         May useful for conversion in tuple.
         """
-        yield self.hor
+        yield self.hor, self.vert
         yield self.vert

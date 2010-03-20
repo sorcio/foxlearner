@@ -8,8 +8,8 @@ import pygame
 import states
 from math import sin, cos, radians, hypot
 from sys import exit
-from pygame.gfxdraw import line, aacircle, filled_circle
-from structures import Direction
+from pygame.gfxdraw import aacircle, filled_circle
+from structures import Direction, Vector
 
 def usermove(cls, keypress):
     """
@@ -45,7 +45,7 @@ class Fox(foxgame.BasicFox):
     radius = 18
 
     def __init__(self, *args):
-        foxgame.BasicFox.__init__(self, *args)
+        super(Fox, self).__init__(*args)
         self._tracks = [self.pos] * 100
 
     def update_track(self):
@@ -62,7 +62,7 @@ class Hare(foxgame.BasicHare):
     radius = 15
 
     def __init__(self, *args):
-        foxgame.BasicHare.__init__(self, *args)
+    	super(Hare, self).__init__(*args)
         self._tracks = [self.pos] * 100
 
     def update_track(self):
@@ -88,7 +88,7 @@ class Game(foxgame.BasicGame):
         Fox.move = fox_algorithm or usermove
         Hare.move = hare_algorithm or usermove
 
-        self.foxes = (Fox(self.size), ) * foxnum
+        self.foxes = tuple(Fox(self.size) fox x in xrange(foxnum))
         self.hare = Hare(self.size)
 
         self._clock = pygame.time.Clock()
@@ -97,7 +97,7 @@ class Game(foxgame.BasicGame):
         self._screen = pygame.display.set_mode(tuple(self.size),
                                                pygame.DOUBLEBUF |
                                                pygame.HWSURFACE)
-        # pygame.display.set_capiton('FoxGame!')
+        pygame.display.set_caption('FoxGame!')
         self._screen.fill((50, 50, 50))
 
         # Setting up arena
@@ -109,7 +109,7 @@ class Game(foxgame.BasicGame):
         self.place_carrot()
 
         foxgame.state = state
-        pygame.display.set_caption('FoxGame!')
+
 
 
     def _draw(self, item):
