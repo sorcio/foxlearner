@@ -71,12 +71,12 @@ class TestDirection(TestCase):
             dir.vert = -1
         except ValueError, e:
             self.fail(e)
-        self.assertRaises(ValueError, Direction, 2, 2)
+        self.assertRaises(ValueError, Direction, (2, 2))
 
     def test_neg(self):
         dir = Direction(Direction.UP)
         self.assertEqual(-dir, Direction.DOWN)
-        self.asssertNotEqual(-dir, dir)
+        self.assertNotEqual(-dir, dir)
         self.assertNotEqual(-dir, Direction.NULL)
         self.assertEqual(-Direction(Direction.NULL), Direction.NULL)
  
@@ -88,6 +88,5 @@ class TestDirection(TestCase):
 
     def test_bool(self):
         self.assertTrue(Direction(Direction.DOWNLEFT))
-        self.assertFalse(Direction(Direction.NULL)
-
+        self.assertFalse(Direction(Direction.NULL))
 

@@ -103,7 +103,7 @@ class Direction(object):
     DOWNLEFT  = (-1, -1)
     NULL      = ( 0,  0)
 
-    def __init__(self, h, v):
+    def __init__(self, (h, v)):
         self.hor = h
         self.vert = v
 
@@ -131,7 +131,7 @@ class Direction(object):
 	"""
 	Return the opposite position of self.
 	"""
-	return Direction(-self.hor, -self.vert)
+	return Direction((-self.hor, -self.vert))
 	
     def __setattr__(self, name, value):
         """
@@ -151,11 +151,11 @@ class Direction(object):
         return not self == other
 
     def __nonzero__(self):
-        return self != self.VOID
+        return self != Direction(self.NULL)
 
     def __iter__(self):
         """
         May useful for conversion in tuple.
         """
-        yield self.hor, self.vert
+        yield self.hor
         yield self.vert
