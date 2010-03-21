@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from foxgame.structures import Direction
+from math import copysign
 
 
 class Controller(object):
@@ -9,31 +10,38 @@ class Controller(object):
     for specific controllers.
     """
 
-    def __init__(self, game, pawn):
+    def __init__(self, pawn, brain, *postfilters):
     	"""
     	Set up basic values.
     	"""
-        self.game = game
+        # TODO: add self.tracks to keep a history of controller's previous position
         self.pawn = pawn
-        # TODO
-        # self.tracks keep a history of previous positions
+
+        self.brain = brain
+        self.postfilters = postfilters
+
 
     def __repr__(self):
         return '<Controller object at {0}>'.format(self.__class__.__module__)
 
     def update(self, time):
         """
-        Decision method.
-        This methodshould be inherited from a specific controller,
-        which updates using his own algorithms.
+        Find the direction to follow using self.brain,
+        then elaborates the output using postfilters.
         """
         pass
+
+
+class Brain(object):
+    """
+    A simple class wich provides soe useful functions for all AIs.
+    """
 
     def towards(self, othpawn):
         """
         Return the Direction of other respectively to self.
         """
-        return Direction(othpawn.pos - self.pawn.pos)
+        return Direction.fromVector(ohpawn.pos - self.pawn.pos)
 
     @property
     def nearest_fox(self):

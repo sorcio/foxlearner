@@ -53,43 +53,36 @@ class TestMovingPawn(TestCase):
 
         self.assertTrue(isinstance(mpawn.speed, Vector))
         self.assertEqual(mpawn.speed, (0, 0))
-
-    def test_update_speed(self):
-        """
-        FAIL
-        """
+        
+    def test_update_acc(self):
         mpawn = Fox(NoneGame, Direction.NULL)
-        updir= lambda dir: [mpawn._update_acc(x) for x in dir]
 
-        hor, vert = updir(Direction.NULL)
-        self.assertEqual(hor, 0)
-        self.assertEqual(vert, 0)
-
-        hor, vert = updir(Direction.UP)
-        self.assertEqual(hor, 0)
-        self.assertNotEqual(vert, 0)
-
-        hor, vert = updir(Direction.UPRIGHT)
-        self.assertNotEqual(hor, 0)
-        self.assertNotEqual(vert, 0)
-
-    def test_drive(self):
-        """
-        FAIL
-        """
-        mpawn = Fox(NoneGame, (0, 0))
-
-        mpawn.drive(Direction(Direction.NULL))
+        mpawn._update_acc(Direction(Direction.NULL))
         self.assertEqual(mpawn.acc, (0, 0))
 
-        mpawn.drive(Direction(Direction.UP))
-        self.assertNotEqual(mpawn.acc, (0, 0))
+        mpawn._update_acc(Direction(Direction.UP))
+        self.assertEqual(mpawn.acc.x, 0)
+        self.assertNotEqual(mpawn.acc.y, 0)
 
-    def test_tick(self):
-        """
-        FAIL
-        """
-        mpawn = Fox(FakeGame(100,100), Direction.NULL)
+        mpawn._update_acc(Direction(Direction.UPRIGHT))
+        self.assertNotEqual(mpawn.acc.x, 0)
+        self.assertNotEqual(mpawn.acc.y, 0)
+    
+    def test_update_speed(self):
+        mpawn = Fox(NoneGame, Direction.NULL)
+
+        time_delta = randrange(1, 121)
+        mpawn._update_acc(Direction(Direction.UPRIGHT))
+        mpawn._update_speed(time_delta)
+        self.assertTrue(mpawn.speed.x > 0)
+        self.assertTrue(mpawn.speed.y > 0)
+
+        mpawn._update_acc(Direction(Direction.NULL))
+        mpawn._update_speed(0)
+        self.assertEqual(mpawn.speed.x, 0)
+        self.assertEqual(mpawn.speed.y, 0)
+    
+    def test_update_pos(self):
         pass
 
 

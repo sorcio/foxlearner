@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-i
+# -*- coding:utf-8 -*-
 from __future__ import division
 
 from math import hypot
@@ -14,9 +14,8 @@ class GameObject(object):
     # an object on the board is identified by these constants:
     radius = None
     color = None
-    # .. and position
 
-    def __init__(self, parent, pos):
+    def __init__(self, parent, pos=(0, 0)):
         """
         Arguments:
          parent is the Game class which contains the GameObject;
@@ -46,55 +45,29 @@ class MovingPawn(GameObject):
     """
     A moving GameObject.
     """
-    move = None # algorithm used to move the Pawn.
 
-    def __init__(self, controller, *args):
+    # algorithm used to move the pawn
+    controller = None
+
+    def __init__(self, *args):
         super(MovingPawn, self).__init__(*args)
 
-        self.controller = controller
         self.acc = Vector(0, 0)
         self.speed = Vector(0, 0)
 
-"""
-    def _update_acc(self, d):
-        "
-        Update acceleration.
-        "
-        if d == 0:  # stop
-            if self.speed > 0:   # moving forward
-                return -self.brake
-            if self.speed < 0:   # moving backward
-                return self.brake
-            else:                # already stopped
-                return 0
-        else:       # move
-            if d * speed >= 0:   # in the same direction
-                return d * acc
-            if d * speed < 0:    # in the opposite direction
-                return d * self.brake
+    def _update_acc(self, dir):
+        """
+        Update acceleration according to the Direction dir.
+        """
+        pass
 
+    def _update_speed(self, time_delta):
+        """
+        Update speed according to time t.
+        """
+        speedup = self.speed + self.acc * time_delta
 
-    def drive(self, direction):
-        "
-        Move to the position given by direction.
-        "
-
-        hor  = self._update_acc(direction.hor)
-        vert = self._update_acc(direction.vert)
-        if hor != 0 and vert != 0:
-            self.acc = Vector(hor, vert) * (
-                       max(self.baccel, self.brake) / hypot(hor, vert))
-        else:
-            self.acc = Vector(0, 0)
-
-    def tick(self, time):
-        "
-        Update speed and pos according to time.
-        "
-        # update speed
-        speedup = self.speed + self.acc * time
-
-        if speedup:
+        if speedup != 0:
             if abs(speedup) < self.bspeed:
                 speed_norm = 1
             else:
@@ -105,29 +78,31 @@ class MovingPawn(GameObject):
             else:
                 self.speed.x = 0
 
-            if sp_y * self.speed.y > 0:
+            if speedup.y * self.speed.y > 0:
                 self.speed.y = speedup.y * speed_norm
             else:
                 self.speed.y = 0
 
         else:
-            self.speed.x = 0
-            self.speed.y = 0
+            self.speed = Vector(0, 0)
 
-        # update pos, checking for arena limits.
-        offset = self.pos + self.speed * time
+    def _update_pos(self, time_delta):
+        """
+        Update position keeping the same speed and acceleration.
+        """
+        newpos = self.pos + self.speed * time_delta
 
-        if 0 < offset.x < self.parent.size[0] + radius:
-            self.speed.x = offset.x
+        if 0 < newpos.x < self.parent.size[0] - self.radius:
+            self.speed.x = newpos.x
         else:
             self.speed.x = 0
 
-        if 0 < offset.y < self.parent.size[1] + radius:
-            self.speed.y = offset.y
+        if 0 < newpos.y < self.parent.size[1] - self.radius:
+            self.speed.y = newpos.y
         else:
             self.speed.y = 0
-"""
-    def update(self, time_delta, dir):
+
+    def drive(self, dir, time_delta):
         """
         This is the only public function in this class.
         Updates position, speed, acceleration according to time and direction.
@@ -137,8 +112,11 @@ class MovingPawn(GameObject):
          self._udpdate_pos  => update position
                                NOTE: this function may change pawn's speed
         """
-        # do all your job
-        pass
+        # update game physic
+        self._update_acc(dir)
+        self._update_speed(time_delta)
+        self._update_pos(time_delta)
+        # return dir
 
 
 class Fox(MovingPawn):
@@ -177,20 +155,26 @@ class Game(object):
     A basic, abstract game interface.
     """
 
-    def __init__(self, size, harectrl, foxcrtl, foxnum=1):
+    def __init__(self, size, hcfact, fcfact, foxnum=1):
         """
         Set up the basics of GameLogic.
         """
         self.size = Vector(*size)
 
-        # XXX
-        self.foxes = tuple(Fox(self.size) for x in xrange(foxnum))
-        self.hare = Hare(self.size)
+        # create pawns
+        self.foxes = tuple(Fox(self) for x in xrange(foxnum))
+        self.hare = Hare(hcfact.new_controller(), self)
 
-        # Place the first carrot
+        # setting up controllers
+        for fox in self.foxes:
+            fcfact.new_controller(fox)
+        hcfact.new_controller(self.hare)
+
+        # place objects
         self.place_carrot()
+        self._randomlocate(10)
 
-        # total time spent playing
+        # starting up time elapsed
         self.time_elapsed = 0
 
     def _randompoint(self):
@@ -227,12 +211,29 @@ class Game(object):
     @property
     def objects(self):
         """
-        Return all the objects present on the board.
+        Return all the GameObjects present on the board.
         """
-        return self.foxes + [self.hare, self.carrot]
+        return self.pawns + [self.carrot]
+
+    @property
+    def pawns(self):
+        """
+        Return all the MovingPawns prensent on the board.
+        """
+        return self.foxes + [self.hare]
 
     def place_carrot(self):
         """
         Place a carrot the arena in a random point.
         """
         self.carrot = Carrot(self, self._randompoint())
+
+    def tick(time):
+        """
+        """
+        self.time_elapsed += time
+
+        for p, move in ((p, p.controller.update(time)) for p in self.pawns):
+            p.drive(time, move)
+
+        # return True if collision?

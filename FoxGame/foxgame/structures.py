@@ -96,19 +96,20 @@ class Direction(object):
       0 -> void
     """
 
-    UP        = ( 1,  0)
-    DOWN      = (-1,  0)
-    RIGHT     = ( 0,  1)
-    LEFT      = ( 0, -1)
+    UP        = ( 0,  1)
+    DOWN      = ( 0, -1)
+    RIGHT     = ( 1,  0)
+    LEFT      = (-1,  0)
     UPRIGHT   = ( 1,  1)
-    UPLEFT    = ( 1, -1)
-    DOWNRIGHT = (-1,  1)
+    UPLEFT    = (-1,  1)
+    DOWNRIGHT = ( 1, -1)
     DOWNLEFT  = (-1, -1)
     NULL      = ( 0,  0)
 
-    def __init__(self, (h, v)):
-        self.hor = h
-        self.vert = v
+    def __init__(self, (x, y)):
+        #XXX: change in x, y?
+        self.hor = x
+        self.vert = y
 
     def __repr__(self):
         return '<Direction object ({0}, {1})>'.format(self.hor, self.vert)
@@ -162,3 +163,18 @@ class Direction(object):
         """
         yield self.hor
         yield self.vert
+
+    @classmethod
+    def fromVector(cls, vec):
+        """
+        Convert a Vector into a Direction object.
+        """
+        def sign(x):
+            if x > 0:
+                return +1
+            if x < 0:
+                return -1
+            else:
+                return 0
+        return Direction(sign(x) for x in vec)
+

@@ -71,7 +71,7 @@ class Hare(foxgame.BasicHare):
     def draw(self):
         return Game._draw_circle(self.parent.arena, self)
 
-class Game(foxgame.BasicGame):
+class GUI:
     """
     A foxgame.Game class which provides a GUI using pygame.
     """
