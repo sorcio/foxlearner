@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-i
 from __future__ import division
 
 from math import hypot
@@ -44,20 +44,22 @@ class GameObject(object):
 
 class MovingPawn(GameObject):
     """
-    A moving Circle.
+    A moving GameObject.
     """
     move = None # algorithm used to move the Pawn.
 
-    def __init__(self, *args):
+    def __init__(self, controller, *args):
         super(MovingPawn, self).__init__(*args)
 
+        self.controller = controller
         self.acc = Vector(0, 0)
         self.speed = Vector(0, 0)
 
+"""
     def _update_acc(self, d):
-        """
+        "
         Update acceleration.
-        """
+        "
         if d == 0:  # stop
             if self.speed > 0:   # moving forward
                 return -self.brake
@@ -73,9 +75,9 @@ class MovingPawn(GameObject):
 
 
     def drive(self, direction):
-        """
+        "
         Move to the position given by direction.
-        """
+        "
 
         hor  = self._update_acc(direction.hor)
         vert = self._update_acc(direction.vert)
@@ -86,9 +88,9 @@ class MovingPawn(GameObject):
             self.acc = Vector(0, 0)
 
     def tick(self, time):
-        """
+        "
         Update speed and pos according to time.
-        """
+        "
         # update speed
         speedup = self.speed + self.acc * time
 
@@ -124,6 +126,19 @@ class MovingPawn(GameObject):
             self.speed.y = offset.y
         else:
             self.speed.y = 0
+"""
+    def update(self, time_delta, dir):
+        """
+        This is the only public function in this class.
+        Updates position, speed, acceleration according to time and direction.
+        For each one of these points call the correspective private method:
+         self._update_acc   => update acceleration
+         self._update_speed => update speed
+         self._udpdate_pos  => update position
+                               NOTE: this function may change pawn's speed
+        """
+        # do all your job
+        pass
 
 
 class Fox(MovingPawn):
