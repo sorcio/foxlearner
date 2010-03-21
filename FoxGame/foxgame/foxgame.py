@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 
-import states
 from math import hypot
 from collections import namedtuple
 from random import randrange
-from foxgame.structures import Vector, Direction
+from structures import Vector, Direction
+
 
 class GameObject(object):
     """
@@ -16,17 +16,29 @@ class GameObject(object):
     color = None
     # .. and position
 
-    def __init__(self, parent, pos=(0, 0)):
-        # parent is the Game class which contains the Cicle
+    def __init__(self, parent, pos):
+        """
+        Arguments:
+         parent is the Game class which contains the GameObject;
+         pos    is the Vectior class which identifies the GameObject's position
+        """
         self.parent = parent
-        self.pos = pos
+        self.pos = Vector(*pos)
+
+    def __eq__(self, other):
+        """
+        Return True if other and self are *the same pawn*,
+        False otherwise.
+        """
+        return other is self
 
     def distance(self, other):
         """
         Return the discance between two circles.
         """
-        dist = hypot(self.pos[0]+other.pos[0], self.pos[1]+other.pos[1]) - (
-                     (self.radius + other.radius))
+        fx, fy = self.pos
+        sx, sy = other.pos
+        dist = hypot(fx-sx, fy-sy) - (self.radius+other.radius)
         return dist if dist > 0 else 0
 
 
@@ -37,17 +49,10 @@ class MovingPawn(GameObject):
     move = None # algorithm used to move the Pawn.
 
     def __init__(self, *args):
-        super(GameObject, self).__init__(*args)
+        super(MovingPawn, self).__init__(*args)
 
         self.acc = Vector(0, 0)
         self.speed = Vector(0, 0)
-
-    def __eq__(self, other):
-        """
-        Return True if other and self are *the same pawn*,
-        False otherwise.
-        """
-        return other is self
 
     def _update_acc(self, d):
         """
@@ -62,12 +67,12 @@ class MovingPawn(GameObject):
                 return 0
         else:       # move
             if d * speed >= 0:   # in the same direction
-                return dir * acc
+                return d * acc
             if d * speed < 0:    # in the opposite direction
-                return dir * self.brake
+                return d * self.brake
 
 
-    def _drive(self, direction):
+    def drive(self, direction):
         """
         Move to the position given by direction.
         """
@@ -76,7 +81,7 @@ class MovingPawn(GameObject):
         vert = self._update_acc(direction.vert)
         if hor != 0 and vert != 0:
             self.acc = Vector(hor, vert) * (
-                        max(self.baccel, self.brake) / hypot(hor, vert))
+                       max(self.baccel, self.brake) / hypot(hor, vert))
         else:
             self.acc = Vector(0, 0)
 
@@ -121,48 +126,63 @@ class MovingPawn(GameObject):
             self.speed.y = 0
 
 
-class BasicFox(MovingPawn):
+class Fox(MovingPawn):
     """
     A fox.
     """
     bspeed = 250.0
     baccel = 300.0
     brake = 75.0
+    radius = 18
+    color = 'RED'
 
 
-class BasicHare(MovingPawn):
+class Hare(MovingPawn):
     """
     A hare.
     """
     bspeed = 200.0
     baccel = 560.0
     brake = 240.0
+    radius = 15
+    color = 'GREY'
     # carrots eaten
     carrots = 0
 
-class BasicCarrot(MovingPawn):
+class Carrot(GameObject):
     """
     A carrot.
     """
-    pass
+    radius = 10
+    color = "ORANGE"
 
-class BasicGame(object):
+
+class Game(object):
     """
     A basic, abstract game interface.
     """
+
+    def __init__(self, size, harectrl, foxcrtl, foxnum=1):
+        """
+        Set up the basics of GameLogic.
+        """
+        self.size = Vector(*size)
+
+        # XXX
+        self.foxes = tuple(Fox(self.size) for x in xrange(foxnum))
+        self.hare = Hare(self.size)
+
+        # Place the first carrot
+        self.place_carrot()
+
+        # total time spent playing
+        self.time_elapsed = 0
 
     def _randompoint(self):
         """
         Return a random point.
         """
         return tuple(randrange(x) for x in self.size)
-
-    @property
-    def objects(self):
-        """
-        Return all the objects present on the board.
-        """
-        return self.foxes + [self.hare, self.carrot]
 
     def _collision(self, pawn1, pawn2):
         """
@@ -188,3 +208,16 @@ class BasicGame(object):
                   if x != y):
             for f in self.foxes:
                 f.pos = self._randompoint()
+
+    @property
+    def objects(self):
+        """
+        Return all the objects present on the board.
+        """
+        return self.foxes + [self.hare, self.carrot]
+
+    def place_carrot(self):
+        """
+        Place a carrot the arena in a random point.
+        """
+        self.carrot = Carrot(self, self._randompoint())

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import division
 from math import hypot
+
 
 class Vector(object):
     """
@@ -93,6 +95,7 @@ class Direction(object):
      -1 -> negative shift
       0 -> void
     """
+
     UP        = ( 1,  0)
     DOWN      = (-1,  0)
     RIGHT     = ( 0,  1)
@@ -123,7 +126,7 @@ class Direction(object):
                 self.UPLEFT   : '↖',
                 self.DOWNRIGHT: '↘',
                 self.DOWNLEFT : '↙',
-                self.NULL     : ' '  
+                self.NULL     : ' '
         }
         return dirs[self.hor, self.vert]
 
@@ -132,7 +135,7 @@ class Direction(object):
 	Return the opposite position of self.
 	"""
 	return Direction((-self.hor, -self.vert))
-	
+
     def __setattr__(self, name, value):
         """
         Check if value is in range [-1, +1], then assign it to name.

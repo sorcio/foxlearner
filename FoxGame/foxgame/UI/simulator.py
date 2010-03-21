@@ -1,4 +1,7 @@
-import foxgame
+# -*- coding: utf-8 -*-
+
+from foxgame import foxgame
+
 
 def rawmove(cls, keypress):
     """
@@ -7,22 +10,22 @@ def rawmove(cls, keypress):
     pass
 
 
-class Fox(foxgame.BasicFox):
+class Fox(foxgame.Fox):
     radius = 20
     color = None
 
 
-class Hare(foxgame.BasicHare):
+class Hare(foxgame.Hare):
     radius = 15
     color = None
 
 
-class Carrot(foxgame.BasicCarrot):
+class Carrot(foxgame.Carrot):
     radius = 10
     color = None
 
 
-class Game(foxgame.BasicGame):
+class GUI():
     """
     A simple interface which doesn't show any output on the screen.
     """
@@ -44,3 +47,5 @@ class Game(foxgame.BasicGame):
 
         self.carrot = Carrot(self, self._randompoint())
 
+def main(gamefact, foxctrl, harectrl):
+    pass

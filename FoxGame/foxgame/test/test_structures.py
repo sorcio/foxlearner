@@ -79,7 +79,7 @@ class TestDirection(TestCase):
         self.assertNotEqual(-dir, dir)
         self.assertNotEqual(-dir, Direction.NULL)
         self.assertEqual(-Direction(Direction.NULL), Direction.NULL)
- 
+
     def test_eq(self):
         dir = Direction(Direction.UP)
         self.assertEqual(dir, Direction.UP)

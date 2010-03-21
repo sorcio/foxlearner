@@ -4,66 +4,96 @@ from unittest import TestCase
 from random import randrange
 
 
+from foxgame.foxgame import *
+from foxgame.structures import Vector
 
-from foxgame.UI.simulator import Game as NullGame
-from foxgame.foxgame import Fox, Hare
-
-
-# TODO:this class shuold be _almost_ rewritten
-class TestBaseGame(): # TestCase 
+class FakeGame(object):
     """
-    Test the Basic Game Interface:
-      locating, collisions, ...;
-      speed, accelerations, position, ....
+    A simple class used to test GameObject and MovingPawn
+    providing all necessary attributes, so without using
+    the __real__ game class.
     """
+    def __init__(self, size):
+        """
+        Set up fake attributes.
+        """
+        self.size = size
 
-    def setUp(self):
-        """
-        Set up a basic Game instance
-        """
-        self.foxnum = randrange(1, 15)
-        self.mindist = 10
-        self.game = NullGame(BasicFox, BasicHare,
-                             self.foxnum, size=(300, 300))
-        self.game._randomlocate(self.mindist)
+NoneGame = FakeGame(None)
 
-    def test_foxes(self):
-        """
-        Ensure that foxes on the game are *different* foxes.
-        """
-        self.assertEqual(len([x for x in self.game.foxes
-                               for y in self.game.foxes if x == y]),
-                         self.foxnum)
+class TestGameObject(TestCase):
 
-    def test_randlocate(self):
-        """
-        Test random locating.
-        """
-        for x in self.game.objects:
-            self.assertTrue(x.pos < self.game.size)
-            for y in self.game.objects:
-                if x == y:
-                    continue
-                self.assertTrue(x.distance(y) >= self.mindist)
+    def test_init(self):
+        gobj = GameObject(NoneGame, (0, 0))
+        self.assertTrue(isinstance(gobj.pos, Vector))
 
-    def test_collision(self):
-        """
-        Test collisions between some objects.
-        """
-        ffox = self.game.foxes[0]
-        step = (self.game.hare.radius + ffox.radius) // 2
-        for i, fox in enumerate(self.game.foxes):
-            fox.pos = (self.game.hare.pos[0] + step*i,
-                       self.game.hare.pos[1] + step*i)
+    def test_distance(self):
+        pos1 = Vector(10, 20)
+        pos2 = pos1 * randrange(Carrot.radius+1, 100)
+        gcarrot1 = Carrot(NoneGame, pos1)
+        gcarrot2 = Carrot(NoneGame, pos2)
 
-        self.assertEqual(ffox.pos, self.game.hare.pos)
-        self.assertTrue(self.game._collision(self.game.hare, ffox))
-        self.assertTrue(self.game.collision)
+        self.assertEqual(gcarrot1.distance(gcarrot2),
+                         gcarrot2.distance(gcarrot1))
+        self.assertTrue(gcarrot1.distance(gcarrot2) > 0)
+
+        gcarrot2 = Carrot(NoneGame, [x+Carrot.radius-1 for x in pos1])
+
+        self.assertEqual(gcarrot1.distance(gcarrot2),
+                         0)
+
+
+class TestMovingPawn(TestCase):
+
+    def test_init(self):
+        mpawn = MovingPawn(NoneGame, Direction.NULL)
+
+        self.assertTrue(isinstance(mpawn.acc, Vector))
+        self.assertEqual(mpawn.acc, (0, 0))
+
+        self.assertTrue(isinstance(mpawn.speed, Vector))
+        self.assertEqual(mpawn.speed, (0, 0))
+
+    def test_update_speed(self):
+        """
+        FAIL
+        """
+        mpawn = Fox(NoneGame, Direction.NULL)
+        updir= lambda dir: [mpawn._update_acc(x) for x in dir]
+
+        hor, vert = updir(Direction.NULL)
+        self.assertEqual(hor, 0)
+        self.assertEqual(vert, 0)
+
+        hor, vert = updir(Direction.UP)
+        self.assertEqual(hor, 0)
+        self.assertNotEqual(vert, 0)
+
+        hor, vert = updir(Direction.UPRIGHT)
+        self.assertNotEqual(hor, 0)
+        self.assertNotEqual(vert, 0)
 
     def test_drive(self):
         """
-        Test pawns' updating speed module.
+        FAIL
         """
+        mpawn = Fox(NoneGame, (0, 0))
+
+        mpawn.drive(Direction(Direction.NULL))
+        self.assertEqual(mpawn.acc, (0, 0))
+
+        mpawn.drive(Direction(Direction.UP))
+        self.assertNotEqual(mpawn.acc, (0, 0))
+
+    def test_tick(self):
+        """
+        FAIL
+        """
+        mpawn = Fox(FakeGame(100,100), Direction.NULL)
         pass
 
+
+class TestGame(TestCase):
+
+    pass
 

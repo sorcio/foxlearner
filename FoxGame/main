@@ -31,6 +31,8 @@ __license__ = 'GPLv2'
 from optparse import OptionParser
 from sys import exit
 
+
+# parsing arguments from stdin
 parser = OptionParser(usage='%prog [interface] [algorthm] [options]',
                       version='%prog {0}'.format(__version__))
 
@@ -54,37 +56,40 @@ parser.add_option('-r', '--record', dest='record',
 
 (options, args) = parser.parse_args()
 
-# make FOX class
-if options.fox == 'none':
-    FoxMotor = None
-#if options.fox == 'traditional':
-#    from foxgame.tradlib import FoxMotor
-#elif options.fox == 'ann':
-#   provide a neuralnetwork algorithm for the fox (Otacon22?)
-#elif options.fox == 'q-learn':
-#    provide a q-learn algorithm for the fox      (il_sorcio?)
-#elif options.fox == 'fuzzy':
-#    provide a fuzzylogic algorithm for the fox   (maker?)
+
+# ---- 1. creating game and controllers using factories
+from foxgame.factories import Gamefactory, ControllerFactory
+
+gfactory = Gamefactory()          # game factory
+cffactory = ControllerFactory()   # fox controller factory
+chfactory = ControllerFactory()   # hare controller factory
+
+
+# ---- 2. setting controllers
+from foxgame import controllers
+
+# setting controller for the fox
+if options.fox == 'traditional':
+    cffactory.add_control(controllers.tradlib.FoxController)
 else:
     print 'error: unknown algorithm for the fox.'
     exit(1)
 
-# make HARE class
-#elif options.hare == 'traditional':
-#   from tradlib import HareMotor
-#else:
-HareMotor = None
+# setting controller for the hare
+if options.hare  == 'traditional':
+    chfactory.add_control(controllers.tradlib.HareController)
+else:
+    print 'error: unknown algorithm for the hare'
+    exit(1)
 
+
+# ---- 3. creating game interface
 if options.interface == 'pygame':
-     import foxgame.pygamei as game
-#elif options.interface == 'ncurses':
-#    import foxgame.ncgamei as game
-#elif options.interface == 'none':
-#    import foxgame.nogamei as game
+     from foxgame.UI.bubbles import main
 else:
     print 'error: unknown game interface.'
     exit(1)
 
 
-
-game.main(options.foxes_num, FoxMotor, HareMotor)
+# ---- 4. launching main
+main(gfactory, cffactory, chfactory)

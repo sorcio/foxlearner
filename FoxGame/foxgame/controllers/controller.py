@@ -8,18 +8,19 @@ class Controller(object):
     A basic controller which provides some properties useful
     for specific controllers.
     """
-    
+
     def __init__(self, game, pawn):
     	"""
     	Set up basic values.
     	"""
         self.game = game
         self.pawn = pawn
+        # TODO
         # self.tracks keep a history of previous positions
-        
+
     def __repr__(self):
         return '<Controller object at {0}>'.format(self.__class__.__module__)
-        
+
     def update(self, time):
         """
         Decision method.
@@ -27,15 +28,15 @@ class Controller(object):
         which updates using his own algorithms.
         """
         pass
-        
-    def towards(self, other):
+
+    def towards(self, othpawn):
         """
         Return the Direction of other respectively to self.
         """
-        return Direction(other.pos - self.pawn.pos)
-        
+        return Direction(othpawn.pos - self.pawn.pos)
+
     @property
-    def nearest_fox(self): 
+    def nearest_fox(self):
         """
         Return the nearest fox respectively to the hare.
         """

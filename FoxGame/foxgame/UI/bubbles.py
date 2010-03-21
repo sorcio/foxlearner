@@ -5,7 +5,6 @@
 #from __future__ import division
 import foxgame
 import pygame
-import states
 from math import sin, cos, radians, hypot
 from sys import exit
 from pygame.gfxdraw import aacircle, filled_circle
@@ -77,8 +76,7 @@ class Game(foxgame.BasicGame):
     A foxgame.Game class which provides a GUI using pygame.
     """
 
-    def __init__(self, fox_algorithm, hare_algorithm, foxnum,
-                 size, state=states.READY):
+    def __init__(self, fox_algorithm, hare_algorithm, foxnum, size):
         """
         Set up the game window.
         """
@@ -209,12 +207,6 @@ class Game(foxgame.BasicGame):
     def quit(self):
         exit()
 
-    def place_carrot(self):
-        """
-        Place a carrot to the arena in a random point.
-        """
-        self.carrot = Carrot(self, self._randompoint())
-
     def update_config(self):
         pass
 
@@ -290,3 +282,6 @@ def main(foxnum, fox_algorithm, hare_algorithm):
         game.wait()
         game.run()
 
+
+def main(gamefact, foxctrl, harectrl):
+    pass
