@@ -61,6 +61,18 @@ class Vector(object):
         sx, sy = other
         return fx == sx and fy == sy
 
+    def __lt__(self, other):
+        return all(x < y for x, y in zip(self, other))
+
+    def __le__(self, other):
+        return all(x <= y for x, y in zip(self, other))
+
+    def __gt__(self, other):
+        return all(x > y for x, y in zip(self, other))
+
+    def __ge__(self, other):
+        return all(x >= y for x, y in zip(self, other))
+
     def __abs__(self):
         """
         Return the euclidean distance.

@@ -50,3 +50,8 @@ class Brain(object):
         """
         return min(self.game.foxes,
                    key=lambda x: x.pos.distance(self.game.hare.pos))
+
+
+def PostFilter(object):
+
+    pass

@@ -45,10 +45,10 @@ class MovingPawn(GameObject):
     """
     A moving GameObject.
     """
-    
+
     # algorithm used to move the pawn
     controller = None
-    
+
     def __init__(self, *args):
         super(MovingPawn, self).__init__(*args)
 
@@ -59,9 +59,10 @@ class MovingPawn(GameObject):
         """
         Compute the acceleration on a single component accordingly
         to move intention.
-        
-        Called by _update_acc before computing acceleration update,
-        because we want different dynamics on acceleration or brake.
+
+        Note: this function is called by _update_acc before computing
+              acceleration update, because we want different dynamics
+              on acceleration or brake.
         """
         if d == 0:  # Want to stop...
             if speed > 0:             # ...while moving forwards
@@ -83,7 +84,7 @@ class MovingPawn(GameObject):
         """
         push = Vector(self._compute_acc(dir.hor, self.speed.x),
                       self._compute_acc(dir.vert, self.speed.y))
-        
+
         if push:
             norm_factor = max(self.baccel, self.brake) / abs(push)
             self.acc = push * norm_factor
@@ -112,7 +113,7 @@ class MovingPawn(GameObject):
                 sp_y = speedup.y * speed_norm
             else:
                 sp_y = 0
-             
+
             self.speed = Vector(sp_x, sp_y)
 
         else:
@@ -195,7 +196,7 @@ class Game(object):
 
         # create pawns
         self.foxes = tuple(Fox(self) for x in xrange(foxnum))
-        self.hare = Hare(hcfact.new_controller(), self)
+        self.hare = Hare(self)
 
         # setting up controllers
         for fox in self.foxes:
@@ -213,14 +214,14 @@ class Game(object):
         """
         Return a random point.
         """
-        return tuple(randrange(x) for x in self.size)
+        return Vector(randrange(self.size.x), randrange(self.size.y))
 
     def _collision(self, pawn1, pawn2):
         """
         Find if there's a collision between obj1 and obj2:
          so just checks if their distance < sum of radius.
         """
-        return pawn1.distance(pawn2) > 0
+        return pawn1.distance(pawn2) == 0
 
     @property
     def collision(self):
@@ -252,7 +253,7 @@ class Game(object):
         """
         Return all the MovingPawns prensent on the board.
         """
-        return self.foxes + [self.hare]
+        return list(self.foxes) + [self.hare]
 
     def place_carrot(self):
         """

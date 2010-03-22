@@ -4,13 +4,14 @@ from unittest import TestCase
 
 
 from foxgame.foxgame import *
+from foxgame.factories import ControllerFactory
 from foxgame.structures import Vector
 
 class FakeGame(object):
     """
-    A simple class used to test GameObject and MovingPawn
-    providing all necessary attributes, so without using
-    the __real__ game class.
+    A simple class used to test GameObject and MovingPawn class
+    providing all necessary attributes, so without using the __real__
+    game class.
     """
     def __init__(self, size):
         """
@@ -19,6 +20,21 @@ class FakeGame(object):
         self.size = size
 
 NoneGame = FakeGame(None)
+
+
+class FakeController(object):
+    """
+    A simple class used to test Game class providinf all necessary attributes,
+    so without the __real__ game class.
+    """
+    def __init__(self, parent_pawn, brain, postfilters):
+        """
+        Set up fake attributes.
+        """
+        self.brain = brain
+        self.postfitlers = postfilters
+        self.pawn = parent_pawn
+
 
 class TestGameObject(TestCase):
 
@@ -52,7 +68,7 @@ class TestMovingPawn(TestCase):
 
         self.assertTrue(isinstance(mpawn.speed, Vector))
         self.assertEqual(mpawn.speed, (0, 0))
-        
+
     def test_update_acc(self):
         mpawn = Fox(NoneGame, Direction.NULL)
 
@@ -66,8 +82,12 @@ class TestMovingPawn(TestCase):
         mpawn._update_acc(Direction(Direction.UPRIGHT))
         self.assertNotEqual(mpawn.acc.x, 0)
         self.assertNotEqual(mpawn.acc.y, 0)
-    
+
     def test_update_speed(self):
+        """
+        Test MovingPawn._update_speed module.
+        Note: Testing this function implies a call to _update_acc.
+        """
         mpawn = Fox(NoneGame, Direction.NULL)
 
         time_delta = 60
@@ -76,12 +96,68 @@ class TestMovingPawn(TestCase):
         self.assertNotEqual(mpawn.speed.x, 0)
         self.assertNotEqual(mpawn.speed.y, 0)
 
-    
+
     def test_update_pos(self):
-        pass
+        """
+        Test MovingPawn._update_pos module.
+        Note: Testing update_pos implies a call to _udate_speed and _update_acc
+              so testing this function is equal to testing the MovingPawn.drive
+              function.
+        """
+        mpawn = Fox(FakeGame((100, 100)), Direction.NULL)
+
+        mpawn.drive(Direction(Direction.NULL), 60)
+        self.assertEqual(mpawn.pos, (0, 0))
 
 
 class TestGame(TestCase):
+    """
+    Test the Basic Game Interface:
+      locating, collisions, ...;
+      speed, accelerations, position, ....
+    """
 
-    pass
+    def setUp(self):
+        """
+        Set up a basic Game instance
+        """
+        self.foxnum = 3
+        self.mindist = 10
+        self.game = Game((300, 300),
+                         ControllerFactory(FakeController, None, None),
+                         ControllerFactory(FakeController, None, None),
+                         self.foxnum)
+        self.game._randomlocate(self.mindist)
 
+    def test_foxes(self):
+        """
+        Ensure that foxes on the game are *different* foxes.
+        """
+        self.assertEqual(len([x for x in self.game.foxes
+                              for y in self.game.foxes if x == y]),
+                         self.foxnum)
+
+    def test_randlocate(self):
+        """
+        Test random locating.
+        """
+        for x in self.game.objects:
+            self.assertTrue(x.pos, self.game.size)
+            for y in self.game.objects:
+                if x == y:
+                    continue
+                self.assertTrue(x.distance(y) >= self.mindist)
+
+    def test_collision(self):
+        """
+        Test collisions between some objects.
+        """
+        ffox = self.game.foxes[0]
+        step = (self.game.hare.radius + ffox.radius) // 2
+        for i, fox in enumerate(self.game.foxes):
+            fox.pos = Vector(self.game.hare.pos.x + step*i,
+                             self.game.hare.pos.y + step*i)
+
+        self.assertEqual(ffox.pos, self.game.hare.pos)
+        self.assertTrue(self.game._collision(self.game.hare, ffox))
+        self.assertTrue(self.game.collision)

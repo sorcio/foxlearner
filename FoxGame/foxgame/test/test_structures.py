@@ -24,10 +24,16 @@ class TestVector(TestCase):
         self.assertTrue(Vector(1, 0))
         self.assertTrue(Vector(0, -1))
         self.assertFalse(Vector(0, 0))
-        
+
     def test_equal(self):
         self.assertNotEqual(self.p1, self.p2)
         self.assertEqual(Vector(*self.fcoords), self.p1)
+
+    def test_cmp(self):
+        self.assertTrue(Vector(1, 1) > Vector(0, 0))
+        self.assertFalse(Vector(0, 0) < Vector(-1, -1))
+        self.assertTrue(Vector(10, 1) <= Vector (10, 2))
+        self.assertFalse(Vector(10, 1) >= Vector(11, 1))
 
     def test_operators(self):
         """

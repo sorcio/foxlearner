@@ -1,5 +1,4 @@
-from collctions import defaultdict
-from foxgame.foxgame import Game, Fox, Hare
+from foxgame import Game, Fox, Hare
 
 
 class GameFactory(object):
@@ -30,7 +29,7 @@ class ControllerFactory(object):
     def __init__(self, ctrltype, brain = None, *postfilters):
         self.ctrltype = ctrltype
         self.brain = brain
-        self.postfiltters = postfilters
+        self.postfilters = postfilters
 
-    def new_controller(self):
-        return ctrltype(brain, postfilters)
+    def new_controller(self, parent_pawn):
+        return self.ctrltype(parent_pawn, self.brain, self.postfilters)
