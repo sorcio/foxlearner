@@ -29,48 +29,6 @@ def usermove(cls, keypress):
 
     cls._drive(d)
 
-class Carrot(foxgame.BasicCarrot):
-
-    color = 220, 140, 0
-    radius = 10
-
-    def draw(self):
-        return Game._draw_circle(self.parent.arena, self)
-
-
-class Fox(foxgame.BasicFox):
-
-    color = 250, 50, 0
-    radius = 18
-
-    def __init__(self, *args):
-        super(Fox, self).__init__(*args)
-        self._tracks = [self.pos] * 100
-
-    def update_track(self):
-        del self._tracks[0]
-        self._tracks.append(self.pos)
-
-    def draw(self):
-        return Game._draw_circle(self)
-
-
-class Hare(foxgame.BasicHare):
-
-    color = 220, 190, 40
-    radius = 15
-
-    def __init__(self, *args):
-    	super(Hare, self).__init__(*args)
-        self._tracks = [self.pos] * 100
-
-    def update_track(self):
-        del self._tracks[0]
-        self._tracks.append(self.pos)
-
-    def draw(self):
-        return Game._draw_circle(self.parent.arena, self)
-
 class GUI:
     """
     A foxgame.Game class which provides a GUI using pygame.
@@ -108,11 +66,6 @@ class GUI:
 
         foxgame.state = state
 
-
-
-    def _draw(self, item):
-        pass
-
     @staticmethod
     def _draw_circle(arena, pawn):
         """
@@ -122,13 +75,14 @@ class GUI:
         filled_circle(*args)
         aacircle(*args)
 
-    def _draw_tracks(self):
-        for pawn in self.foxes + (self.hare,):
-            pawn.update_track()
-            trackslen = len(pawn._tracks)
-            for i, track in enumerate(pawn._tracks):
-                self._draw(foxgame.GameObject(track, pawn.radius - 1,
-                                      pawn.color +(100 * i / trackslen)))
+    # TODO: add controller.tracks.
+    #def _draw_tracks(self):
+    #    for pawn in self.foxes + (self.hare,):
+    #        pawn.update_track()
+    #        trackslen = len(pawn._tracks)
+    #        for i, track in enumerate(pawn._tracks):
+    #            self._draw(foxgame.GameObject(track, pawn.radius - 1,
+    #                                  pawn.color +(100 * i / trackslen)))
 
     def _paint_gamefield(self):
         """
@@ -178,21 +132,16 @@ class GUI:
         subtitle.top = title.bottom
         self._screen.flip()
 
-        # changing gamestate
-        foxgame.state = states.WAITING
-
-
     def wait(self):
         """
         Game paused: wait for space to continue the game.
+        XXX
         """
         event = None
         while pygame.K_SPACE not in (event.type
                                      for event in pygame.event.get()):
             # XXX
             pass
-        else:
-            foxgame.state = states.RUNNING
 
     def ask_newplay(self):
         """
@@ -272,16 +221,11 @@ def main(foxnum, fox_algorithm, hare_algorithm):
     pygame.init()
 
     # setting constants
-    size = 800, 600
 
-    # starting game.
-    game = Game(fox_algorithm, hare_algorithm, foxnum, size)
+    # starting
+
     # starting app's mainloop
     while True:
         game.welcome()
         game.wait()
         game.run()
-
-
-def main(gamefact, foxctrl, harectrl):
-    pass
