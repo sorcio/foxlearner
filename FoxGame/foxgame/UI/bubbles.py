@@ -34,15 +34,15 @@ class GUI:
     A foxgame.Game class which provides a GUI using pygame.
     """
 
-    def __init__(self, fox_algorithm, hare_algorithm, foxnum, size):
+    def __init__(self, fox_factory, hare_factory, foxnum, size):
         """
         Set up the game window.
         """
 
         self.size = foxgame.Vector(*size)
 
-        Fox.move = fox_algorithm or usermove
-        Hare.move = hare_algorithm or usermove
+        Fox.move = fox_algorithm
+        Hare.move = hare_algorithm
 
         self.foxes = tuple(Fox(self.size) fox x in xrange(foxnum))
         self.hare = Hare(self.size)
@@ -220,7 +220,8 @@ def main(foxnum, fox_algorithm, hare_algorithm):
     """
     pygame.init()
 
-    # setting constants
+    # setting up clock
+    clock = pygame.time.Clock()
 
     # starting
 

@@ -246,14 +246,18 @@ class Game(object):
         """
         Return all the GameObjects present on the board.
         """
-        return self.pawns + [self.carrot]
+        for pawn in self.pawns:
+            yield pawn
+        yield self.carrot
 
     @property
     def pawns(self):
         """
         Return all the MovingPawns prensent on the board.
         """
-        return list(self.foxes) + [self.hare]
+        for fox in self.foxes:
+            yield fox
+        yield self.hare
 
     def place_carrot(self):
         """

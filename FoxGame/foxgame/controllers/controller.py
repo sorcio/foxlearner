@@ -53,5 +53,4 @@ class Brain(object):
 
 
 def PostFilter(object):
-
     pass
