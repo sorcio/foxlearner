@@ -45,21 +45,51 @@ class MovingPawn(GameObject):
     """
     A moving GameObject.
     """
-
+    
     # algorithm used to move the pawn
     controller = None
-
+    
     def __init__(self, *args):
         super(MovingPawn, self).__init__(*args)
 
         self.acc = Vector(0, 0)
         self.speed = Vector(0, 0)
 
+    def _compute_acc(self, d, speed):
+        """
+        Compute the acceleration on a single component accordingly
+        to move intention.
+        
+        Called by _update_acc before computing acceleration update,
+        because we want different dynamics on acceleration or brake.
+        """
+        if d == 0:  # Want to stop...
+            if speed > 0:             # ...while moving forwards
+                return -self.brake
+            if speed < 0:             # ...while moving backwards
+                return self.brake
+            else:                     # ...but I am still already
+                return 0
+        else:       # Want to move...
+            if d * speed >= 0:        # ...in the same direction
+                return d * self.baccel
+            if d * self.speed < 0:    # ...in the opposite direction
+                return d * self.brake
+
+
     def _update_acc(self, dir):
         """
         Update acceleration according to the Direction dir.
         """
-        pass
+        push = Vector(self._compute_acc(dir.hor, self.speed.x),
+                      self._compute_acc(dir.vert, self.speed.y))
+        
+        if push:
+            norm_factor = max(self.baccel, self.brake) / abs(push)
+            self.acc = push * norm_factor
+        else:
+            self.acc = Vector(0, 0)
+
 
     def _update_speed(self, time_delta):
         """
@@ -67,21 +97,23 @@ class MovingPawn(GameObject):
         """
         speedup = self.speed + self.acc * time_delta
 
-        if speedup != 0:
+        if speedup:
             if abs(speedup) < self.bspeed:
                 speed_norm = 1
             else:
                 speed_norm = self.bspeed / abs(speedup)
 
-            if speedup.x * self.speed.x > 0:
-                self.speed.x = speedup.x * speed_norm
+            if speedup.x * self.speed.x >= 0:
+                sp_x = speedup.x * speed_norm
             else:
-                self.speed.x = 0
+                sp_x = 0
 
-            if speedup.y * self.speed.y > 0:
-                self.speed.y = speedup.y * speed_norm
+            if speedup.y * self.speed.y >= 0:
+                sp_y = speedup.y * speed_norm
             else:
-                self.speed.y = 0
+                sp_y = 0
+             
+            self.speed = Vector(sp_x, sp_y)
 
         else:
             self.speed = Vector(0, 0)

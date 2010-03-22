@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 from unittest import TestCase
-from random import randrange
 
 
 from foxgame.foxgame import *
@@ -29,7 +28,7 @@ class TestGameObject(TestCase):
 
     def test_distance(self):
         pos1 = Vector(10, 20)
-        pos2 = pos1 * randrange(Carrot.radius+1, 100)
+        pos2 = pos1 * (Carrot.radius + 50)
         gcarrot1 = Carrot(NoneGame, pos1)
         gcarrot2 = Carrot(NoneGame, pos2)
 
@@ -71,16 +70,12 @@ class TestMovingPawn(TestCase):
     def test_update_speed(self):
         mpawn = Fox(NoneGame, Direction.NULL)
 
-        time_delta = randrange(1, 121)
+        time_delta = 60
         mpawn._update_acc(Direction(Direction.UPRIGHT))
         mpawn._update_speed(time_delta)
-        self.assertTrue(mpawn.speed.x > 0)
-        self.assertTrue(mpawn.speed.y > 0)
+        self.assertNotEqual(mpawn.speed.x, 0)
+        self.assertNotEqual(mpawn.speed.y, 0)
 
-        mpawn._update_acc(Direction(Direction.NULL))
-        mpawn._update_speed(0)
-        self.assertEqual(mpawn.speed.x, 0)
-        self.assertEqual(mpawn.speed.y, 0)
     
     def test_update_pos(self):
         pass

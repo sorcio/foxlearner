@@ -21,8 +21,10 @@ class TestVector(TestCase):
 
     def test_bool(self):
         self.assertTrue(Vector(1, 2))
-        self.assertFalse(Vector(1, 0))
-
+        self.assertTrue(Vector(1, 0))
+        self.assertTrue(Vector(0, -1))
+        self.assertFalse(Vector(0, 0))
+        
     def test_equal(self):
         self.assertNotEqual(self.p1, self.p2)
         self.assertEqual(Vector(*self.fcoords), self.p1)

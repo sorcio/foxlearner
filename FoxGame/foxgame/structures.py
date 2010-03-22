@@ -17,7 +17,7 @@ class Vector(object):
         """
         Return True if x and y are different from 0, false otherwise.
         """
-        return self.x and self.y
+        return self.x != 0 or self.y != 0
 
     def __add__(self, other):
         """
