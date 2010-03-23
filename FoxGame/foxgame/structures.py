@@ -127,8 +127,12 @@ class Direction(object):
 
     def __init__(self, (x, y)):
         #XXX: change in x, y?
-        self.__dict__['hor'] = x
-        self.__dict__['vert'] = y
+        if (x in (-1, 0, 1) and
+            y in (-1, 0, 1)):
+            self.__dict__['hor'] = x
+            self.__dict__['vert'] = y
+        else:
+            raise ValueError('Direction\'s attributes must be either -1, 0, or 1.')
 
     def __setattr__(self, name, value):
         """
@@ -163,15 +167,6 @@ class Direction(object):
 	Return the opposite position of self.
 	"""
 	return Direction((-self.hor, -self.vert))
-
-    def __setattr__(self, name, value):
-        """
-        Check if value is in range [-1, +1], then assign it to name.
-        """
-        if value not in (-1, 0, 1):
-            raise ValueError('Direction.{0} must be either -1, 0, or 1.'
-                             'Got {1} instead.'.format(name, value))
-        self.__dict__[name] = value
 
     def __eq__(self, other):
         fh, fv = self
