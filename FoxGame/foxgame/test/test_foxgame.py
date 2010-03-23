@@ -77,11 +77,35 @@ class TestMovingPawn(TestCase):
 
         mpawn._update_acc(Direction(Direction.UP))
         self.assertEqual(mpawn.acc.x, 0)
-        self.assertNotEqual(mpawn.acc.y, 0)
+        self.assertTrue(mpawn.acc.y > 0)
 
         mpawn._update_acc(Direction(Direction.UPRIGHT))
-        self.assertNotEqual(mpawn.acc.x, 0)
-        self.assertNotEqual(mpawn.acc.y, 0)
+        self.assertTrue(mpawn.acc.x > 0)
+        self.assertTrue(mpawn.acc.y > 0)
+        
+        mpawn._update_acc(Direction(Direction.RIGHT))
+        self.assertTrue(mpawn.acc.x > 0)
+        self.assertEqual(mpawn.acc.y, 0)
+        
+        mpawn._update_acc(Direction(Direction.LEFT))
+        self.assertTrue(mpawn.acc.x < 0)
+        self.assertEqual(mpawn.acc.y, 0)
+        
+        mpawn._update_acc(Direction(Direction.DOWN))
+        self.assertEqual(mpawn.acc.x, 0)
+        self.assertTrue(mpawn.acc.y < 0)
+        
+        mpawn._update_acc(Direction(Direction.UPLEFT))
+        self.assertTrue(mpawn.acc.x < 0)
+        self.assertTrue(mpawn.acc.y > 0)
+        
+        mpawn._update_acc(Direction(Direction.DOWNRIGHT))
+        self.assertTrue(mpawn.acc.x > 0)
+        self.assertTrue(mpawn.acc.y < 0)
+        
+        mpawn._update_acc(Direction(Direction.DOWNLEFT))
+        self.assertTrue(mpawn.acc.x < 0)
+        self.assertTrue(mpawn.acc.y < 0)
 
     def test_update_speed(self):
         """
@@ -91,9 +115,9 @@ class TestMovingPawn(TestCase):
         mpawn = Fox(NoneGame, Direction.NULL)
 
         time_delta = 60
-        mpawn._update_acc(Direction(Direction.UPRIGHT))
+        mpawn._update_acc(Direction(Direction.UP))
         mpawn._update_speed(time_delta)
-        self.assertNotEqual(mpawn.speed.x, 0)
+        self.assertEqual(mpawn.speed.x, 0)
         self.assertNotEqual(mpawn.speed.y, 0)
 
 
