@@ -180,7 +180,7 @@ class Carrot(GameObject):
     A carrot.
     """
     radius = 10
-    color = "ORANGE"
+    color = 'ORANGE'
 
 
 class Game(object):
@@ -261,16 +261,25 @@ class Game(object):
 
     def place_carrot(self):
         """
-        Place a carrot the arena in a random point.
+        Place a new carrot on the board in a random point.
         """
         self.carrot = Carrot(self, self._randompoint())
 
     def tick(time):
         """
+        Updates the game according to the time given.
         """
+        # updates total time
         self.time_elapsed += time
 
+        # moves pawns
         for p, move in ((p, p.controller.update(time)) for p in self.pawns):
             p.drive(time, move)
 
-        # return True if collision?
+        # check for collisions
+        if self.collision:
+            return False
+        elif self._collision(self.hare, self.carrot):
+            self.hare.carrots += 1
+            self.place_carrot()
+            return True
