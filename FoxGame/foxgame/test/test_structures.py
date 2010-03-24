@@ -42,14 +42,21 @@ class TestVector(TestCase):
         zipped = zip(self.fcoords, self.scoords)
         n = randrange(1, 200)
 
+        # testing __add__
         self.assertEqual(self.p1 + self.p2,
                          map(sum, zipped))
+        # testing __sub__
         self.assertEqual(self.p1 - self.p2,
                          map(lambda x: sub(*x), zipped))
+        # testing __mul__
         self.assertEqual(n * self.p1,
                          map(lambda x: x*n, self.p1))
+        # testing __div__
         self.assertEqual(self.p2 / n,
                          map(lambda x: x/n, self.p2))
+        #testing __neg__
+        self.assertEqual(-self.p1,
+                         map(lambda x: -x, self.p1))
 
     def test_abs(self):
         self.assertEqual(abs(self.p1), hypot(self.p1.x, self.p1.y))
@@ -98,3 +105,12 @@ class TestDirection(TestCase):
         self.assertTrue(Direction(Direction.DOWNLEFT))
         self.assertFalse(Direction(Direction.NULL))
 
+    def test_fromVector(self):
+        vec = Vector(10, 0)
+        rvec = Vector(0, 10)
+
+        self.assertEqual(Direction.fromVector(vec), Direction.RIGHT)
+        self.assertEqual(Direction.fromVector(vec+rvec), Direction.UPRIGHT)
+        self.assertEqual(Direction.fromVector(-vec), Direction.LEFT)
+        self.assertEqual(Direction.fromVector(-vec-rvec), Direction.DOWNLEFT)
+        self.assertEqual(Direction.fromVector(vec * 0), Direction.NULL)

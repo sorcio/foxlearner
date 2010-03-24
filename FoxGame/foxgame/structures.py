@@ -53,6 +53,12 @@ class Vector(object):
 
     __truediv__ = __div__
 
+    def __neg__(self):
+        """
+        -(x, y) <==> (-x, -y)
+        """
+        return -1 * self
+
     def __eq__(self, other):
         """
         Return true if self and other have the same values, false otherwise.
