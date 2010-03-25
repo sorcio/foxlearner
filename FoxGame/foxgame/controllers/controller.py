@@ -34,9 +34,45 @@ class Controller(object):
 
 class Brain(object):
     """
-    A simple class wich provides soe useful functions for all AIs.
+    A Brain is.. [TODO]
+    XXX: review.
     """
 
+    def __init__(self):
+        """
+        Set up main constants.
+         session : defines the gamestate.
+                    True  stands for "busy on a new game session"
+                    False stands for "waiting for a new game session"
+        """
+        self.session = False
+
+    def new_gamesession(self, pawn):
+        """
+        Start a new session receiving as argument the pawn.
+        The brain will give inputs according to events redarding this one.
+        """
+        self.pawn = pawn
+        # add only in the case it would make the code readable
+        # self.game = pawn.game
+
+        # changing session state
+        self.session = True
+
+    def del_gamesession(self):
+        """
+        Ends a session cleaning attributes regarding this one.
+        """
+        # removing old session
+        del self.pawn
+
+        # changing session state
+        self.session = False
+
+    ###                                                                  ##
+    # here starts common functions useful for an easy implementation of a #
+    # new controller brain.                                               #
+    ##                                                                   ##
     def towards(self, othpawn):
         """
         Return the Direction of other respectively to self.
@@ -53,4 +89,39 @@ class Brain(object):
 
 
 def PostFilter(object):
-    pass
+    """
+    A PostFilter is.. [TODO]
+    XXX: review
+    """
+
+    def __init__(self):
+        """
+        Set up main constants.
+         session : defines the gamestate.
+                    True  stands for "busy on a new game session"
+                    False stands for "waiting for a new game session"
+        """
+        self.session = False
+
+    def new_gamesession(self, pawn):
+        """
+        Start a new session receiving as argument the pawn.
+        The brain will give inputs according to events redarding this one.
+        """
+        self.pawn = pawn
+        # add only in the case it would make the code readable
+        # self.game = pawn.game
+
+        # changing session state
+        self.session = True
+
+    def del_gamesession(self):
+        """
+        Ends a session cleaning attributes regarding this one.
+        """
+        # removing old session
+        del self.pawn
+
+        # changing session state
+        self.session = False
+
