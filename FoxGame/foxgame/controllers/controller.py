@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from foxgame.structures import Direction
-from math import copysign
-
 
 class Controller(object):
     """

@@ -2,9 +2,8 @@
 from __future__ import division
 
 from math import hypot
-from collections import namedtuple
 from random import randrange
-from itertools import ifilter, combinations
+from itertools import combinations
 from structures import Vector, Direction
 
 
