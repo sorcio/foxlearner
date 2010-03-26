@@ -3,9 +3,10 @@ from __future__ import division
 from unittest import TestCase
 
 
-from foxgame.foxgame import *
+from foxgame.foxgame import (GameObject, MovingPawn, Game,
+                             Carrot, Hare, Fox)
 from foxgame.factories import ControllerFactory
-from foxgame.structures import Vector
+from foxgame.structures import Vector, Direction
 
 class FakeGame(object):
     """
