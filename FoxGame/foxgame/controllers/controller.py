@@ -40,36 +40,36 @@ class Brain(object):
 
     def __init__(self):
         """
-        Set up main constants.
-         session : defines the gamestate.
-                    True  stands for "busy on a new game session"
-                    False stands for "waiting for a new game session"
+        Set up a new session,
+        where both game and pawn atributes are equal to zero.
         """
-        self.session = False
 
-    def new_gamesession(self, pawn):
+        self.game = self.pawn = None
+
+    @property
+    def playing(self):
         """
-        Start a new session receiving as argument the pawn.
+        Return True if the Controller is currently playing, False otherwise.
+        """
+        return self.game is not None
+
+    def start_game(self, pawn):
+        """
+        Set up a the controlelr for a new game.
         The brain will give inputs according to events redarding this one.
         """
         self.pawn = pawn
-        # add only in the case it would make the code readable
-        # self.game = pawn.game
+        self.game = pawn.game
 
-        # changing session state
-        self.session = True
-
-    def del_gamesession(self):
+    def end_game(self):
         """
-        Ends a session cleaning attributes regarding this one.
+        End the previously created game,
+        cleaning attributes regarding this one.
         """
         # removing old session
-        del self.pawn
+        self.pawn = self.game = None
 
-        # changing session state
-        self.session = False
-
-    ###                                                                  ##
+    ##                                                                   ##
     # here starts common functions useful for an easy implementation of a #
     # new controller brain.                                               #
     ##                                                                   ##
@@ -114,6 +114,7 @@ def PostFilter(object):
 
         # changing session state
         self.session = True
+
 
     def del_gamesession(self):
         """

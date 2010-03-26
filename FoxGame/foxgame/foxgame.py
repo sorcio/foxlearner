@@ -4,6 +4,7 @@ from __future__ import division
 from math import hypot
 from collections import namedtuple
 from random import randrange
+from itertools import ifilter, combinations
 from structures import Vector, Direction
 
 
@@ -231,16 +232,11 @@ class Game(object):
         """
         Put the hare and the fox into random positions.
         """
-        # fixed position for the hare
-        self.hare.pos = self._randompoint()
+        obj_combs = combinations(self.pawns, 2)
 
-        while any(x.distance(y) < mindist
-                  for y in self.objects
-                  for x in self.objects
-                  if x != y):
-            for f in self.foxes:
-                f.pos = self._randompoint()
-
+        while not all(x.distance(y) >= mindist for x, y in obj_combs):
+            for pawn in self.pawns:
+                pawn.pos = self._randompoint()
     @property
     def objects(self):
         """

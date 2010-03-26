@@ -82,27 +82,27 @@ class TestMovingPawn(TestCase):
         mpawn._update_acc(Direction(Direction.UPRIGHT))
         self.assertTrue(mpawn.acc.x > 0)
         self.assertTrue(mpawn.acc.y > 0)
-        
+
         mpawn._update_acc(Direction(Direction.RIGHT))
         self.assertTrue(mpawn.acc.x > 0)
         self.assertEqual(mpawn.acc.y, 0)
-        
+
         mpawn._update_acc(Direction(Direction.LEFT))
         self.assertTrue(mpawn.acc.x < 0)
         self.assertEqual(mpawn.acc.y, 0)
-        
+
         mpawn._update_acc(Direction(Direction.DOWN))
         self.assertEqual(mpawn.acc.x, 0)
         self.assertTrue(mpawn.acc.y < 0)
-        
+
         mpawn._update_acc(Direction(Direction.UPLEFT))
         self.assertTrue(mpawn.acc.x < 0)
         self.assertTrue(mpawn.acc.y > 0)
-        
+
         mpawn._update_acc(Direction(Direction.DOWNRIGHT))
         self.assertTrue(mpawn.acc.x > 0)
         self.assertTrue(mpawn.acc.y < 0)
-        
+
         mpawn._update_acc(Direction(Direction.DOWNLEFT))
         self.assertTrue(mpawn.acc.x < 0)
         self.assertTrue(mpawn.acc.y < 0)
@@ -151,7 +151,6 @@ class TestGame(TestCase):
                          ControllerFactory(FakeController, None, None),
                          ControllerFactory(FakeController, None, None),
                          self.foxnum)
-        self.game._randomlocate(self.mindist)
 
     def test_foxes(self):
         """
@@ -165,9 +164,10 @@ class TestGame(TestCase):
         """
         Test random locating.
         """
-        for x in self.game.objects:
-            self.assertTrue(x.pos, self.game.size)
-            for y in self.game.objects:
+        self.game._randomlocate(self.mindist)
+        for x in self.game.pawns:
+            self.assertTrue((0, 0) <= x.pos < self.game.size)
+            for y in self.game.pawns:
                 if x == y:
                     continue
                 self.assertTrue(x.distance(y) >= self.mindist)
