@@ -15,14 +15,14 @@ class GameObject(object):
     radius = None
     color = None
 
-    def __init__(self, parent, pos=(0, 0)):
+    def __init__(self, parent, pos=Vector(0, 0)):
         """
         Arguments:
          parent is the Game class which contains the GameObject;
          pos    is the Vectior class which identifies the GameObject's position
         """
         self.parent = parent
-        self.pos = Vector(*pos)
+        self.pos = pos
 
     def __eq__(self, other):
         """
@@ -35,9 +35,7 @@ class GameObject(object):
         """
         Return the discance between two circles.
         """
-        fx, fy = self.pos
-        sx, sy = other.pos
-        dist = hypot(fx-sx, fy-sy) - (self.radius+other.radius)
+        dist = self.pos.distance(other.pos) - self.radius - other.radius
         return dist if dist > 0 else 0
 
 
@@ -172,7 +170,8 @@ class Hare(MovingPawn):
     brake = 240.0
     radius = 15
     color = 'GREY'
-    # carrots eaten
+
+    # a attribute of any Hare istance counting carrots eaten
     carrots = 0
 
 class Carrot(GameObject):
@@ -210,12 +209,6 @@ class Game(object):
         # starting up time elapsed
         self.time_elapsed = 0
 
-    def _randompoint(self):
-        """
-        Return a random point.
-        """
-        return Vector(randrange(self.size.x), randrange(self.size.y))
-
     def _collision(self, pawn1, pawn2):
         """
         Find if there's a collision between obj1 and obj2:
@@ -226,6 +219,12 @@ class Game(object):
     @property
     def collision(self):
         return any(self._collision(self.hare, fox) for fox in self.foxes)
+
+    def _randompoint(self):
+        """
+        Return a random point.
+        """
+        return Vector(randrange(self.size.x), randrange(self.size.y))
 
     def _randomlocate(self, mindist):
         """

@@ -40,7 +40,7 @@ class FakeController(object):
 class TestGameObject(TestCase):
 
     def test_init(self):
-        gobj = GameObject(NoneGame, (0, 0))
+        gobj = GameObject(NoneGame, Vector(0, 0))
         self.assertTrue(isinstance(gobj.pos, Vector))
 
     def test_distance(self):
@@ -53,7 +53,7 @@ class TestGameObject(TestCase):
                          gcarrot2.distance(gcarrot1))
         self.assertTrue(gcarrot1.distance(gcarrot2) > 0)
 
-        gcarrot2 = Carrot(NoneGame, [x+Carrot.radius-1 for x in pos1])
+        gcarrot2 = Carrot(NoneGame, Vector(*(x+Carrot.radius-1 for x in pos1)))
 
         self.assertEqual(gcarrot1.distance(gcarrot2),
                          0)
@@ -62,7 +62,7 @@ class TestGameObject(TestCase):
 class TestMovingPawn(TestCase):
 
     def test_init(self):
-        mpawn = MovingPawn(NoneGame, Direction.NULL)
+        mpawn = MovingPawn(NoneGame, Vector(0, 0))
 
         self.assertTrue(isinstance(mpawn.acc, Vector))
         self.assertEqual(mpawn.acc, (0, 0))
@@ -70,8 +70,10 @@ class TestMovingPawn(TestCase):
         self.assertTrue(isinstance(mpawn.speed, Vector))
         self.assertEqual(mpawn.speed, (0, 0))
 
+        self.assertTrue(isinstance(mpawn.pos, Vector))
+
     def test_update_acc(self):
-        mpawn = Fox(NoneGame, Direction.NULL)
+        mpawn = Fox(NoneGame, Vector(0, 0))
 
         mpawn._update_acc(Direction(Direction.NULL))
         self.assertEqual(mpawn.acc, (0, 0))
@@ -113,7 +115,7 @@ class TestMovingPawn(TestCase):
         Test MovingPawn._update_speed module.
         Note: Testing this function implies a call to _update_acc.
         """
-        mpawn = Fox(NoneGame, Direction.NULL)
+        mpawn = Fox(NoneGame, Vector(0, 0))
 
         time_delta = 60
         mpawn._update_acc(Direction(Direction.UP))
@@ -129,7 +131,7 @@ class TestMovingPawn(TestCase):
               so testing this function is equal to testing the MovingPawn.drive
               function.
         """
-        mpawn = Fox(FakeGame((100, 100)), Direction.NULL)
+        mpawn = Fox(FakeGame((100, 100)), Vector(0, 0))
 
         mpawn.drive(Direction(Direction.NULL), 60)
         self.assertEqual(mpawn.pos, (0, 0))
