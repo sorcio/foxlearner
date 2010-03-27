@@ -199,8 +199,8 @@ class Game(object):
 
         # setting up controllers
         for fox in self.foxes:
-            fcfact.new_controller(fox)
-        hcfact.new_controller(self.hare)
+            fox.controller = fcfact.new_controller(fox)
+        self.hare.controller = hcfact.new_controller(self.hare)
 
         # place objects
         self.place_carrot()
