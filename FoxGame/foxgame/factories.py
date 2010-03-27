@@ -15,6 +15,7 @@ class GameFactory(object):
     	"""
         self.harefact = hare_factory
         self.foxfact = fox_factory
+        self.size = size
         self.foxnum = foxnum
 
     def new_game(self):

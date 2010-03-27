@@ -48,23 +48,23 @@ class GUI:
     A foxgame.Game class which provides a GUI using pygame.
     """
 
-    def __init__(self, fox_factory, hare_factory, foxnum, size):
+    def __init__(self, game_factory, fox_factory, hare_factory):
         """
         Set up the game window.
         """
+        # setting up attributes..
+        #  factories
+        self.gfact = game_factory
+        self.ffact = fox_factory
+        self.hfact = hare_factory
+        #  game
+        self.game = self.gfact.new_game()
+        #  shortcuts
+        self.size = self.game.size
 
-        self.size = foxgame.Vector(*size)
-
-        Fox.move = fox_algorithm
-        Hare.move = hare_algorithm
-
-        self.foxes = tuple(Fox(self.size) fox x in xrange(foxnum))
-        self.hare = Hare(self.size)
-
-        self._clock = pygame.time.Clock()
 
         # Setting up screen
-        self._screen = pygame.display.set_mode(tuple(self.size),
+        self._screen = pygame.display.set_mode(tuple(self.game.size),
                                                pygame.DOUBLEBUF |
                                                pygame.HWSURFACE)
         pygame.display.set_caption('FoxGame!')
@@ -74,11 +74,6 @@ class GUI:
         arena = pygame.Rect(0, 0, *self.size)
         arena.center = self._screen.get_rect().center
         self.arena = self._screen.subsurface(arena)
-
-        # Place the first carrot
-        self.place_carrot()
-
-        foxgame.state = state
 
     @staticmethod
     def _draw_circle(arena, pawn):
