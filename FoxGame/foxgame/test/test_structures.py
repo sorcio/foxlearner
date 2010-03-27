@@ -101,6 +101,11 @@ class TestDirection(TestCase):
         self.assertEqual(dir, dir)
         self.assertNotEqual(dir, Direction(Direction.DOWN))
 
+    def test_or(self):
+        self.assertEqual(Direction(Direction.UP) | Direction(Direction.DOWN),
+                         Direction.NULL)
+        self.assertEqual(Direction(Direction.UP) | Direction(Direction.LEFT),
+                         Direction.UPLEFT)
     def test_bool(self):
         self.assertTrue(Direction(Direction.DOWNLEFT))
         self.assertFalse(Direction(Direction.NULL))

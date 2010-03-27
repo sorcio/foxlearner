@@ -10,24 +10,38 @@ from sys import exit
 from pygame.gfxdraw import aacircle, filled_circle
 from structures import Direction, Vector
 
-def usermove(cls, keypress):
+
+from controllers.controller import Brain
+from operator import or_
+class UserCtl(Brain):
     """
     Move a generic pawn using pygame's keyboard events.
     """
-    # XXX: improve.
-    # creating directions
-    d = foxgame.Direction(0, 0)
-    for key in keypress:
-        if key == pygame.K_UP:
-            d.up = key
-        elif key == pygame.K_DOWN:
-            d.down = key
-        elif key == pygame.K_LEFT:
-            d.left = key
-        elif key == pygame.K_RIGHT:
-            d.right = key
 
-    cls._drive(d)
+    accepted_keys = {
+                pygame.K_DOWN : Direction(Direction.DOWN),
+                pygame.K_UP   : Direction(Direction.UP),
+                pygame.K_LEFT : Direction(Direction.LEFT),
+                pygame.K_RIGHT: Direction(Direction.RIGHT)
+    }
+
+    def __init__(self, *args):
+        super(UserCtl, self).__init__(*args)
+
+        # add keypress to keey track of previous pressed buttons
+        self.keypress = set()
+
+    def tick(self, time_delta):
+        # update self.keypress
+        for event in pygame.event.get():
+            if event.type = ptgame.KEYDOWN:
+                self.keypress.add(event.key)
+            elif event.type == pygame.KEYUP:
+                self.keypress.remove(event.key)
+
+        # return the direction
+        return reduce(or_, self.keypress)
+
 
 class GUI:
     """

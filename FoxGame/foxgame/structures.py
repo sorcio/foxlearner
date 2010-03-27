@@ -170,6 +170,12 @@ class Direction(object):
         sh, sv = other
         return fh == sh and fv == sv
 
+    def __or__(self, other):
+        fh, fv = self
+        sh, sv = other
+        return Direction((fh | sh if fh != -sh else 0,
+                          fv | sv if fv != -sv else 0))
+
     def __ne__(self, other):
         return not self == other
 
