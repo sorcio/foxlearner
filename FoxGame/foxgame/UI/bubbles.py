@@ -13,7 +13,7 @@ from structures import Direction, Vector
 
 from controllers.controller import Brain
 from operator import or_
-class UserCtl(Brain):
+class UserBrain(Brain):
     """
     Move a generic pawn using pygame's keyboard events.
     """
@@ -45,26 +45,24 @@ class UserCtl(Brain):
 
 class GUI:
     """
-    A foxgame.Game class which provides a GUI using pygame.
+    Provide a GUI to foxgame.Game using pygame.
     """
 
-    def __init__(self, game_factory, fox_factory, hare_factory):
+    def __init__(self, game_factory):
         """
         Set up the game window.
         """
-        # setting up attributes..
+        # setting up attributes
         #  factories
         self.gfact = game_factory
-        self.ffact = fox_factory
-        self.hfact = hare_factory
         #  game
         self.game = self.gfact.new_game()
         #  shortcuts
         self.size = self.game.size
 
 
-        # Setting up screen
-        self._screen = pygame.display.set_mode(tuple(self.game.size),
+        # setting up screen
+        self._screen = pygame.display.set_mode(tuple(self.size),
                                                pygame.DOUBLEBUF |
                                                pygame.HWSURFACE)
         pygame.display.set_caption('FoxGame!')
@@ -75,8 +73,7 @@ class GUI:
         arena.center = self._screen.get_rect().center
         self.arena = self._screen.subsurface(arena)
 
-    @staticmethod
-    def _draw_circle(arena, pawn):
+    def _draw(self, pawn):
         """
         Draw a GameObject with circular shape on the screen.
         """
@@ -111,15 +108,17 @@ class GUI:
 
         # Drawing pawns
         #self._draw_tracks()
-        self.carrot.draw()
+        self._draw(self.game.carrot)
 
-        for fox in self.foxes:
-            aacircle(self.arena, fox.pos[0], fox.pos[1],
-                     int(hypot(*self.size)/5), (100, )*3)
+        for fox in self.game.foxes:
+            x, y = fox.pos
+            self._draw(fox)
+            
+            aacircle(self.arena, x, y, int(hypot(*self.size)/5), (100, )*3)
             for deg in xrange(225, 3600, 450):
                 rad = radians(deg // 10)
                 # XXX
-                end = fox.pos[0] + cos(rad) * 1000, fox.pos[1] + sin(rad) * 1000
+                end = x + cos(rad) * 1000, y + sin(rad) * 1000
                 pygame.draw.line(self.arena, (100, ) * 3, fox.pos, end, 1)
 
     def welcome(self):
@@ -147,7 +146,8 @@ class GUI:
         XXX
         """
         event = None
-        while pygame.K_SPACE not in (event.type
+        # XXX
+        while pygame.K_SPACE not in (event.key
                                      for event in pygame.event.get()):
             # XXX
             pass
@@ -163,67 +163,32 @@ class GUI:
         # else return a new GameObject
 
     def quit(self):
+        # TODO:close controllers correctly
         exit()
 
-    def update_config(self):
-        pass
-
-    def run(self):
+    def tick(self, time):
         """
-        App's mainloop.
-         It handles time, check for collisions, redraw the screen,
-         and binds keyboard events.
+        Updates GL according to time, and redraw the screen,
+         doing necessary updates if any collision.
         """
-        keys = set()
-
-        self._clock.tick(60)
-
-        # handle user input.
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                keys.add(event.type)
-            elif event.type == pygame.KEYUP:
-                keys.remove(event.type)
-
-            if event.type in self._bindkeys:
-                self._bindkeys[key.type](self)
-
-        self.hare.move(keys)
-        for fox in self.foxes:
-            fox.move(keys)
-
-        # updating time
-        time = self._clock.get_time() / 1000
-        self._clock.tick(time)
-
-        # for obj in self._objects:
-        #    obj.tick(time)
+        if self.game.tick(time) is False:
+            # draw a blank circle
+            blankc = foxgame.GameObject(pos=self.foxes[0].pos,
+                                        radius=(self.hare.radius +
+                                                self.foxes[0].radius) * 2,
+                                                color=(255, 255, 255))
+            self._draw(blankc)
+            alive = False
+        else:
+            alive = True
 
         # redrawing screen
         self._paint_gamefield()
 
-        # check for collisions
-        if self.collision:
-            # draw a blank circle
-            blankc = foxgame.Circle(pos=self.foxes[0].pos,
-                                    radius=(self.hare.radius +
-                                            self.foxes[0].radius) * 2,
-                                            color=(255, 255, 255))
-            self._draw(blankc)
-            foxgame.state = states.ENDED
-            if self._collision(self.hare, self.carrot):
-                self.onEatCarrot()
-
-            pygame.display.flip()
+        return alive
 
 
-    _bindkeys = {
-                 pygame.K_ESCAPE : quit,
-                 pygame.K_SPACE  : wait,
-    }
-
-
-def main(foxnum, fox_algorithm, hare_algorithm):
+def main(gfact):
     """
     App's main function.
     """
@@ -232,10 +197,25 @@ def main(foxnum, fox_algorithm, hare_algorithm):
     # setting up clock
     clock = pygame.time.Clock()
 
-    # starting
+    # setting up the gui
+    ui = GUI(gfact)
+    # paint a welcome message
+    ui.welcome()
+    ui.wait()
 
     # starting app's mainloop
     while True:
-        game.welcome()
-        game.wait()
-        game.run()
+        # update time
+        time = clock.get_time() / 1000
+        clock.tick(time)
+        
+        # update the board
+        if not ui.tick(time):
+            ui.quit()
+
+        # handle user inputs
+        for key in (e.key in pygame.event.get()):
+            if key == pygame.K_SPACE:
+                ui.wait()
+            elif key == pygame.K_ESCAPE:
+                ui.quit()
