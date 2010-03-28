@@ -17,14 +17,14 @@ class FoxController(Controller):
 
 
 class HareController(Controller):
-   """
-   A simple controller witch uses traditions algorithms
-   to escape from the fox.
-   """
+    """
+    A simple controller witch uses traditions algorithms
+    to escape from the fox.
+    """
 
-   def update(self, time):
-       """
-       Hare's aim is to get away from the fox, so it should go to the opposite
-       position of the Fox.
-       """
-       return -self.towards(self.nearest_fox)
+    def update(self, time):
+        """
+        Hare's aim is to get away from the fox, so it should go to the opposite
+        position of the Fox.
+        """
+        return -self.towards(self.nearest_fox)

@@ -110,12 +110,12 @@ class TestDirection(TestCase):
         self.assertTrue(Direction(Direction.DOWNLEFT))
         self.assertFalse(Direction(Direction.NULL))
 
-    def test_fromVector(self):
+    def test_from_vector(self):
         vec = Vector(10, 0)
         rvec = Vector(0, 10)
 
-        self.assertEqual(Direction.fromVector(vec), Direction.RIGHT)
-        self.assertEqual(Direction.fromVector(vec+rvec), Direction.UPRIGHT)
-        self.assertEqual(Direction.fromVector(-vec), Direction.LEFT)
-        self.assertEqual(Direction.fromVector(-vec-rvec), Direction.DOWNLEFT)
-        self.assertEqual(Direction.fromVector(vec * 0), Direction.NULL)
+        self.assertEqual(Direction.from_vector(vec), Direction.RIGHT)
+        self.assertEqual(Direction.from_vector(vec+rvec), Direction.UPRIGHT)
+        self.assertEqual(Direction.from_vector(-vec), Direction.LEFT)
+        self.assertEqual(Direction.from_vector(-vec-rvec), Direction.DOWNLEFT)
+        self.assertEqual(Direction.from_vector(vec * 0), Direction.NULL)

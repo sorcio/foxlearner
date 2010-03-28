@@ -8,11 +8,11 @@ class GameFactory(object):
     """
 
     def __init__(self, size, hare_factory, fox_factory, foxnum=1):
-    	"""
-    	A GameFactory is a container which let the user configure
-    	dinamically, the current played game, and store a collection
-    	of games instances.
-    	"""
+        """
+        A GameFactory is a container which let the user configure
+        dinamically, the current played game, and store a collection
+        of games instances.
+        """
         self.harefact = hare_factory
         self.foxfact = fox_factory
         self.size = size
