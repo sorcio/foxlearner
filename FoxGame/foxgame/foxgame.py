@@ -3,7 +3,7 @@ from __future__ import division
 
 from random import randrange
 from itertools import combinations
-from fox.structures import Vector, Direction
+from structures import Vector
 
 
 class GameObject(object):
@@ -131,7 +131,7 @@ class MovingPawn(GameObject):
         """
         newpos = self.pos + self.speed * time_delta
 
-        if 0 < newpos.x < (self.parent.size[0] - self.radius): 
+        if 0 < newpos.x < (self.parent.size[0] - self.radius):
             self.speed.x = newpos.x
         else:
             self.speed.x = 0
