@@ -197,13 +197,13 @@ class Direction(object):
         return Direction(sign(x) for x in vec)
 
 
-def sign(x):
+def sign(num):
     """
     sgn function
     """
-    if x > 0:
+    if num > 0:
         return +1
-    if x < 0:
+    if num < 0:
         return -1
     else:
         return 0

@@ -1,4 +1,4 @@
-from foxgame import Game, Fox, Hare
+from foxgame import Game
 
 
 class GameFactory(object):
@@ -19,6 +19,9 @@ class GameFactory(object):
         self.foxnum = foxnum
 
     def new_game(self):
+        """
+        Return a new Game instance according to the configuration given.
+        """
         return Game(self.size, self.harefact, self.foxfact, self.foxnum)
 
 
@@ -33,4 +36,7 @@ class ControllerFactory(object):
         self.postfilters = postfilters
 
     def new_controller(self, parent_pawn):
+        """
+        Return a new controller instance according to the configuration given.
+        """
         return self.ctrltype(parent_pawn, self.brain, self.postfilters)

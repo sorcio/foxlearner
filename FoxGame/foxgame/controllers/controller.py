@@ -12,7 +12,7 @@ class Controller(object):
         """
         Set up basic values.
         """
-        # TODO: add self.tracks to keep a history 
+        # TODO: add self.tracks to keep a history
         # of controller's previous position
         self.pawn = pawn
 

@@ -6,9 +6,8 @@
 import foxgame
 import pygame
 from math import sin, cos, radians, hypot
-from sys import exit
 from pygame.gfxdraw import aacircle, filled_circle
-from structures import Direction, Vector
+from structures import Direction
 
 
 from controllers.controller import Brain
@@ -34,7 +33,7 @@ class UserBrain(Brain):
     def tick(self, time_delta):
         # update self.keypress
         for event in pygame.event.get():
-            if event.type = ptgame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
                 self.keypress.add(event.key)
             elif event.type == pygame.KEYUP:
                 self.keypress.remove(event.key)
@@ -113,7 +112,7 @@ class GUI:
         for fox in self.game.foxes:
             x, y = fox.pos
             self._draw(fox)
-            
+
             aacircle(self.arena, x, y, int(hypot(*self.size)/5), (100, )*3)
             for deg in xrange(225, 3600, 450):
                 rad = radians(deg // 10)
@@ -163,6 +162,9 @@ class GUI:
         # else return a new GameObject
 
     def quit(self):
+        """
+        Quit the game.
+        """
         # TODO:close controllers correctly
         exit()
 
@@ -173,9 +175,11 @@ class GUI:
         """
         if self.game.tick(time) is False:
             # draw a blank circle
-            blankc = foxgame.GameObject(pos=self.foxes[0].pos,
-                                        radius=(self.hare.radius +
-                                                self.foxes[0].radius) * 2,
+            # XXX
+            collfox = self.game.foxes[0]
+            blankc = foxgame.GameObject(pos=collfox.pos,
+                                        radius=(self.game.hare.radius +
+                                                collfox.radius) * 2,
                                                 color=(255, 255, 255))
             self._draw(blankc)
             alive = False
@@ -208,7 +212,7 @@ def main(gfact):
         # update time
         time = clock.get_time() / 1000
         clock.tick(time)
-        
+
         # update the board
         if not ui.tick(time):
             ui.quit()
