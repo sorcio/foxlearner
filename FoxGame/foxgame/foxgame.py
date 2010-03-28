@@ -1,9 +1,9 @@
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 from __future__ import division
 
 from random import randrange
 from itertools import combinations
-from structures import Vector
+from fox.structures import Vector, Direction
 
 
 class GameObject(object):
@@ -32,7 +32,8 @@ class GameObject(object):
 
     def distance(self, other):
         """
-        Return the discance between two circles.
+        Return the distance between between the two closest
+        points in the circumference.
         """
         dist = self.pos.distance(other.pos) - self.radius - other.radius
         return dist if dist > 0 else 0
@@ -57,6 +58,7 @@ class MovingPawn(GameObject):
 
         self.acc = Vector(0, 0)
         self.speed = Vector(0, 0)
+
 
     def _compute_acc(self, dpoint, speed):
         """
@@ -122,25 +124,27 @@ class MovingPawn(GameObject):
         else:
             self.speed = Vector(0, 0)
 
+
     def _update_pos(self, time_delta):
         """
         Update position keeping the same speed and acceleration.
         """
         newpos = self.pos + self.speed * time_delta
 
-        if 0 < newpos.x < self.parent.size[0] - self.radius:
+        if 0 < newpos.x < (self.parent.size[0] - self.radius): 
             self.speed.x = newpos.x
         else:
             self.speed.x = 0
 
-        if 0 < newpos.y < self.parent.size[1] - self.radius:
+        if 0 < newpos.y < (self.parent.size[1] - self.radius):
             self.speed.y = newpos.y
         else:
             self.speed.y = 0
 
+
     def drive(self, direction, time_delta):
+        # This is the only public function in this class.
         """
-        This is the only public function in this class.
         Updates position, speed, acceleration according to time and direction.
         For each one of these points call the correspective private method:
          self._update_acc   => update acceleration
@@ -178,6 +182,7 @@ class Hare(MovingPawn):
 
     # a attribute of any Hare istance counting carrots eaten
     carrots = 0
+
 
 class Carrot(GameObject):
     """
@@ -218,7 +223,7 @@ class Game(object):
     def _collision(self, pawn1, pawn2):
         """
         Find if there's a collision between obj1 and obj2:
-         so just checks if their distance < sum of radius.
+         so just checks if their distance is the sum of radius.
         """
         return pawn1.distance(pawn2) == 0
 
