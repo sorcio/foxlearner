@@ -41,26 +41,26 @@ class ControllerFactory(object):
         return Controller(parent_pawn, self.brain, self.postfilters)
 
 
-def load_brain(brain_name, cls_name="Brain"):
+def load_brain(brain_name, cls_name='Brain'):
     """
     Dynamically loads brain class with given name.
     """
     if brain_name == 'none':
         return None
-    
+
     # XXX: throwing ImportError (and AttributeError), is this right?
-    controllers = __import__("foxgame.controllers." + brain_name).controllers
+    controllers = __import__('foxgame.controllers.' + brain_name).controllers
     brain_module = getattr(controllers, brain_name)
-    brain = getattr(brain_module, "Brain")
+    brain = getattr(brain_module, 'Brain')
     return brain
 
 
-def load_ui(ui_name, main_name="main"):
+def load_ui(ui_name, main_name='main'):
     """
     Dynamically loads UI class with given name.
     """
     # XXX: throwing ImportError (and AttributeError), is this right?
-    uis = __import__("foxgame.UI." + ui_name).UI
+    uis = __import__('foxgame.UI.' + ui_name).UI
     ui_module = getattr(uis, ui_name)
     ui_main = getattr(ui_module, main_name)
     return ui_main
