@@ -3,15 +3,16 @@
 # values: author, mail, committers, etc.
 
 #from __future__ import division
-import foxgame
+import foxgame.foxgame
 import pygame
 from math import sin, cos, radians, hypot
 from pygame.gfxdraw import aacircle, filled_circle
-from structures import Direction
+from foxgame.structures import Direction
 
 
-from controllers.controller import Brain
+from foxgame.controllers.controller import Brain
 from operator import or_
+
 class UserBrain(Brain):
     """
     Move a generic pawn using pygame's keyboard events.
@@ -137,7 +138,7 @@ class GUI:
                                               ).get_rect().copy()
         subtitle.centerx = title.centerx
         subtitle.top = title.bottom
-        self._screen.flip()
+        #self._screen.flip()
 
     def wait(self):
         """
