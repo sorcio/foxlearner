@@ -1,5 +1,5 @@
 from foxgame import Game
-
+from controllers.controller import Controller
 
 class GameFactory(object):
     """
@@ -7,7 +7,7 @@ class GameFactory(object):
     configured.
     """
 
-    def __init__(self, size, hare_factory, fox_factory, foxnum=1):
+    def __init__(self, hare_factory, fox_factory, size=(300,200), foxnum=1):
         """
         A GameFactory is a container which let the user configure
         dinamically, the current played game, and store a collection
@@ -30,8 +30,7 @@ class ControllerFactory(object):
     Once incapsulated, this class let the user use one or more controller.
     """
 
-    def __init__(self, ctrltype, brain = None, *postfilters):
-        self.ctrltype = ctrltype
+    def __init__(self, brain=None, *postfilters):
         self.brain = brain
         self.postfilters = postfilters
 
@@ -39,4 +38,29 @@ class ControllerFactory(object):
         """
         Return a new controller instance according to the configuration given.
         """
-        return self.ctrltype(parent_pawn, self.brain, self.postfilters)
+        return Controller(parent_pawn, self.brain, self.postfilters)
+
+
+def load_brain(brain_name, cls_name="Brain"):
+    """
+    Dynamically loads brain class with given name.
+    """
+    if brain_name == 'none':
+        return None
+    
+    # XXX: throwing ImportError (and AttributeError), is this right?
+    controllers = __import__("foxgame.controllers." + brain_name).controllers
+    brain_module = getattr(controllers, brain_name)
+    brain = getattr(brain_module, "Brain")
+    return brain
+
+
+def load_ui(ui_name, main_name="main"):
+    """
+    Dynamically loads UI class with given name.
+    """
+    # XXX: throwing ImportError (and AttributeError), is this right?
+    uis = __import__("foxgame.UI." + ui_name).UI
+    ui_module = getattr(uis, ui_name)
+    ui_main = getattr(ui_module, main_name)
+    return ui_main

@@ -33,20 +33,21 @@ from sys import exit
 
 
 # parsing arguments from stdin
-parser = OptionParser(usage='%prog [interface] [algorthm] [options]',
+parser = OptionParser(usage='%prog [interface] [algorithm] [options]',
                       version='%prog {0}'.format(__version__))
 
 parser.add_option('-v', '--verbose', dest='verbose',
                   default=False, action='store_true',
                   help='lots of debug messages')
 parser.add_option('-i', '--iface', dest='interface',
-                  default='pygame', action='store',
+                  default='bubbles', action='store',
                   metavar='INTERFACE', help='select game interface')
 parser.add_option('--fox', dest='fox',
                   default='none', action='store',
-                  metavar='ALGORITHM', help='select ai algorithm for the fox')
+                  metavar='FOXBRAIN', help='select ai algorithm for the fox')
 parser.add_option('--hare', dest='hare',
-                  metavar='INPUT', help='select an input for the hare')
+                  default='none', action='store',
+                  metavar='HAREBRAIN', help='select ai algorithm for the hare')
 parser.add_option('--nfoxes', dest='foxes_num',
                   type='int', default=1,
                   metavar='NUM', help='select the number of foxes in the game')
@@ -57,39 +58,22 @@ parser.add_option('-r', '--record', dest='record',
 (options, args) = parser.parse_args()
 
 
-# ---- 1. creating game and controllers using factories
-from foxgame.factories import Gamefactory, ControllerFactory
+# ---- 1. setting up factories
+from foxgame.factories import GameFactory, ControllerFactory
+from foxgame.factories import load_brain
 
-gfactory = Gamefactory()          # game factory
-cffactory = ControllerFactory()   # fox controller factory
-chfactory = ControllerFactory()   # hare controller factory
+fox_brain = load_brain(options.fox)
+hare_brain = load_brain(options.hare)
 
+cffactory = ControllerFactory(fox_brain)        # fox controller factory
+chfactory = ControllerFactory(hare_brain)       # hare controller factory
 
-# ---- 2. setting controllers
-from foxgame import controllers
-
-# setting controller for the fox
-if options.fox == 'traditional':
-    cffactory.add_control(controllers.tradlib.FoxController)
-else:
-    print 'error: unknown algorithm for the fox.'
-    exit(1)
-
-# setting controller for the hare
-if options.hare  == 'traditional':
-    chfactory.add_control(controllers.tradlib.HareController)
-else:
-    print 'error: unknown algorithm for the hare'
-    exit(1)
+gfactory = GameFactory(cffactory, chfactory)    # game factory
 
 
 # ---- 3. creating game interface
-if options.interface == 'pygame':
-     from foxgame.UI.bubbles import main
-else:
-    print 'error: unknown game interface.'
-    exit(1)
-
+from foxgame.factories import load_ui
+ui_main = load_ui(options.interface)
 
 # ---- 4. launching main
-main(gfactory, cffactory, chfactory)
+ui_main(gfactory)
