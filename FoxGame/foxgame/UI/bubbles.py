@@ -33,11 +33,11 @@ class UserBrain(Brain):
 
     def tick(self, time_delta):
         # update self.keypress
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                self.keypress.add(event.key)
-            elif event.type == pygame.KEYUP:
-                self.keypress.remove(event.key)
+        for evt in pygame.event.get():
+            if evt.type == pygame.KEYDOWN:
+                self.keypress.add(evt.key)
+            elif evt.type == pygame.KEYUP:
+                self.keypress.remove(evt.key)
 
         # return the direction
         return reduce(or_, self.keypress)
@@ -145,12 +145,11 @@ class GUI:
         Game paused: wait for space to continue the game.
         XXX
         """
-        event = None
         # XXX
-        while pygame.K_SPACE not in (event.key
-                                     for event in pygame.event.get()):
+        while pygame.K_SPACE not in (evt.key
+                                     for evt in pygame.event.get()):
             # XXX
-            pass
+        pass
 
     def ask_newplay(self):
         """
