@@ -62,13 +62,13 @@ parser.add_option('-r', '--record', dest='record',
 from foxgame.factories import GameFactory, ControllerFactory
 from foxgame.factories import load_brain
 
-fox_brain = load_brain(options.fox)
-hare_brain = load_brain(options.hare)
+fox_brain = load_brain(options.fox, 'FoxBrain')
+hare_brain = load_brain(options.hare, 'HareBrain')
 
 cffactory = ControllerFactory(fox_brain)        # fox controller factory
 chfactory = ControllerFactory(hare_brain)       # hare controller factory
 
-gfactory = GameFactory(cffactory, chfactory)    # game factory
+gfactory = GameFactory((300, 200), cffactory, chfactory)    # game factory
 
 
 # ---- 2. creating game interface

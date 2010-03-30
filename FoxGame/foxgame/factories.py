@@ -30,7 +30,7 @@ class ControllerFactory(object):
     Once incapsulated, this class let the user use one or more controller.
     """
 
-    def __init__(self, brain=None, *postfilters):
+    def __init__(self, brain, *postfilters):
         self.brain = brain
         self.postfilters = postfilters
 
@@ -51,7 +51,7 @@ def load_brain(brain_name, cls_name='Brain'):
     # XXX: throwing ImportError (and AttributeError), is this right?
     controllers = __import__('foxgame.controllers.' + brain_name).controllers
     brain_module = getattr(controllers, brain_name)
-    brain = getattr(brain_module, 'Brain')
+    brain = getattr(brain_module, cls_name)
     return brain
 
 

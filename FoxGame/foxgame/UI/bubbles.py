@@ -146,10 +146,10 @@ class GUI:
         XXX
         """
         # XXX
-        while pygame.K_SPACE not in (evt.key
+        while pygame.K_SPACE not in (evt.type
                                      for evt in pygame.event.get()):
             # XXX
-        pass
+            pass
 
     def ask_newplay(self):
         """
@@ -205,7 +205,7 @@ def main(gfact):
     ui = GUI(gfact)
     # paint a welcome message
     ui.welcome()
-    ui.wait()
+    #ui.wait()
 
     # starting app's mainloop
     while True:

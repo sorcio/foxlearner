@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from foxgame.controllers.controller import Controller
+from foxgame.controllers.controller import Brain
 
-class FoxController(Controller):
+class FoxBrain(Brain):
     """
     A simple controller which uses simple traditional algorithms
     to follow the hare.
@@ -16,7 +16,7 @@ class FoxController(Controller):
         return self.towards(self.game.hare)
 
 
-class HareController(Controller):
+class HareBrain(Brain):
     """
     A simple controller witch uses traditions algorithms
     to escape from the fox.
