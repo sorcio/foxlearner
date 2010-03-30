@@ -3,7 +3,7 @@
 # values: author, mail, committers, etc.
 
 #from __future__ import division
-import foxgame.foxgame
+from  foxgame import foxgame
 import pygame
 from math import sin, cos, radians, hypot
 from pygame.gfxdraw import aacircle, filled_circle
@@ -55,6 +55,7 @@ class GUI:
         # setting up attributes
         #  factories
         self.gfact = game_factory
+        self.gfact.harefact.brain = self.gfact.harefact.brain or UserBrain
         #  game
         self.game = self.gfact.new_game()
         #  shortcuts
@@ -77,7 +78,7 @@ class GUI:
         """
         Draw a GameObject with circular shape on the screen.
         """
-        args = arena, pawn.pos[0], pawn.pos[1], pawn.radius, pawn.color
+        args = self.arena, pawn.pos.x, pawn.pos.y, pawn.radius, pygame.Color(pawn.color)
         filled_circle(*args)
         aacircle(*args)
 
@@ -101,9 +102,9 @@ class GUI:
         for x, y in zip(xrange(200, self.size.x, 200),
                         xrange(200, self.size.y, 200)):
 
-            pygame.draw.line(self.arena, (100, ) * 3,
+            pygame.draw.line(self.arena, (100, ) * 2,
                              (x, 0), (x, self.size.y), 1)
-            pygame.draw.line(self.arena, (100, ) * 3,
+            pygame.draw.line(self.arena, (100, ) * 2,
                              (0, y), (self.size.x, y), 1)
 
         # Drawing pawns
@@ -119,7 +120,7 @@ class GUI:
                 rad = radians(deg // 10)
                 # XXX
                 end = x + cos(rad) * 1000, y + sin(rad) * 1000
-                pygame.draw.line(self.arena, (100, ) * 3, fox.pos, end, 1)
+                #pygame.draw.line(self.arena, (100, ) * 2, fox.pos)
 
     def welcome(self):
         """
@@ -179,8 +180,9 @@ class GUI:
             collfox = self.game.foxes[0]
             blankc = foxgame.GameObject(pos=collfox.pos,
                                         radius=(self.game.hare.radius +
-                                                collfox.radius) * 2,
-                                                color=(255, 255, 255))
+                                                collfox.radius) * 2)
+            blankc.color = pygame.Color('WHITE')
+
             self._draw(blankc)
             alive = False
         else:
@@ -218,7 +220,7 @@ def main(gfact):
             ui.quit()
 
         # handle user inputs
-        for key in (e.key in pygame.event.get()):
+        for key in (evt.type for evt in pygame.event.get()):
             if key == pygame.K_SPACE:
                 ui.wait()
             elif key == pygame.K_ESCAPE:

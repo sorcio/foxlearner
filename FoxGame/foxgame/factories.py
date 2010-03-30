@@ -38,7 +38,7 @@ class ControllerFactory(object):
         """
         Return a new controller instance according to the configuration given.
         """
-        return Controller(parent_pawn, self.brain, self.postfilters)
+        return Controller(parent_pawn, self.brain(), self.postfilters)
 
 
 def load_brain(brain_name, cls_name='Brain'):

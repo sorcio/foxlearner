@@ -8,7 +8,7 @@ class FoxBrain(Brain):
     to follow the hare.
     """
 
-    def update(self, time):
+    def update(self):
         """
         Fax's aim is to follow the hare, so its directions is determined by
         the hare's one.
@@ -22,7 +22,7 @@ class HareBrain(Brain):
     to escape from the fox.
     """
 
-    def update(self, time):
+    def update(self):
         """
         Hare's aim is to get away from the fox, so it should go to the opposite
         position of the Fox.

@@ -46,6 +46,8 @@ class MovingPawn(GameObject):
 
     # algorithm used to move the pawn
     controller = None
+    # pointer to the game
+    game = None
 
     # each MovingPawn object should provide at least one of these constants
     bspeed = None
@@ -131,12 +133,12 @@ class MovingPawn(GameObject):
         """
         newpos = self.pos + self.speed * time_delta
 
-        if 0 < newpos.x < (self.parent.size[0] - self.radius):
+        if 0 < newpos.x < (self.parent.size.x - self.radius):
             self.speed.x = newpos.x
         else:
             self.speed.x = 0
 
-        if 0 < newpos.y < (self.parent.size[1] - self.radius):
+        if 0 < newpos.y < (self.parent.size.y - self.radius):
             self.speed.y = newpos.y
         else:
             self.speed.y = 0
@@ -208,6 +210,8 @@ class Game(object):
         self.hare = Hare(self)
         self.carrot = None  # carrots are placed later
 
+        for pawn in self.pawns:
+            pawn.game = self
         # setting up controllers
         for fox in self.foxes:
             fox.controller = fcfact.new_controller(fox)
@@ -283,7 +287,7 @@ class Game(object):
 
         # moves pawns
         for pawn, move in ((p, p.controller.update(time)) for p in self.pawns):
-            pawn.drive(time, move)
+            pawn.drive(move, time)
 
         # check for collisions
         if self.collision:

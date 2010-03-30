@@ -19,6 +19,8 @@ class Controller(object):
         self.brain = brain
         self.postfilters = postfilters
 
+        self.brain.start_game(self.pawn)
+
 
     def __repr__(self):
         return '<Controller object at {0}>'.format(self.__class__.__module__)
@@ -32,8 +34,8 @@ class Controller(object):
         dir = self.brain.update()
 
         # modify the direction using Postfilter
-        for postfilter in self.postfitlers:
-            dir = postfilter.update(dir)
+        #for postfilter in self.postfilters:
+        #    dir = postfilter.update(dir)
 
         # finally return the new direction
         return dir
@@ -84,7 +86,7 @@ class Brain(object):
         """
         Return the Direction of other respectively to self.
         """
-        return Direction.fromVector(ohpawn.pos - self.pawn.pos)
+        return Direction.from_vector(othpawn.pos - self.pawn.pos)
 
     @property
     def nearest_fox(self):
