@@ -139,7 +139,7 @@ class GUI:
                                               ).get_rect().copy()
         subtitle.centerx = title.centerx
         subtitle.top = title.bottom
-        #self._screen.flip()
+        pygame.display.update()
 
     def wait(self):
         """
@@ -147,8 +147,8 @@ class GUI:
         XXX
         """
         # XXX
-        while pygame.K_SPACE not in (evt.type
-                                     for evt in pygame.event.get()):
+        while pygame.K_SPACE not in (const for const, press in enumerate(
+                                     pygame.key.get_pressed()) if press):
             # XXX
             pass
 
@@ -206,7 +206,7 @@ def main(gfact):
     # setting up the gui
     ui = GUI(gfact)
     # paint a welcome message
-    ui.welcome()
+    #ui.welcome()
     #ui.wait()
 
     # starting app's mainloop
@@ -220,8 +220,14 @@ def main(gfact):
             ui.quit()
 
         # handle user inputs
-        for key in (evt.type for evt in pygame.event.get()):
-            if key == pygame.K_SPACE:
+        for event in pygame.event.get():
+            # handling general events
+            if event.type == pygame.QUIT:
+                ui.quit()
+            #elif ...
+            # handling specific ketyboard events
+            pressed_keys = pygame.key.get_pressed()
+            if pressed_keys[pygame.K_SPACE]:
                 ui.wait()
-            elif key == pygame.K_ESCAPE:
+            elif pressed_keys[pygame.K_ESCAPE]:
                 ui.quit()
