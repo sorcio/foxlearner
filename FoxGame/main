@@ -71,9 +71,9 @@ chfactory = ControllerFactory(hare_brain)       # hare controller factory
 gfactory = GameFactory(cffactory, chfactory)    # game factory
 
 
-# ---- 3. creating game interface
+# ---- 2. creating game interface
 from foxgame.factories import load_ui
 ui_main = load_ui(options.interface)
 
-# ---- 4. launching main
+# ---- 3. launching main
 ui_main(gfactory)
