@@ -19,7 +19,9 @@ class UserBrain(Brain):
     Move a generic pawn using pygame's keyboard events.
     """
 
-    def __init__(self):
+    def __init__(self, *args):
+        super(UserBrain, self).__init__(*args)
+
         self.inputs = {
                 Direction.DOWN : False,
                 Direction.UP : False,
@@ -66,10 +68,10 @@ class GUI:
 
         # Setting up clock
         self.clock = pygame.time.Clock()
-        
+
         # Init tick_time with default value
         self.frame_rate = 30
-        
+
         # Set up keyboard input
         self.pressed_keys = set()
 
@@ -79,43 +81,43 @@ class GUI:
         self.register_state('running')
         self.register_state('paused')
         self.register_state('dead')
-        
+
         self.quitting = False
-        
+
         # First state will be entered in run()
         self.state = None
-    
+
     def do_nothing(self, *args):
         pass
-    
+
     def register_state(self, name):
         methods = (getattr(self, name + '_main', self.do_nothing),
                    getattr(self, name + '_enter', self.do_nothing),
                    getattr(self, name + '_exit', self.do_nothing))
-        
+
         getattr(self, name + '_init', self.do_nothing)()
-        
+
         self.states[name] = methods
-    
+
     def goto_state(self, name):
         new_state = self.states[name]
         print "Entering", name
-        
+
         # Call previous state exit
         if self.state:
             # Exit takes name of the new state
             self.state[2](name)
-        
+
         # Set new state
         self.state = new_state
-        
+
         # Enter the new state
         new_state[1]()
-        
-    
+
+
     def setup_game(self):
         self.game = self.gfact.new_game()
-    
+
     def run(self):
         self.goto_state('welcome')
         while not self.quitting:
@@ -125,7 +127,7 @@ class GUI:
             self.state[0](time)
             self.clock.tick(self.frame_rate)
             pygame.display.update()
-    
+
     def _process_events(self):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -141,7 +143,7 @@ class GUI:
     def _coords(self, vec):
         scaled = vec * self.scale
         return int(scaled.x), int(scaled.y)
-    
+
     def _draw_object(self, pawn):
         """
         Draw a GameObject with circular shape on the screen.
@@ -166,11 +168,11 @@ class GUI:
             self._draw_object(fox)
 
         self._draw_object(self.game.hare)
-    
+
     def arrows_ctl_factory(self):
         self.arrows_ctl = UserBrain()
         return self.arrows_ctl
-    
+
     def update_arrows_ctl(self):
         inp = self.arrows_ctl.inputs # shortcutting
         inp[Direction.UP] = pygame.K_UP in self.pressed_keys
@@ -182,24 +184,24 @@ class GUI:
     #######################
     ### States handlers ###
     #######################
-    
+
     ### welcome ###
-    
+
     def welcome_init(self):
         # Creating title and subtitle surfaces and rects
         title_font = pygame.font.Font(None, 100)
         self.welcome_title = title_font.render('FoxGame!', True, (0, 0, 255))
         self.welcome_title_rect = self.welcome_title.get_rect().copy()
         self.welcome_title_rect.center = self._screen.get_rect().center
-        
+
         subtitle_font = pygame.font.Font(None, 50)
         self.welcome_subtitle = subtitle_font.render(
                         "Press spacebar to start playing", True, (255, 0, 0))
         self.welcome_subtitle_rect = self.welcome_title.get_rect().copy()
         self.welcome_subtitle_rect.centerx = self.welcome_title_rect.centerx
         self.welcome_subtitle_rect.top = self.welcome_title_rect.bottom
-        
-    
+
+
     def welcome_main(self, time):
         self.handle_quit()
 
@@ -210,23 +212,23 @@ class GUI:
         if pygame.K_SPACE in self.pressed_keys:
             self.setup_game()
             self.goto_state('running')
-    
+
     def welcome_enter(self):
         # Slowdown, no animation here!
         self.frame_rate = 5
-    
-    
+
+
     ### running ###
-    
+
     def running_init(self):
         # Setting up arena
         arena = pygame.Rect(0, 0, *self.screen_size)
         arena.center = self._screen.get_rect().center
         self.arena = self._screen.subsurface(arena)
-        
+
     def running_main(self, time):
         self.handle_quit()
-        
+
         self.update_arrows_ctl()
         self.game.tick(time)
         self._paint_gamefield()
@@ -234,12 +236,12 @@ class GUI:
     def running_enter(self):
         # Quick rate for the quick brown fox!
         self.frame_rate = 60
-        
+
         # Fit the drawing to the screen size
-        self.scale = min(self.screen_size[0] / self.game.size.x, 
+        self.scale = min(self.screen_size[0] / self.game.size.x,
                          self.screen_size[1] / self.game.size.y)
-    
-    
+
+
     def handle_quit(self):
         if pygame.K_ESCAPE in self.pressed_keys:
             self.quitting = True
