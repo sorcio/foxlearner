@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+"""
+gamecore.py: basic classes for pawns and game logic (GL).
+"""
 from __future__ import division
 
 from random import randrange
 from itertools import combinations
-from structures import Vector
+from foxgame.structures import Vector
 
 
 class GameObject(object):
@@ -140,7 +143,6 @@ class MovingPawn(GameObject):
         new_y = min(self.parent.size.y - self.radius, new_y)
 
         self.pos = Vector(new_x, new_y)
-
 
     def drive(self, direction, time_delta):
         # This is the only public function in this class.

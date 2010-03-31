@@ -3,15 +3,16 @@
 # values: author, mail, committers, etc.
 
 from __future__ import division
-from  foxgame import foxgame
+
 import pygame
-from math import sin, cos, radians, hypot
-from pygame.gfxdraw import aacircle, filled_circle
-from foxgame.structures import Direction
+
 from collections import defaultdict
 
+from foxgame.structures import Direction
 from foxgame.controllers.controller import Brain
-from operator import or_
+
+from pygame.gfxdraw import aacircle, filled_circle
+
 
 class UserBrain(Brain):
     """

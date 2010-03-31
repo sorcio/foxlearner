@@ -71,6 +71,14 @@ class TestVector(TestCase):
 
         self.assertEqual(p1.distance(p2), triplet[2])
 
+    def test_setattr(self):
+        """
+        A Vector _must_ be an immutable object, so check for it.
+        """
+        self.assertRaises(AttributeError, self.p1.__setattr__, 'x', 1)
+        self.assertRaises(AttributeError, self.p2.__setattr__, 'y', 2)
+
+
 class TestDirection(TestCase):
     """
     Test the Direction class and its constants.
@@ -81,9 +89,7 @@ class TestDirection(TestCase):
         Sure that Directions only accepts value in range [-1; +1].
         """
         try:
-            dir = Direction(Direction.NULL)
-            dir.hor = 1
-            dir.vert = -1
+            dir = Direction(Direction.UPLEFT)
         except ValueError, e:
             self.fail(e)
         self.assertRaises(ValueError, Direction, (2, 2))
@@ -119,3 +125,11 @@ class TestDirection(TestCase):
         self.assertEqual(Direction.from_vector(-vec), Direction.LEFT)
         self.assertEqual(Direction.from_vector(-vec-rvec), Direction.DOWNLEFT)
         self.assertEqual(Direction.from_vector(vec * 0), Direction.NULL)
+
+    def test_setattr(self):
+        """
+        A  Direction _must_ be an immutable object, so check for it.
+        """
+        dir = Direction(Direction.NULL)
+        self.assertRaises(AttributeError, dir.__setattr__, 'hor', 1)
+        self.assertRaises(AttributeError, dir.__setattr__, 'vert', 3)

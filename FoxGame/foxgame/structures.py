@@ -4,15 +4,22 @@ from __future__ import division
 
 from math import hypot
 
-
 class Vector(object):
     """
     A point identified on a cartesian plane.
     """
 
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
+        self.__dict__['x'] = x
+        self.__dict__['y'] = y
+
+    def __setattr__(self, name, value):
+        """
+        Vector is an immutable object, so raises if user tries to
+        reassing components.
+        """
+        if name in 'xy':
+            raise AttributeError('can\'t set attribute.')
 
     def __nonzero__(self):
         """
@@ -90,7 +97,7 @@ class Vector(object):
         return '<Vector(x={0}, y={1})>'.format(self.x, self.y)
 
     def __str__(self):
-        return '({0}, {1})'.format(self.x, self.y)
+        return 'Vector(x={0}, y={1})'.format(self.x, self.y)
 
     def __iter__(self):
         """
@@ -127,8 +134,20 @@ class Direction(object):
 
     def __init__(self, (x, y)):
         #XXX: change in x, y?
-        self.hor = x
-        self.vert = y
+        if (x in (-1, 0, 1) and
+            y in (-1, 0, 1)):
+            self.__dict__['hor'] = x
+            self.__dict__['vert'] = y
+        else:
+            raise ValueError('Direction\'s attributes must be either -1, 0, or 1.')
+
+    def __setattr__(self, name, value):
+        """
+        Direction is an imutable object, sp raises if user tries to
+        reassign components.
+        """
+        if name in ('hor', 'vert'):
+            raise AttributeError('can\'t set attribute.')
 
     def __repr__(self):
         return '<Direction object ({0}, {1})>'.format(self.hor, self.vert)
@@ -155,15 +174,6 @@ class Direction(object):
         Return the opposite position of self.
         """
         return Direction((-self.hor, -self.vert))
-
-    def __setattr__(self, name, value):
-        """
-        Check if value is in range [-1, +1], then assign it to name.
-        """
-        if value not in (-1, 0, 1):
-            raise ValueError('Direction.{0} must be either -1, 0, or 1.'
-                             'Got {1} instead.'.format(name, value))
-        self.__dict__[name] = value
 
     def __eq__(self, other):
         fh, fv = self
