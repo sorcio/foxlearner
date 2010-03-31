@@ -139,7 +139,7 @@ class MovingPawn(GameObject):
         new_y = max(self.radius, new_y)
         new_y = min(self.parent.size.y - self.radius, new_y)
 
-        self.pos = Vector(int(new_x), int(new_y))
+        self.pos = Vector(new_x, new_y)
 
 
     def drive(self, direction, time_delta):
