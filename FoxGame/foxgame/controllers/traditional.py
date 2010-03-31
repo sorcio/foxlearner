@@ -4,7 +4,7 @@ traditional.py: Brains which provide a simple algorithm
                 to move foxes/hare using traditional programming.
 """
 
-from foxgame.controllers.controller import Brain
+from foxgame.controller import Brain
 
 class FoxBrain(Brain):
     """

@@ -9,7 +9,7 @@ import pygame
 from collections import defaultdict
 
 from foxgame.structures import Direction
-from foxgame.controllers.controller import Brain
+from foxgame.controller import Brain
 
 from pygame.gfxdraw import aacircle, filled_circle
 

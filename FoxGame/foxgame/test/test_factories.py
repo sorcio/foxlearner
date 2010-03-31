@@ -3,7 +3,7 @@ from unittest import TestCase
 from foxgame.factories import ControllerFactory, GameFactory
 
 # useful classes for test with isinstance
-from foxgame.controllers.controller import Controller
+from foxgame.controller import Controller
 
 class TestFactory(TestCase):
     """

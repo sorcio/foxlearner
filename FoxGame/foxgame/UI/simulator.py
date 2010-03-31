@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from foxgame.controllers.controller import Brain
+from foxgame.controller import Brain
+
 class RawBrain(Brain):
     """
     Move the pawn using manual inputs from stdin.
     """
     pass
+
 
 class GUI():
     """
