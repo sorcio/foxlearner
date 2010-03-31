@@ -3,7 +3,6 @@
 # values: author, mail, committers, etc.
 
 #from __future__ import division
-from  foxgame import foxgame
 import pygame
 from math import sin, cos, radians, hypot
 from pygame.gfxdraw import aacircle, filled_circle
@@ -39,7 +38,7 @@ class UserBrain(Brain):
 
 class GUI:
     """
-    Provide a GUI to foxgame.Game using pygame.
+    Provide a GUI to gamecore.Game using pygame.
     """
 
     def __init__(self, game_factory):
@@ -83,7 +82,7 @@ class GUI:
     #        pawn.update_track()
     #        trackslen = len(pawn._tracks)
     #        for i, track in enumerate(pawn._tracks):
-    #            self._draw(foxgame.GameObject(track, pawn.radius - 1,
+    #            self._draw(gamecore.GameObject(track, pawn.radius - 1,
     #                                  pawn.color +(100 * i / trackslen)))
 
     def _paint_gamefield(self):

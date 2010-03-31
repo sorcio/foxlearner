@@ -4,7 +4,6 @@ from foxgame.factories import ControllerFactory, GameFactory
 
 # useful classes for test with isinstance
 from foxgame.controllers.controller import Controller
-from foxgame.foxgame import Game
 
 class TestFactory(TestCase):
     """

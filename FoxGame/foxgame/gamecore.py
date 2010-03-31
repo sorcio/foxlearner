@@ -6,7 +6,7 @@ from __future__ import division
 
 from random import randrange
 from itertools import combinations
-from structures import Vector
+from foxgame.structures import Vector
 
 
 class GameObject(object):

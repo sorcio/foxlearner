@@ -1,5 +1,5 @@
-from foxgame import Game
-from controllers.controller import Controller
+from foxgame.gamecore import Game
+from foxgame.controllers.controller import Controller
 
 class GameFactory(object):
     """
