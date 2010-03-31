@@ -72,7 +72,8 @@ class GUI:
         """
         Draw a GameObject with circular shape on the screen.
         """
-        args = self.arena, pawn.pos.x, pawn.pos.y, pawn.radius, pygame.Color(pawn.color)
+        args = (self.arena, int(pawn.pos.x), int(pawn.pos.y),
+                pawn.radius, pygame.Color(pawn.color))
         filled_circle(*args)
         aacircle(*args)
 
@@ -106,7 +107,7 @@ class GUI:
         self._draw(self.game.carrot)
 
         for fox in self.game.foxes:
-            x, y = fox.pos
+            x, y = map(int, fox.pos)
             self._draw(fox)
 
             aacircle(self.arena, x, y, int(hypot(*self.size)//5), (100, )*3)
