@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-#   main.py: the main game.
+"""
+   main.py: the main game.
+"""
 #
 # Copyright 2010 <Michele Orrù>
 #
