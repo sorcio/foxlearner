@@ -19,28 +19,22 @@ class UserBrain(Brain):
     """
 
     accepted_keys = {
-                pygame.K_DOWN : Direction(Direction.DOWN),
-                pygame.K_UP   : Direction(Direction.UP),
+                pygame.K_UP   : Direction(Direction.DOWN),
+                pygame.K_DOWN : Direction(Direction.UP),
                 pygame.K_LEFT : Direction(Direction.LEFT),
                 pygame.K_RIGHT: Direction(Direction.RIGHT)
     }
 
-    def __init__(self, *args):
-        super(UserCtl, self).__init__(*args)
-
-        # add keypress to keey track of previous pressed buttons
-        self.keypress = set()
-
-    def tick(self, time_delta):
-        # update self.keypress
-        for evt in pygame.event.get():
-            if evt.type == pygame.KEYDOWN:
-                self.keypress.add(evt.key)
-            elif evt.type == pygame.KEYUP:
-                self.keypress.remove(evt.key)
+    def update(self):
+        keydir = Direction(Direction.NULL)
+        for key, pressed in enumerate(pygame.key.get_pressed()):
+            if not pressed or key not in self.accepted_keys:
+               continue
+            else:
+                keydir |= self.accepted_keys[key]
 
         # return the direction
-        return reduce(or_, self.keypress)
+        return keydir
 
 
 class GUI:
@@ -99,12 +93,12 @@ class GUI:
         self.arena.fill((0, 0, 0))
 
         # Background grid
-        for x, y in zip(xrange(200, self.size.x, 200),
-                        xrange(200, self.size.y, 200)):
+        for x, y in zip(xrange(0, self.size.x, 200),
+                        xrange(0, self.size.y, 200)):
 
-            pygame.draw.line(self.arena, (100, ) * 2,
+            pygame.draw.aaline(self.arena, (200, ) * 3,
                              (x, 0), (x, self.size.y), 1)
-            pygame.draw.line(self.arena, (100, ) * 2,
+            pygame.draw.aaline(self.arena, (200, ) * 3,
                              (0, y), (self.size.x, y), 1)
 
         # Drawing pawns
@@ -115,13 +109,13 @@ class GUI:
             x, y = fox.pos
             self._draw(fox)
 
-            aacircle(self.arena, x, y, int(hypot(*self.size)/5), (100, )*3)
+            aacircle(self.arena, x, y, int(hypot(*self.size)//5), (100, )*3)
             for deg in xrange(225, 3600, 450):
                 rad = radians(deg // 10)
                 # XXX
                 end = x + cos(rad) * 1000, y + sin(rad) * 1000
-                #pygame.draw.line(self.arena, (100, ) * 2, fox.pos)
-        
+                #<pygame.draw.aaline(self.arena, (100, ) * 3, fox.pos)
+
         self._draw(self.game.hare)
 
     def welcome(self):
@@ -141,7 +135,6 @@ class GUI:
                                               ).get_rect().copy()
         subtitle.centerx = title.centerx
         subtitle.top = title.bottom
-        pygame.display.update()
 
     def wait(self):
         """
@@ -208,6 +201,7 @@ def main(gfact):
 
     # starting app's mainloop
     while True:
+        pygame.display.flip()
         # update time
         tick_time = 60
         clock.tick(tick_time)

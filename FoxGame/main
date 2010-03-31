@@ -68,7 +68,7 @@ hare_brain = load_brain(options.hare, 'HareBrain')
 cffactory = ControllerFactory(fox_brain)        # fox controller factory
 chfactory = ControllerFactory(hare_brain)       # hare controller factory
 
-gfactory = GameFactory((300, 200), fox_factory=cffactory, hare_factory=chfactory)    # game factory
+gfactory = GameFactory((600,400), fox_factory=cffactory, hare_factory=chfactory)    # game factory
 
 
 # ---- 2. creating game interface
