@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from foxgame import foxgame
-
-from controllers.controller import Brain
+from foxgame.controllers.controller import Brain
 class RawBrain(Brain):
     """
     Move the pawn using manual inputs from stdin.
@@ -25,6 +23,17 @@ class GUI():
         #  shortcuts
         self.size = self.game.size
 
+    def tick(self, time):
+        return self.game.tick(time)
+
 
 def main(gfact):
-    pass
+    # setting up the gui
+    ui = GUI(gfact)
+    try:
+        while True:
+            if not ui.tick(60):
+                print 'game ended.'
+                break
+    except KeyboardInterrupt:
+        exit()
