@@ -29,8 +29,6 @@ __date__ = '15-02-2010'
 __license__ = 'GPLv2'
 
 from optparse import OptionParser
-from sys import exit
-
 
 # parsing arguments from stdin
 parser = OptionParser(usage='%prog [interface] [algorithm] [options]',
@@ -68,7 +66,9 @@ hare_brain = load_brain(options.hare, 'HareBrain')
 cffactory = ControllerFactory(fox_brain)        # fox controller factory
 chfactory = ControllerFactory(hare_brain)       # hare controller factory
 
-gfactory = GameFactory((600,400), fox_factory=cffactory, hare_factory=chfactory)    # game factory
+gfactory = GameFactory((600, 400),
+                       fox_factory=cffactory,
+                       hare_factory=chfactory)  # game factory
 
 
 # ---- 2. creating game interface
