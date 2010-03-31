@@ -178,14 +178,8 @@ class GUI:
         """
         if self.game.tick(time) == False:
             # draw a blank circle
-            # XXX
-            collfox = self.game.foxes[0]
-            blankc = foxgame.GameObject(pos=collfox.pos,
-                                        radius=(self.game.hare.radius +
-                                                collfox.radius) * 2)
-            blankc.color = pygame.Color('WHITE')
+            # XXX: drawing suppressed, that was terrible
 
-            self._draw(blankc)
             alive = False
         else:
             alive = True
