@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
+
 from math import hypot
 
 class Vector(object):
@@ -59,6 +60,12 @@ class Vector(object):
         return Vector(self.x//other, self.y//other)
 
     __truediv__ = __div__
+
+    def __neg__(self):
+        """
+        -(x, y) <==> (-x, -y)
+        """
+        return -1 * self
 
     def __eq__(self, other):
         """
@@ -150,28 +157,34 @@ class Direction(object):
         Print the direction using cool Unicode characters.
         """
         dirs = {
-                self.UP       : '↑',
-                self.DOWN     : '↓',
-                self.RIGHT    : '→',
-                self.LEFT     : '←',
-                self.UPRIGHT  : '↗',
-                self.UPLEFT   : '↖',
-                self.DOWNRIGHT: '↘',
-                self.DOWNLEFT : '↙',
-                self.NULL     : ' '
+                self.UP       : 'N',
+                self.DOWN     : 'S',
+                self.RIGHT    : 'W',
+                self.LEFT     : 'L',
+                self.UPRIGHT  : 'NW',
+                self.UPLEFT   : 'NE',
+                self.DOWNRIGHT: 'SW',
+                self.DOWNLEFT : 'SE',
+                self.NULL     : '-'
         }
         return dirs[self.hor, self.vert]
 
     def __neg__(self):
-	"""
-	Return the opposite position of self.
-	"""
-	return Direction((-self.hor, -self.vert))
+        """
+        Return the opposite position of self.
+        """
+        return Direction((-self.hor, -self.vert))
 
     def __eq__(self, other):
         fh, fv = self
         sh, sv = other
         return fh == sh and fv == sv
+
+    def __or__(self, other):
+        fh, fv = self
+        sh, sv = other
+        return Direction((fh | sh if fh != -sh else 0,
+                          fv | sv if fv != -sv else 0))
 
     def __ne__(self, other):
         return not self == other
@@ -187,16 +200,20 @@ class Direction(object):
         yield self.vert
 
     @classmethod
-    def fromVector(cls, vec):
+    def from_vector(cls, vec):
         """
         Convert a Vector into a Direction object.
         """
-        def sign(x):
-            if x > 0:
-                return +1
-            if x < 0:
-                return -1
-            else:
-                return 0
         return Direction(sign(x) for x in vec)
 
+
+def sign(num):
+    """
+    sgn function
+    """
+    if num > 0:
+        return +1
+    if num < 0:
+        return -1
+    else:
+        return 0

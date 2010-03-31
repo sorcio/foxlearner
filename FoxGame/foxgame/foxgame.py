@@ -1,10 +1,12 @@
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
+"""
+gamecore.py: basic classes for pawns and game logic (GL).
+"""
 from __future__ import division
 
-from math import hypot
-from collections import namedtuple
 from random import randrange
-from structures import Vector, Direction
+from itertools import combinations
+from structures import Vector
 
 
 class GameObject(object):
@@ -15,14 +17,14 @@ class GameObject(object):
     radius = None
     color = None
 
-    def __init__(self, parent, pos=(0, 0)):
+    def __init__(self, parent, pos=Vector(0, 0)):
         """
         Arguments:
          parent is the Game class which contains the GameObject;
          pos    is the Vectior class which identifies the GameObject's position
         """
         self.parent = parent
-        self.pos = Vector(*pos)
+        self.pos = pos
 
     def __eq__(self, other):
         """
@@ -33,11 +35,10 @@ class GameObject(object):
 
     def distance(self, other):
         """
-        Return the discance between two circles.
+        Return the distance between between the two closest
+        points in the circumference.
         """
-        fx, fy = self.pos
-        sx, sy = other.pos
-        dist = hypot(fx-sx, fy-sy) - (self.radius+other.radius)
+        dist = self.pos.distance(other.pos) - self.radius - other.radius
         return dist if dist > 0 else 0
 
 
@@ -48,6 +49,14 @@ class MovingPawn(GameObject):
 
     # algorithm used to move the pawn
     controller = None
+    # pointer to the game
+    game = None
+
+    # each MovingPawn object should provide at least one of these constants
+    bspeed = None
+    baccel = None
+    brake = None
+    radius = None
 
     def __init__(self, *args):
         super(MovingPawn, self).__init__(*args)
@@ -55,7 +64,8 @@ class MovingPawn(GameObject):
         self.acc = Vector(0, 0)
         self.speed = Vector(0, 0)
 
-    def _compute_acc(self, d, speed):
+
+    def _compute_acc(self, dpoint, speed):
         """
         Compute the acceleration on a single component accordingly
         to move intention.
@@ -64,26 +74,26 @@ class MovingPawn(GameObject):
               acceleration update, because we want different dynamics
               on acceleration or brake.
         """
-        if d == 0:  # Want to stop...
-            if speed > 0:             # ...while moving forwards
+        if dpoint == 0:  # Want to stop...
+            if speed > 0:                 # ...while moving forwards
                 return -self.brake
-            if speed < 0:             # ...while moving backwards
+            if speed < 0:                 # ...while moving backwards
                 return self.brake
-            else:                     # ...but I am still already
+            else:                         # ...but I am still already
                 return 0
-        else:       # Want to move...
-            if d * speed >= 0:        # ...in the same direction
-                return d * self.baccel
-            if d * self.speed < 0:    # ...in the opposite direction
-                return d * self.brake
+        else:            # Want to move...
+            if dpoint * speed >= 0:       # ...in the same direction
+                return dpoint * self.baccel
+            if dpoint * speed < 0:         # ...in the opposite direction
+                return dpoint * self.brake
 
 
-    def _update_acc(self, dir):
+    def _update_acc(self, direction):
         """
         Update acceleration according to the Direction dir.
         """
-        push = Vector(self._compute_acc(dir.hor, self.speed.x),
-                      self._compute_acc(dir.vert, self.speed.y))
+        push = Vector(self._compute_acc(direction.hor, self.speed.x),
+                      self._compute_acc(direction.vert, self.speed.y))
 
         if push:
             norm_factor = max(self.baccel, self.brake) / abs(push)
@@ -119,27 +129,24 @@ class MovingPawn(GameObject):
         else:
             self.speed = Vector(0, 0)
 
+
     def _update_pos(self, time_delta):
         """
         Update position keeping the same speed and acceleration.
         """
-        newpos = self.pos + self.speed * time_delta
+        new_x, new_y = self.pos + self.speed * time_delta
 
-        if 0 < newpos.x < self.parent.size[0] - self.radius:
-            sp_x = newpos.x
-        else:
-            sp_x = 0
+        new_x = max(self.radius, new_x)
+        new_x = min(self.parent.size.x - self.radius, new_x)
 
-        if 0 < newpos.y < self.parent.size[1] - self.radius:
-            sp_y = newpos.y
-        else:
-            sp_y = 0
+        new_y = max(self.radius, new_y)
+        new_y = min(self.parent.size.y - self.radius, new_y)
 
-        self.speed = Vector(sp_x, sp_y)
+        self.pos = Vector(new_x, new_y)
 
-    def drive(self, dir, time_delta):
+    def drive(self, direction, time_delta):
+        # This is the only public function in this class.
         """
-        This is the only public function in this class.
         Updates position, speed, acceleration according to time and direction.
         For each one of these points call the correspective private method:
          self._update_acc   => update acceleration
@@ -148,7 +155,7 @@ class MovingPawn(GameObject):
                                NOTE: this function may change pawn's speed
         """
         # update game physic
-        self._update_acc(dir)
+        self._update_acc(direction)
         self._update_speed(time_delta)
         self._update_pos(time_delta)
         # return dir
@@ -174,15 +181,17 @@ class Hare(MovingPawn):
     brake = 240.0
     radius = 15
     color = 'GREY'
-    # carrots eaten
+
+    # a attribute of any Hare istance counting carrots eaten
     carrots = 0
+
 
 class Carrot(GameObject):
     """
     A carrot.
     """
     radius = 10
-    color = "ORANGE"
+    color = 'ORANGE'
 
 
 class Game(object):
@@ -199,11 +208,14 @@ class Game(object):
         # create pawns
         self.foxes = tuple(Fox(self) for x in xrange(foxnum))
         self.hare = Hare(self)
+        self.carrot = None  # carrots are placed later
 
+        for pawn in self.pawns:
+            pawn.game = self
         # setting up controllers
         for fox in self.foxes:
-            fcfact.new_controller(fox)
-        hcfact.new_controller(self.hare)
+            fox.controller = fcfact.new_controller(fox)
+        self.hare.controller = hcfact.new_controller(self.hare)
 
         # place objects
         self.place_carrot()
@@ -212,37 +224,36 @@ class Game(object):
         # starting up time elapsed
         self.time_elapsed = 0
 
+    def _collision(self, pawn1, pawn2):
+        """
+        Find if there's a collision between obj1 and obj2:
+         so just checks if their distance is the sum of radius.
+        """
+        return pawn1.distance(pawn2) == 0
+
+    @property
+    def collision(self):
+        """
+        Return True if there's any collision between any fox and the hare,
+        False otherwise.
+        """
+        return any(self._collision(self.hare, fox) for fox in self.foxes)
+
     def _randompoint(self):
         """
         Return a random point.
         """
         return Vector(randrange(self.size.x), randrange(self.size.y))
 
-    def _collision(self, pawn1, pawn2):
-        """
-        Find if there's a collision between obj1 and obj2:
-         so just checks if their distance < sum of radius.
-        """
-        return pawn1.distance(pawn2) == 0
-
-    @property
-    def collision(self):
-        return any(self._collision(self.hare, fox) for fox in self.foxes)
-
     def _randomlocate(self, mindist):
         """
         Put the hare and the fox into random positions.
         """
-        # fixed position for the hare
-        self.hare.pos = self._randompoint()
+        obj_combs = combinations(self.pawns, 2)
 
-        while any(x.distance(y) < mindist
-                  for y in self.objects
-                  for x in self.objects
-                  if x != y):
-            for f in self.foxes:
-                f.pos = self._randompoint()
-
+        while not all(x.distance(y) >= mindist for x, y in obj_combs):
+            for pawn in self.pawns:
+                pawn.pos = self._randompoint()
     @property
     def objects(self):
         """
@@ -263,16 +274,25 @@ class Game(object):
 
     def place_carrot(self):
         """
-        Place a carrot the arena in a random point.
+        Place a new carrot on the board in a random point.
         """
         self.carrot = Carrot(self, self._randompoint())
 
-    def tick(time):
+    def tick(self, time):
         """
+        Updates the game according to the time given.
         """
+        # updates total time
         self.time_elapsed += time
 
-        for p, move in ((p, p.controller.update(time)) for p in self.pawns):
-            p.drive(time, move)
+        # moves pawns
+        for pawn, move in [(p, p.controller.update(time)) for p in self.pawns]:
+            pawn.drive(move, time)
 
-        # return True if collision?
+        # check for collisions
+        if self.collision:
+            return False
+        elif self._collision(self.hare, self.carrot):
+            self.hare.carrots += 1
+            self.place_carrot()
+            return True

@@ -42,14 +42,21 @@ class TestVector(TestCase):
         zipped = zip(self.fcoords, self.scoords)
         n = randrange(1, 200)
 
+        # testing __add__
         self.assertEqual(self.p1 + self.p2,
                          map(sum, zipped))
+        # testing __sub__
         self.assertEqual(self.p1 - self.p2,
                          map(lambda x: sub(*x), zipped))
+        # testing __mul__
         self.assertEqual(n * self.p1,
                          map(lambda x: x*n, self.p1))
+        # testing __div__
         self.assertEqual(self.p2 / n,
                          map(lambda x: x/n, self.p2))
+        #testing __neg__
+        self.assertEqual(-self.p1,
+                         map(lambda x: -x, self.p1))
 
     def test_abs(self):
         self.assertEqual(abs(self.p1), hypot(self.p1.x, self.p1.y))
@@ -100,9 +107,24 @@ class TestDirection(TestCase):
         self.assertEqual(dir, dir)
         self.assertNotEqual(dir, Direction(Direction.DOWN))
 
+    def test_or(self):
+        self.assertEqual(Direction(Direction.UP) | Direction(Direction.DOWN),
+                         Direction.NULL)
+        self.assertEqual(Direction(Direction.UP) | Direction(Direction.LEFT),
+                         Direction.UPLEFT)
     def test_bool(self):
         self.assertTrue(Direction(Direction.DOWNLEFT))
         self.assertFalse(Direction(Direction.NULL))
+
+    def test_from_vector(self):
+        vec = Vector(10, 0)
+        rvec = Vector(0, 10)
+
+        self.assertEqual(Direction.from_vector(vec), Direction.RIGHT)
+        self.assertEqual(Direction.from_vector(vec+rvec), Direction.UPRIGHT)
+        self.assertEqual(Direction.from_vector(-vec), Direction.LEFT)
+        self.assertEqual(Direction.from_vector(-vec-rvec), Direction.DOWNLEFT)
+        self.assertEqual(Direction.from_vector(vec * 0), Direction.NULL)
 
     def test_setattr(self):
         """
@@ -111,5 +133,3 @@ class TestDirection(TestCase):
         dir = Direction(Direction.NULL)
         self.assertRaises(AttributeError, dir.__setattr__, 'hor', 1)
         self.assertRaises(AttributeError, dir.__setattr__, 'vert', 3)
-
-
