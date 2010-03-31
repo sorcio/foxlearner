@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-
+"""
+controller.py: basic clases for managing inputs (CTL).
+"""
 from foxgame.structures import Direction
 
 class Controller(object):
