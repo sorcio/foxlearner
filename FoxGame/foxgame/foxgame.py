@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+gamecore.py: basic classes for pawns and game logic (GL).
+"""
 from __future__ import division
 
 from random import randrange
