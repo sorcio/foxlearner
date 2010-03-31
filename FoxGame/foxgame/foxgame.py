@@ -131,17 +131,15 @@ class MovingPawn(GameObject):
         """
         Update position keeping the same speed and acceleration.
         """
-        newpos = self.pos + self.speed * time_delta
+        new_x, new_y = self.pos + self.speed * time_delta
 
-        if 0 < newpos.x < (self.parent.size.x - self.radius):
-            self.speed.x = newpos.x
-        else:
-            self.speed.x = 0
+        new_x = max(self.radius, new_x)
+        new_x = min(self.parent.size.x - self.radius, new_x)
 
-        if 0 < newpos.y < (self.parent.size.y - self.radius):
-            self.speed.y = newpos.y
-        else:
-            self.speed.y = 0
+        new_y = max(self.radius, new_y)
+        new_y = min(self.parent.size.y - self.radius, new_y)
+            
+        self.pos = Vector(new_x, new_y)
 
 
     def drive(self, direction, time_delta):
@@ -286,7 +284,7 @@ class Game(object):
         self.time_elapsed += time
 
         # moves pawns
-        for pawn, move in ((p, p.controller.update(time)) for p in self.pawns):
+        for pawn, move in [(p, p.controller.update(time)) for p in self.pawns]:
             pawn.drive(move, time)
 
         # check for collisions
