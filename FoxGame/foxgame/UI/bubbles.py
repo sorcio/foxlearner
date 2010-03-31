@@ -176,7 +176,7 @@ class GUI:
         Updates GL according to time, and redraw the screen,
          doing necessary updates if any collision.
         """
-        if self.game.tick(time) is False:
+        if self.game.tick(time) == False:
             # draw a blank circle
             # XXX
             collfox = self.game.foxes[0]
@@ -215,8 +215,11 @@ def main(gfact):
     # starting app's mainloop
     while True:
         # update time
-        time = clock.get_time() / 1000
-        clock.tick(time)
+        tick_time = 60
+        clock.tick(tick_time)
+
+        #XXX: fix with future division
+        time = float(clock.get_time() / 1000.0)
 
         # update the board
         if not ui.tick(time):
