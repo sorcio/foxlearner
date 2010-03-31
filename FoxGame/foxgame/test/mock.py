@@ -1,14 +1,16 @@
+from foxgame.structures import Vector
+
 class FakeGame(object):
     """
     A simple class used to test GameObject and MovingPawn class
     providing all necessary attributes, so without using the __real__
     game class.
     """
-    def __init__(self, size):
+    def __init__(self, size=(300, 200)):
         """
         Set up fake attributes.
         """
-        self.size = size
+        self.size = Vector(*size)
 
 
 class FakeController(object):

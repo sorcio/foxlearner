@@ -10,7 +10,7 @@ from foxgame.structures import Vector, Direction
 from foxgame.test.mock import FakeGame, FakeController
 
 
-NoneGame = FakeGame(None)
+NoneGame = FakeGame()
 
 
 class TestGameObject(TestCase):
@@ -107,10 +107,12 @@ class TestMovingPawn(TestCase):
               so testing this function is equal to testing the MovingPawn.drive
               function.
         """
-        mpawn = Fox(FakeGame((100, 100)), Vector(0, 0))
+        game = FakeGame((100, 100))
+        startpos = Vector(50, 50)
+        mpawn = Fox(game, startpos)
 
         mpawn.drive(Direction(Direction.NULL), 60)
-        self.assertEqual(mpawn.pos, (0, 0))
+        self.assertEqual(mpawn.pos, startpos)
 
 
 class TestGame(TestCase):
