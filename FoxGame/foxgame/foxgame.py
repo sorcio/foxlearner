@@ -81,7 +81,7 @@ class MovingPawn(GameObject):
         else:            # Want to move...
             if dpoint * speed >= 0:       # ...in the same direction
                 return dpoint * self.baccel
-            if dpoint  * self.speed < 0:  # ...in the opposite direction
+            if dpoint * speed < 0:         # ...in the opposite direction
                 return dpoint * self.brake
 
 
