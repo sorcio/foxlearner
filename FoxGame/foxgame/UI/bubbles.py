@@ -121,6 +121,8 @@ class GUI:
                 # XXX
                 end = x + cos(rad) * 1000, y + sin(rad) * 1000
                 #pygame.draw.line(self.arena, (100, ) * 2, fox.pos)
+        
+        self._draw(self.game.hare)
 
     def welcome(self):
         """
@@ -190,6 +192,7 @@ class GUI:
 
         # redrawing screen
         self._paint_gamefield()
+        pygame.display.flip()
 
         return alive
 
