@@ -174,7 +174,30 @@ class GUI:
         for fox in self.game.foxes:
             self._draw_object(fox)
 
+    def _paint_hud(self):
+        # Head-up display
+        score_msg = "Score %03d00" % self.game.hare.carrots
+        score = self.hud_font.render(score_msg, True, (255, 255, 255))
+        score_rect = score.get_rect().copy()
+        score_rect.top = self._screen.get_rect().top + 5
+        score_rect.right = self._screen.get_rect().right - 5
+        
+        time_msg = "%4.2f" % self.game.time_elapsed
+        time = self.hud_font.render(time_msg, True, (255, 255, 255))
+        time_rect = time.get_rect().copy()
+        time_rect.top = self._screen.get_rect().top + 5
+        time_rect.left = self._screen.get_rect().left + 5
 
+        clean_rect = pygame.Rect(time_rect.left, 
+                                 time_rect.top,
+                                 self._screen.get_rect().width,
+                                 max(time_rect.height, score_rect.height)
+                                 )
+                                 
+        pygame.draw.rect(self._screen, self.background_color, clean_rect)
+
+        self._screen.blit(score, score_rect)
+        self._screen.blit(time, time_rect)
 
     def rescale_arena(self):
         # Redraw the background (behind the arena)
@@ -242,6 +265,10 @@ class GUI:
 
 
     ### running ###
+    
+    def running_init(self):
+        self.hud_font = pygame.font.Font(None, 32)
+        self.score_rect = None
 
     def running_main(self, time):
         self.handle_quit()
@@ -252,7 +279,9 @@ class GUI:
 
         self.update_arrows_ctl()
         alive = self.game.tick(time)
+        
         self._paint_gamefield()
+        self._paint_hud()
 
         if alive == False:
             self.goto_state('dead')
@@ -269,6 +298,7 @@ class GUI:
     def dead_main(self, time):
         self.handle_quit()
         self._paint_gamefield()
+        self._paint_hud()
 
         if pygame.K_SPACE in self.hit_keys:
             self.goto_state('welcome')
@@ -290,6 +320,7 @@ class GUI:
     def paused_main(self, time):
         self.handle_quit()
         self._paint_gamefield()
+        self._paint_hud()
 
         self.arena.blit(self.paused_text, self.paused_text_rect)
         self.arena.blit(self.paused_subtext, self.paused_subtext_rect)
