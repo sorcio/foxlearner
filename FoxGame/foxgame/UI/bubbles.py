@@ -82,6 +82,8 @@ class GUI:
 
         # First state will be entered in run()
         self.state = None
+        
+        self.arrows_ctl = None
 
     def do_nothing(self, *args):
         pass
@@ -170,11 +172,12 @@ class GUI:
         return self.arrows_ctl
 
     def update_arrows_ctl(self):
-        inp = self.arrows_ctl.inputs # shortcutting
-        inp[Direction.UP] = pygame.K_UP in self.pressed_keys
-        inp[Direction.DOWN] = pygame.K_DOWN in self.pressed_keys
-        inp[Direction.LEFT] = pygame.K_LEFT in self.pressed_keys
-        inp[Direction.RIGHT] = pygame.K_RIGHT in self.pressed_keys
+        if self.arrows_ctl:
+            inp = self.arrows_ctl.inputs # shortcutting
+            inp[Direction.UP] = pygame.K_UP in self.pressed_keys
+            inp[Direction.DOWN] = pygame.K_DOWN in self.pressed_keys
+            inp[Direction.LEFT] = pygame.K_LEFT in self.pressed_keys
+            inp[Direction.RIGHT] = pygame.K_RIGHT in self.pressed_keys
 
 
     #######################
