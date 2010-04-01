@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 traditional.py: Brains which provide a simple algorithm
                 to move foxes/hare using traditional programming.

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 structures.py: core classes Vector and Direction.
 """

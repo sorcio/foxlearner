@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from __future__ import division
 from unittest import TestCase
 from foxgame.factories import ControllerFactory
