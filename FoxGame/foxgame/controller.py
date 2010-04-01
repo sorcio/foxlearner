@@ -9,7 +9,7 @@ class Controller(object):
     for specific controllers.
     """
 
-    def __init__(self, pawn, brain, *postfilters):
+    def __init__(self, pawn, brain, postfilters):
         """
         Set up basic values.
         """
@@ -35,8 +35,8 @@ class Controller(object):
         dir = self.brain.update()
 
         # modify the direction using Postfilter
-        #for postfilter in self.postfilters:
-        #    dir = postfilter.update(dir)
+        for postfilter in self.postfilters:
+            dir = postfilter.update(dir)
 
         # finally return the new direction
         return dir
