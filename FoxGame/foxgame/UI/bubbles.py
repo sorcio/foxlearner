@@ -304,7 +304,7 @@ class GUI:
     def dead_enter(self):
         self.frame_rate = 5
 
-    ### dead ###
+    ### paused ###
     
     def paused_init(self):
         title_font = pygame.font.Font(None, 50)
@@ -315,7 +315,6 @@ class GUI:
         self.paused_subtext = subtitle_font.render('Press spacebar to continue', True, (255, 0, 0))
         self.paused_subtext_rect = self.paused_subtext.get_rect().copy()
         
-    
     def paused_main(self, time):
         self.handle_quit()
         self._paint_gamefield()
