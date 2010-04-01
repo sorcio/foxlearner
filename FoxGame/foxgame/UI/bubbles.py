@@ -22,7 +22,7 @@ def draw_circle_gfx(surf, radius, color, pos_x, pos_y):
     """
     args = surf, pos_x, pos_y, int(radius), pygame.Color(color)
     filled_circle(*args)
-    aacircle(*args)    
+    aacircle(*args)
 
 def draw_circle_old(surf, radius, color, pos_x, pos_y):
     """
@@ -36,7 +36,7 @@ if use_gfxdraw:
     draw_circle = draw_circle_gfx
 else:
     draw_circle = draw_circle_old
-    
+
 
 class UserBrain(Brain):
     """
@@ -70,7 +70,7 @@ class GUI:
     accepted_keys = (pygame.K_DOWN, pygame.K_UP,
                      pygame.K_LEFT, pygame.K_RIGHT,
                      pygame.K_SPACE, pygame.K_ESCAPE)
-    
+
     background_color = (50, 50, 50)
 
     def __init__(self, game_factory, screen_size=(800, 600)):
@@ -112,7 +112,7 @@ class GUI:
 
         # First state will be entered in run()
         self.state = None
-        
+
         self.arrows_ctl = None
 
     def do_nothing(self, *args):
@@ -173,8 +173,8 @@ class GUI:
     def _coords(self, vec):
         scaled = vec * self.scale
         return int(scaled.x), int(scaled.y)
-    
-    
+
+
     def _draw_object(self, pawn):
         """
         Draw a GameObject with circular shape on the screen.
@@ -188,22 +188,22 @@ class GUI:
         """
         # Fill self.arena of black
         self.arena.fill((0, 0, 0))
-        
+
         if self.game.collision:
             draw_circle(self.arena, self.game.hare.radius * self.scale * 3,
                         'WHITE', *self._coords(self.game.hare.pos))
-            
+
         # Drawing pawns
         #self._draw_tracks()
         self._draw_object(self.game.carrot)
 
         self._draw_object(self.game.hare)
-        
+
         for fox in self.game.foxes:
             self._draw_object(fox)
-            
 
-    
+
+
     def rescale_arena(self):
         # Redraw the background (behind the arena)
         self._screen.fill(self.background_color)
@@ -211,13 +211,13 @@ class GUI:
         # Fit the drawing to the screen size
         self.scale = min(self.screen_size[0] / self.game.size.x,
                          self.screen_size[1] / self.game.size.y)
-        
+
         arena_width = self.scale * self.game.size.x
         arena_height = self.scale * self.game.size.y
-        
+
         arena = pygame.Rect(0, 0, arena_width, arena_height)
         arena.center = self._screen.get_rect().center
-        self.arena = self._screen.subsurface(arena)        
+        self.arena = self._screen.subsurface(arena)
 
     def arrows_ctl_factory(self):
         self.arrows_ctl = UserBrain()
@@ -281,7 +281,7 @@ class GUI:
         self.update_arrows_ctl()
         alive = self.game.tick(time)
         self._paint_gamefield()
-        
+
         if alive == False:
             self.goto_state('dead')
 
@@ -291,45 +291,45 @@ class GUI:
 
         self.rescale_arena()
 
-    
+
     ### dead ###
-    
+
     def dead_main(self, time):
         self.handle_quit()
         self._paint_gamefield()
-        
+
         if pygame.K_SPACE in self.hit_keys:
             self.goto_state('welcome')
-    
+
     def dead_enter(self):
         self.frame_rate = 5
 
     ### paused ###
-    
+
     def paused_init(self):
         title_font = pygame.font.Font(None, 50)
         self.paused_text = title_font.render('Game paused!', True, (150, 150, 255))
         self.paused_text_rect = self.paused_text.get_rect().copy()
-        
+
         subtitle_font = pygame.font.Font(None, 30)
         self.paused_subtext = subtitle_font.render('Press spacebar to continue', True, (255, 0, 0))
         self.paused_subtext_rect = self.paused_subtext.get_rect().copy()
-        
+
     def paused_main(self, time):
         self.handle_quit()
         self._paint_gamefield()
-        
+
         self.arena.blit(self.paused_text, self.paused_text_rect)
         self.arena.blit(self.paused_subtext, self.paused_subtext_rect)
 
         if pygame.K_SPACE in self.hit_keys:
             self.goto_state('running')
-    
+
     def paused_enter(self):
         self.frame_rate = 5
 
         self.paused_text_rect.center = self.arena.get_rect().center
-        
+
         self.paused_subtext_rect.centerx = self.paused_text_rect.centerx
         self.paused_subtext_rect.top = self.paused_text_rect.bottom
 
@@ -344,6 +344,7 @@ def main(gfact):
     App's main function.
     """
     pygame.init()
+    pygame.display.set_icon(pygame.image.load('images/foxgame.ico'))
 
     ui = GUI(gfact)
     ui.run()
