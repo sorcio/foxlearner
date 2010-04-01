@@ -88,7 +88,8 @@ chfactory = ControllerFactory(hare_brain, hare_pfilters)
 # game factory
 gfactory = GameFactory((600, 400),
                        fox_factory=cffactory,
-                       hare_factory=chfactory)  # game factory
+                       hare_factory=chfactory,
+                       foxnum=options.foxes_num)
 
 
 # ---- 2. creating game interface
