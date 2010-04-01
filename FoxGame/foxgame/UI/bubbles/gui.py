@@ -316,7 +316,7 @@ def main(gfact):
     App's main function.
     """
     pygame.init()
-    pygame.display.set_icon(pygame.image.load('images/foxgame.ico'))
+    pygame.display.set_icon(pygame.image.load('images/foxgame.png'))
 
     ui = GUI(gfact)
     ui.run()
