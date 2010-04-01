@@ -6,6 +6,8 @@ import pygame
 
 from draw import draw_circle, draw_lines, draw_line
 
+from foxgame.structures import Vector
+
 class BZManager(object):
 
     def __init__(self, gui):
@@ -20,11 +22,19 @@ class BZManager(object):
         return self.contexts[name]
     
     def new_context(self, name='frame'):
-        if d.has_key(name):
+        if self.contexts.has_key(name):
             del self.contexts[name]
         return self.get_context(name)
-
     
+    def draw_all_under(self):
+        for ctx in self.contexts.itervalues():
+            ctx.draw_under()
+
+    def draw_all_over(self):
+        for ctx in self.contexts.itervalues():
+            ctx.draw_over()
+
+
 class BZPainter(object):
     """
     Painter for brainz interface.
@@ -60,3 +70,7 @@ class BZPainter(object):
         color = self.color
         gameobj = gameobj()
         draw_circle(surf, game_obj.radius/2, color, gameobj.pos, scale=scale)
+    
+    @property
+    def dir_len(self):
+        return self.gui.screen_size[0] / 6

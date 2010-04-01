@@ -136,7 +136,9 @@ class GUI(BubbleMachine):
         """
         # Fill self.arena of black
         self.arena.fill((0, 0, 0))
-
+        
+        self.bz.draw_all_under()
+        
         if self.game.collision:
             draw_circle(self.arena, self.game.hare.radius * self.scale * 3,
                         'WHITE', *self._coords(self.game.hare.pos))
@@ -149,6 +151,8 @@ class GUI(BubbleMachine):
 
         for fox in self.game.foxes:
             self._draw_object(fox)
+
+        self.bz.draw_all_over()
 
     def _paint_hud(self):
         # Head-up display
@@ -248,6 +252,8 @@ class GUI(BubbleMachine):
 
     def running_main(self, time):
         self.handle_quit()
+
+        self.bz.new_context()
 
         if pygame.K_SPACE in self.hit_keys:
             self.goto_state('paused')

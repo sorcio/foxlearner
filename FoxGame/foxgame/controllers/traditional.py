@@ -16,7 +16,12 @@ class FoxBrain(Brain):
         Fax's aim is to follow the hare, so its directions is determined by
         the hare's one.
         """
-        return self.towards(self.game.hare)
+        mydir = self.towards(self.game.hare)
+        
+        draw = self.game.brainz_draw()
+        draw.vector(self.pawn, mydir)
+        
+        return mydir
 
 
 class HareBrain(Brain):

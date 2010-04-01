@@ -27,7 +27,10 @@ class GameFactory(object):
         """
         Return a new Game instance according to the configuration given.
         """
-        return Game(self.size, self.harefact, self.foxfact, self.foxnum)
+        game = Game(self.size, self.harefact, self.foxfact, self.foxnum)
+        if hasattr(self, 'brainz_get'):
+            game.brainz_draw = self.brainz_get
+        return game
 
 
 class ControllerFactory(object):

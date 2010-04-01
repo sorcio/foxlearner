@@ -21,29 +21,29 @@ from math import hypot
 from foxgame.structures import Vector, Direction
 
 
-def arg_V(self, vec):
+def arg_V(vec):
     """
     Interprets vec as a point and returns a callable
     bounded to vec value as a x,y-tuple.
     """
-    if hasattr('x', vec) and hasattr('y', vec):
+    if hasattr(vec, 'x') and hasattr(vec, 'y'):
         # Vector-like class
         point = vec.x, vec.y
         return lambda : point
-    if hasattr('pos', vec):
+    if hasattr(vec, 'pos'):
         # Object with pos
-        return lambda : arg_V(vec.pos)
-    if hasattr('__iter__', vec):
+        return lambda : arg_V(vec.pos)()
+    if hasattr(vec, '__iter__'):
         # Iterable with two elements
         p_x, p_y = vec
         return lambda : (p_x, p_y)
     if callable(vec):
         # Callable
-        return lambda : arg_V(vec())
+        return lambda : arg_V(vec())()
     raise TypeError("argument is not a point")
 
 
-def arg_Vector(self, vec, dir_len=50):
+def arg_Vector(vec, dir_len=50):
     """
     Interprets vec as a Vector and returns a callable
     bounded to vec value.
@@ -53,21 +53,21 @@ def arg_Vector(self, vec, dir_len=50):
     if isinstance(vec, Direction):
         vec = Vector(vec.hor, vec.vert)
         return lambda : vec * dir_len
-    if hasattr('x', vec) and hasattr('y', vec):
+    if hasattr(vec, 'x') and hasattr(vec, 'y'):
         # Vector-like class
         vec = Vector(vec.x, vec.y)
         return lambda : vec
-    if hasattr('__iter__', vec):
+    if hasattr(vec, '__iter__'):
         # Iterable with two elements
         vec = Vector(*vec)
         return lambda : vec        
     if callable(vec):
         # Callable
-        return lambda : arg_Vector(vec())
+        return lambda : arg_Vector(vec())()
     raise TypeError("argument is not a vector")
     
 
-def arg_R(self, radius):
+def arg_R(radius):
     """
     Interprets radius as a radius measure and returns a callable
     bounded to radius value.
@@ -78,19 +78,19 @@ def arg_R(self, radius):
         return lambda : radius
     if hasattr(radius, 'radius'):
         # Object with radius
-        return lambda : arg_R(radius.radius)
-    if hasattr('__iter__', vec):
+        return lambda : arg_R(radius.radius)()
+    if hasattr(vec, '__iter__'):
         # Iterable with two elements
         p_x, p_y = vec
         radius = hypot(p_x, p_y)
         return lambda : radius
     if callable(radius):
         # Callable
-        return lambda : arg_R(radius())
+        return lambda : arg_R(radius())()
     raise TypeError("argument is not a radius")
 
 
-def arg_Object(self, obj):
+def arg_Object(obj):
     if callable(obj):
         return obj
     else:
@@ -112,24 +112,28 @@ class DrawingContext(object):
         queue = self.queue_under if 'under' in kwargs else self.queue_over
         posV = arg_V(pos)
         radiusR = arg_R(radius)
-        queue.append((painter.circle, (posV, radiusR, kwargs)))
+        queue.append((self.painter.circle, (posV, radiusR, kwargs)))
     
     def line(self, *points, **kwargs):
         queue = self.queue_under if 'under' in kwargs else self.queue_over
         pointsV = [arg_V(p) for p in points]
-        queue.append((painter.line, pointsV + kwargs))
+        queue.append((self.painter.line, (pointsV, kwargs)))
     
     def vector(self, pos, vec, **kwargs):
         queue = self.queue_under if 'under' in kwargs else self.queue_over
         posV = arg_V(pos)
         vecVector = arg_Vector(vec, self.painter.dir_len)
-        queue.append((painter.vector, (posV, vecVector, kwargs)))
+        queue.append((self.painter.vector, (posV, vecVector, kwargs)))
     
     def highlight(self, gameobj, **kwargs):
         queue = self.queue_under if 'under' in kwargs else self.queue_over
         objO = arg_Object(gameobj)
-        queue.append((painter.highlight, (objO, kwargs)))
+        queue.append((self.painter.highlight, (objO, kwargs)))
         
-    def draw(self):
-        for cmd, args in queue:
+    def draw_under(self):
+        for cmd, args in self.queue_under:
+            cmd(*args)
+
+    def draw_over(self):
+        for cmd, args in self.queue_over:
             cmd(*args)
