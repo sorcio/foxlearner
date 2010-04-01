@@ -9,6 +9,7 @@ from foxgame.structures import Direction
 from foxgame.controller import Brain
 
 from draw import draw_circle
+from machine import BubbleMachine
 
 class UserBrain(Brain):
     """
@@ -35,7 +36,7 @@ class UserBrain(Brain):
         return keydir
 
 
-class GUI:
+class GUI(BubbleMachine):
     """
     Provide a GUI to foxgame.Game using pygame.
     """
@@ -49,6 +50,7 @@ class GUI:
         """
         Set up the game window.
         """
+        super(GUI, self).__init__()
         # setting up attributes
         #  factories
         self.gfact = game_factory
@@ -74,7 +76,8 @@ class GUI:
         self.hit_keys = []
 
         # Setting up state machine
-        self.states = dict()
+        self.statefuls.append('main')
+        
         self.register_state('welcome')
         self.register_state('running')
         self.register_state('paused')
@@ -82,38 +85,7 @@ class GUI:
 
         self.quitting = False
 
-        # First state will be entered in run()
-        self.state = None
-
         self.arrows_ctl = None
-
-    def do_nothing(self, *args):
-        pass
-
-    def register_state(self, name):
-        methods = (getattr(self, name + '_main', self.do_nothing),
-                   getattr(self, name + '_enter', self.do_nothing),
-                   getattr(self, name + '_exit', self.do_nothing))
-
-        getattr(self, name + '_init', self.do_nothing)()
-
-        self.states[name] = methods
-
-    def goto_state(self, name):
-        new_state = self.states[name]
-        print "Entering", name
-
-        # Call previous state exit
-        if self.state:
-            # Exit takes name of the new state
-            self.state[2](name)
-
-        # Set new state
-        self.state = new_state
-
-        # Enter the new state
-        new_state[1]()
-
 
     def setup_game(self):
         self.game = self.gfact.new_game()
@@ -124,7 +96,7 @@ class GUI:
             self._process_events()
             time = float(self.clock.get_time()) / 1000.0
             # Execute state main handler
-            self.state[0](time)
+            self.state_main(time)
             pygame.display.update()
             self.clock.tick(self.frame_rate)
 
