@@ -10,6 +10,7 @@ from foxgame.controller import Brain
 
 from draw import draw_circle
 from machine import BubbleMachine
+from bzdraw import BZManager, BZPainter
 
 class UserBrain(Brain):
     """
@@ -86,6 +87,9 @@ class GUI(BubbleMachine):
         self.quitting = False
 
         self.arrows_ctl = None
+        
+        self.bz = BZManager(self)
+        self.gfact.brainz_get = self.bz.get_context
 
     def setup_game(self):
         self.game = self.gfact.new_game()
