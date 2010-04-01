@@ -109,6 +109,7 @@ class TestMovingPawn(TestCase):
               so testing this function is equal to testing the MovingPawn.drive
               function.
         """
+        self.mpawn.pos = Vector(100, 100)
         startpos = self.mpawn.pos
 
         self.mpawn.drive(Direction(Direction.NULL), 60)
