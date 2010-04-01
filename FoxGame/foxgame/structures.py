@@ -132,12 +132,13 @@ class Direction(object):
     DOWNLEFT  = (-1,  1)
     NULL      = ( 0,  0)
 
-    def __init__(self, (x, y)):
-        #XXX: change in x, y?
-        if (x in (-1, 0, 1) and
-            y in (-1, 0, 1)):
-            self.__dict__['hor'] = x
-            self.__dict__['vert'] = y
+    def __init__(self, dir):
+        h, v = dir
+
+        if (h in (-1, 0, 1) and
+            v in (-1, 0, 1)):
+            self.__dict__['hor'] = h
+            self.__dict__['vert'] = v
         else:
             raise ValueError('Direction\'s attributes must be either -1, 0, or 1.')
 
