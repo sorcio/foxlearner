@@ -98,7 +98,7 @@ class Brain(object):
                    key=lambda x: x.pos.distance(self.game.hare.pos))
 
 
-def PostFilter(object):
+class PostFilter(object):
     """
     A PostFilter is.. [TODO]
     XXX: review

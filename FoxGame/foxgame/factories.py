@@ -35,7 +35,7 @@ class ControllerFactory(object):
     Once incapsulated, this class let the user use one or more controller.
     """
 
-    def __init__(self, brain, *postfilters):
+    def __init__(self, brain, postfilters):
         self.brain = brain
         self.postfilters = postfilters
 
@@ -43,7 +43,8 @@ class ControllerFactory(object):
         """
         Return a new controller instance according to the configuration given.
         """
-        return Controller(parent_pawn, self.brain(), self.postfilters)
+        postfilters = [pfilter() for pfilter in self.postfilters]
+        return Controller(parent_pawn, self.brain(), postfilters)
 
 
 def load_brain(brain_name, cls_name='Brain'):
@@ -58,6 +59,21 @@ def load_brain(brain_name, cls_name='Brain'):
     brain_module = getattr(controllers, brain_name)
     brain = getattr(brain_module, cls_name)
     return brain
+
+def load_postfilters(pfilter_names):
+    postfilters = []
+    if not pfilter_names:
+        return postfilters
+    for pfilter_name in pfilter_names:
+        if not '.' in pfilter_name:
+            raise AttributeError, 'invalid postfilter format'
+        module, cls_name = pfilter_name.split('.')
+        # XXX: throwing ImportError (and AttributeError), is this right?
+        controllers = __import__('foxgame.controllers.' + module).controllers
+        pfilter_module = getattr(controllers, module)
+        pfilter = getattr(pfilter_module, cls_name)
+        postfilters.append(pfilter)
+    return postfilters
 
 
 def load_ui(ui_name, main_name='main'):

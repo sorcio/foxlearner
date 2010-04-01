@@ -35,38 +35,57 @@ from optparse import OptionParser
 parser = OptionParser(usage='%prog [interface] [algorithm] [options]',
                       version='%prog {0}'.format(__version__))
 
-parser.add_option('-v', '--verbose', dest='verbose',
-                  default=False, action='store_true',
-                  help='lots of debug messages')
-parser.add_option('-i', '--iface', dest='interface',
+# parser.add_option('-v', '--verbose', dest='verbose',
+#                   default=False, action='store_true',
+#                   help='lots of debug messages')
+# parser.add_option('-r', '--record', dest='record',
+#                   default='', action='store',
+#                   metavar='FILE', help='record gameplay')
+
+
+# interface
+parser.add_option('-i', '--ui', dest='interface',
                   default='bubbles', action='store',
-                  metavar='INTERFACE', help='select game interface')
-parser.add_option('--fox', dest='fox',
+                  metavar='GUI', help='select game interface')
+# brain
+parser.add_option('--fox-brain', dest='fox_brain',
+                  default='traditional', action='store',
+                  metavar='RAIN', help='select ai algorithm for the fox')
+parser.add_option('--hare-brain', dest='hare_brain',
                   default='none', action='store',
-                  metavar='FOXBRAIN', help='select ai algorithm for the fox')
-parser.add_option('--hare', dest='hare',
-                  default='none', action='store',
-                  metavar='HAREBRAIN', help='select ai algorithm for the hare')
+                  metavar='BRAIN', help='select ai algorithm for the hare')
+# postfilter
+parser.add_option('--fox-pfilter', dest='fox_pfilters',
+                  action='append',
+                  metavar='POSTFILTER', help='select postfilter for the fox')
+parser.add_option('--hare-pfilter', dest='hare_pfilters',
+                  action='append',
+                  metavar='POSTFILTER', help='select postfilter for the hare')
+#
 parser.add_option('--nfoxes', dest='foxes_num',
                   type='int', default=1,
                   metavar='NUM', help='select the number of foxes in the game')
-parser.add_option('-r', '--record', dest='record',
-                  default='', action='store',
-                  metavar='FILE', help='record gameplay')
 
 (options, args) = parser.parse_args()
 
 
 # ---- 1. setting up factories
 from foxgame.factories import GameFactory, ControllerFactory
-from foxgame.factories import load_brain
+from foxgame.factories import load_brain, load_postfilters
 
-fox_brain = load_brain(options.fox, 'FoxBrain')
-hare_brain = load_brain(options.hare, 'HareBrain')
+# fox and hare brains
+fox_brain = load_brain(options.fox_brain, 'FoxBrain')
+hare_brain = load_brain(options.hare_brain, 'HareBrain')
 
-cffactory = ControllerFactory(fox_brain)        # fox controller factory
-chfactory = ControllerFactory(hare_brain)       # hare controller factory
+# fox and hare postfilters
+fox_pfilters = load_postfilters(options.fox_pfilters)
+hare_pfilters = load_postfilters(options.hare_pfilters)
 
+# fox and hare controller factories
+cffactory = ControllerFactory(fox_brain, fox_pfilters)
+chfactory = ControllerFactory(hare_brain, hare_pfilters)
+
+# game factory
 gfactory = GameFactory((600, 400),
                        fox_factory=cffactory,
                        hare_factory=chfactory)  # game factory
