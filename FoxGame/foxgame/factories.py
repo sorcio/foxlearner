@@ -1,5 +1,10 @@
+"""
+factories.py: factory classes used to store and configure controllers.
+"""
+
 from foxgame.gamecore import Game
 from foxgame.controller import Controller
+
 
 class GameFactory(object):
     """

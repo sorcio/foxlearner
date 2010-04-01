@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-
+"""
+simulator.py: a masochistic GUI. Used mainly for tests/controller learning
+"""
 from foxgame.controller import Brain
 
 class RawBrain(Brain):

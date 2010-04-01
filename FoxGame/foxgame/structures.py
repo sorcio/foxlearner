@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+structures.py: core classes Vector and Direction.
+"""
 
 from __future__ import division
-
 from math import hypot
-
 class Vector(object):
     """
     A point identified on a cartesian plane.

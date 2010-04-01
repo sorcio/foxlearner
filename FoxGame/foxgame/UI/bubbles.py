@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
-# license
-# values: author, mail, committers, etc.
+"""
+bubbles.py: simple funny interface with pygame using bubbles.
+"""
 
 from __future__ import division
-
 import pygame
-
-from collections import defaultdict
-
 from foxgame.structures import Direction
 from foxgame.controller import Brain
-
 from pygame.gfxdraw import aacircle, filled_circle
 
 

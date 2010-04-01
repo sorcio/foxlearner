@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+foxgame/: root directory: contains Tests, UI, Controllers, and Game Logic.
+"""
 
 __author__ = 'Michele Orrù'
 __mail__ = 'maker.py@gmail.com'
