@@ -24,9 +24,9 @@
 
 __author__ = 'Michele Orrù'
 __mail__ = 'maker.py@gmail.com'
-__appname__ = 'foxlearner'
-__version__ = 0.1
-__date__ = '15-02-2010'
+__appname__ = 'FoxGame'
+__version__ = 0.5
+__date__ = '01-04-2010'
 __license__ = 'GPLv2'
 
 from optparse import OptionParser

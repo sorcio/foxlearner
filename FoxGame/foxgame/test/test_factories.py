@@ -1,9 +1,8 @@
 from unittest import TestCase
-
 from foxgame.factories import ControllerFactory, GameFactory
-
-# useful classes for test with isinstance
+from foxgame.gamecore import Game, Fox
 from foxgame.controller import Controller
+from foxgame.controllers.traditional import FoxBrain
 
 class TestFactory(TestCase):
     """
@@ -12,16 +11,18 @@ class TestFactory(TestCase):
     intances are created correctly
     """
 
-    def test_controller_factory(self):
-        cfactory = ControllerFactory(None, None)
+    def setUp(self):
+        self.hfactory = ControllerFactory(FoxBrain)
+        self.ffactory = ControllerFactory(FoxBrain)
 
-        self.assertTrue(isinstance(cfactory.new_controller(None),
+    def test_controller_factory(self):
+        cfactory = ControllerFactory(FoxBrain)
+        mpawn = Fox(None)
+
+        self.assertTrue(isinstance(cfactory.new_controller(mpawn),
                                    Controller))
 
     def test_game_factory(self):
-        hfactory = ControllerFactory(None, None)
-        ffactory = ControllerFactory(None, None)
-        gfactory = GameFactory((300, 300), hfactory, ffactory)
-
+        gfactory = GameFactory((300, 300), self.hfactory, self.ffactory)
         self.assertTrue(isinstance(gfactory.new_game(),
                                    Game))

@@ -52,7 +52,7 @@ class MovingPawn(GameObject):
     # pointer to the game
     game = None
 
-    # each MovingPawn object should provide at least one of these constants
+    # each MovingPawn object should provide _all_ of these constants
     bspeed = None
     baccel = None
     brake = None
