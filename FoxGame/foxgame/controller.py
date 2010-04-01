@@ -36,7 +36,7 @@ class Controller(object):
 
         # modify the direction using Postfilter
         for postfilter in self.postfilters:
-            dir = postfilter.update(dir)
+            dir = postfilter.update(dir, time)
 
         # finally return the new direction
         return dir
