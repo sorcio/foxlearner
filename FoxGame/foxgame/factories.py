@@ -35,9 +35,9 @@ class ControllerFactory(object):
     Once incapsulated, this class let the user use one or more controller.
     """
 
-    def __init__(self, brain, postfilters):
+    def __init__(self, brain, postfilters=None):
         self.brain = brain
-        self.postfilters = postfilters
+        self.postfilters = postfilters or tuple()
 
     def new_controller(self, parent_pawn):
         """

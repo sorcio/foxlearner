@@ -16,15 +16,18 @@ class SlowDown(PostFilter):
     A simple postfilter wich slows down the dirrection given.
     """
 
-    delay = 100
+    delay = 1
 
     def __init__(self, *args):
         super(SlowDown, self).__init__(*args)
 
         self.nextmove = Direction(Direction.NULL)
-        self.slow = 0
+        self.skipped = self.delay
 
     def update(self, direction, time):
-        self.slow = (self.slow * 1.5) % self.delay
-
-        return Direction(Direction.NULL) if self.slow != 0 else direction
+        if self.skipped > 0:
+            self.skipped -= 1
+            return Direction(Direction.NULL)
+        else:
+            self.skipped = self.delay
+            return direction
