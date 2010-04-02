@@ -161,13 +161,13 @@ class GUI(BubbleMachine):
         # Head-up display
         score_msg = 'Score: %03d00' % self.game.hare.carrots
         score = self.hud_font.render(score_msg, True, (255, 255, 255))
-        score_rect = score.get_rect().copy()
+        score_rect = score.get_rect()
         score_rect.top = self._screen.get_rect().top + 5
         score_rect.right = self._screen.get_rect().right - 5
 
         time_msg = 'Time Elapsed: %4.2f' %self.game.time_elapsed
         time = self.hud_font.render(time_msg, True, (255, 255, 255))
-        time_rect = time.get_rect().copy()
+        time_rect = time.get_rect()
         time_rect.top = self._screen.get_rect().top + 5
         time_rect.left = self._screen.get_rect().left + 5
 
@@ -241,7 +241,7 @@ class GUI(BubbleMachine):
         subtitle_font = pygame.font.Font(None, 50)
         self.welcome_subtitle = subtitle_font.render(
                         'Press spacebar to start playing', True, (255, 0, 0))
-        self.welcome_subtitle_rect = self.welcome_subtitle.get_rect().copy()
+        self.welcome_subtitle_rect = self.welcome_subtitle.get_rect()
         self.welcome_subtitle_rect.centerx = self.welcome_title_rect.centerx
         self.welcome_subtitle_rect.top = self.welcome_title_rect.bottom
 
@@ -315,11 +315,11 @@ class GUI(BubbleMachine):
     def paused_init(self):
         title_font = pygame.font.Font(None, 50)
         self.paused_text = title_font.render('Game paused!', True, (150, 150, 255))
-        self.paused_text_rect = self.paused_text.get_rect().copy()
+        self.paused_text_rect = self.paused_text.get_rect()
 
         subtitle_font = pygame.font.Font(None, 30)
         self.paused_subtext = subtitle_font.render('Press spacebar to continue', True, (255, 0, 0))
-        self.paused_subtext_rect = self.paused_subtext.get_rect().copy()
+        self.paused_subtext_rect = self.paused_subtext.get_rect()
 
     def paused_main(self, time):
         self.handle_quit()
