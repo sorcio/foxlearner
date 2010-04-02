@@ -146,3 +146,17 @@ class PostFilter(object):
         self.pawn = self.game = None
 
 
+    #########################################################################
+    ## here starts common functions useful for an easy implementation of a ##
+    ## new controller PostFilter.                                          ##
+    #########################################################################
+
+    @property
+    def nearest_fox(self):
+        """
+        Return the nearest fox respectively to the hare.
+        """
+        return min(self.game.foxes,
+                   key=lambda x: x.pos.distance(self.game.hare.pos))
+
+

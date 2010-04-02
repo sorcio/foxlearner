@@ -235,7 +235,7 @@ class GUI(BubbleMachine):
         # Creating title and subtitle surfaces and rects
         title_font = pygame.font.Font(None, 100)
         self.welcome_title = title_font.render('FoxGame!', True, (0, 0, 255))
-        self.welcome_title_rect = self.welcome_title.get_rect().copy()
+        self.welcome_title_rect = self.welcome_title.get_rect()
         self.welcome_title_rect.center = self._screen.get_rect().center
 
         subtitle_font = pygame.font.Font(None, 50)
