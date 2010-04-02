@@ -277,7 +277,7 @@ class GUI(BubbleMachine):
         if pygame.K_SPACE in self.hit_keys:
             self.goto_state('paused')
             return
-        
+
         if pygame.K_d in self.hit_keys:
             self.toggle_bzdebug()
 
@@ -295,7 +295,7 @@ class GUI(BubbleMachine):
         self.frame_rate = 60
 
         self.rescale_arena()
-    
+
 
     ### dead ###
 

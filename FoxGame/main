@@ -30,18 +30,12 @@ __date__ = '01-04-2010'
 __license__ = 'GPLv2'
 
 from optparse import OptionParser
+import logging
+
 
 # parsing arguments from stdin
 parser = OptionParser(usage='%prog [interface] [algorithm] [options]',
                       version='%prog {0}'.format(__version__))
-
-# parser.add_option('-v', '--verbose', dest='verbose',
-#                   default=False, action='store_true',
-#                   help='lots of debug messages')
-# parser.add_option('-r', '--record', dest='record',
-#                   default='', action='store',
-#                   metavar='FILE', help='record gameplay')
-
 
 # interface
 parser.add_option('-i', '--ui', dest='interface',
@@ -61,12 +55,40 @@ parser.add_option('--fox-pfilter', dest='fox_pfilters',
 parser.add_option('--hare-pfilter', dest='hare_pfilters',
                   action='append',
                   metavar='POSTFILTER', help='select postfilter for the hare')
-#
+# foxes number
 parser.add_option('-n', '--nfoxes', dest='foxes_num',
                   type='int', default=1,
                   metavar='NUM', help='select the number of foxes in the game')
 
+# log file
+parser.add_option('--flog', dest='flog_level',
+                  type='int', default=4,
+                  metavar='NUM', help='select the verbosity level for the log file')
+# log stderr
+parser.add_option('-v', '--verbose', dest='slog_level',
+                  type='int', default=0,
+                  metavar='NUM', help='select the verbosity level')
+
 (options, args) = parser.parse_args()
+
+# logger
+
+#  file logger
+logging.basicConfig(level=(5 - options.flog_level)*10,
+                    format='%(asctime)s %(name)-30s %(levelname)-8s %(message)s',
+                    datefmt='%m-%d %H:%M',
+                    filename='{0}.log'.format(__appname__),
+                    filemode='w')
+
+#  stderr logger
+console = logging.StreamHandler()
+console.setLevel((5 - options.slog_level)*10)
+# set a format which is simpler for console use
+formatter = logging.Formatter('%(name)-30s: %(levelname)-8s %(message)s')
+# tell the handler to use this format
+console.setFormatter(formatter)
+# add the handler to the root logger
+logging.getLogger('').addHandler(console)
 
 
 # ---- 1. setting up factories
@@ -97,4 +119,5 @@ from foxgame.factories import load_ui
 ui_main = load_ui(options.interface)
 
 # ---- 3. launching main
+logging.info('Starting game')
 ui_main(gfactory)
