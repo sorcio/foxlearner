@@ -327,9 +327,11 @@ def main(gfact):
     """
     App's main function.
     """
+    from foxgame import __path__
+    path = __path__[0].split('foxgame')[0]
+
     pygame.init()
-    # FIXME: warning ! if os.curdir != Foxgame/ fails
-    pygame.display.set_icon(pygame.image.load('images/foxgame.png'))
+    pygame.display.set_icon(pygame.image.load(path+'/images/foxgame.png'))
 
     ui = GUI(gfact)
     ui.run()
