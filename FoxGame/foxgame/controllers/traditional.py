@@ -17,7 +17,7 @@ class FoxBrain(Brain):
         Fax's aim is to follow the hare, so its directions is determined by
         the hare's one.
         """
-        route = (self.game.hare.pos + self.game.hare.speed/2) - self.pawn.pos
+        route = self.game.hare.pos + self.game.hare.speed/2 - self.pawn.pos
         return self.navigate(route/abs(route))
 
 
@@ -27,7 +27,7 @@ class HareBrain(Brain):
     to escape from the fox.
     """
 
-    threshold = 80
+    threshold = 100
 
     def update(self):
         """
@@ -39,5 +39,5 @@ class HareBrain(Brain):
                fox in self.game.foxes):
             return self.towards(self.game.carrot.pos)
         else:
-            return -self.navigate(self.nearest_fox.pos)
-        # return self.navigate((self.nearest_fox.pos - self.pawn.pos) - self.game.carrot.pos)
+            route = self.nearest_fox.pos + self.nearest_fox.speed/2 - self.pawn.pos
+            return -self.navigate(route/abs(route))
