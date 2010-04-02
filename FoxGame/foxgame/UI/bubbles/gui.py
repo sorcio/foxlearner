@@ -43,7 +43,8 @@ class GUI(BubbleMachine):
     """
     accepted_keys = (pygame.K_DOWN, pygame.K_UP,
                      pygame.K_LEFT, pygame.K_RIGHT,
-                     pygame.K_SPACE, pygame.K_ESCAPE)
+                     pygame.K_SPACE, pygame.K_ESCAPE,
+                     pygame.K_d)
 
     background_color = (50, 50, 50)
 
@@ -92,7 +93,9 @@ class GUI(BubbleMachine):
         self.gfact.brainz_get = self.bz.get_context
 
     def setup_game(self):
+        self.bz.remove_context('bzdebug')
         self.game = self.gfact.new_game()
+        self.activate_bzdebug()
 
     def run(self):
         self.goto_state('welcome')
@@ -205,6 +208,22 @@ class GUI(BubbleMachine):
             inp[Direction.LEFT] = pygame.K_LEFT in self.pressed_keys
             inp[Direction.RIGHT] = pygame.K_RIGHT in self.pressed_keys
 
+    def toggle_bzdebug(self):
+        self.bzdebug = not self.bzdebug
+        self.activate_bzdebug()
+
+    def activate_bzdebug(self):
+        from functools import partial
+        if not self.bzdebug:
+            self.bz.remove_context('bzdebug')
+        else:
+            brainz = self.bz.get_context('bzdebug')
+            for gameobj in self.game.objects:
+                if hasattr(gameobj, 'speed'):
+                    brainz.vector(gameobj, lambda x=gameobj:x.speed, color=(255,0,0))
+                if hasattr(gameobj, 'acc'):
+                    brainz.vector(gameobj, lambda x=gameobj:x.acc/10, color=(0,0,255))
+
 
     #######################
     ### States handlers ###
@@ -248,6 +267,7 @@ class GUI(BubbleMachine):
     def running_init(self):
         self.hud_font = pygame.font.Font(None, 32)
         self.score_rect = None
+        self.bzdebug = False
 
     def running_main(self, time):
         self.handle_quit()
@@ -257,6 +277,9 @@ class GUI(BubbleMachine):
         if pygame.K_SPACE in self.hit_keys:
             self.goto_state('paused')
             return
+        
+        if pygame.K_d in self.hit_keys:
+            self.toggle_bzdebug()
 
         self.update_arrows_ctl()
         alive = self.game.tick(time)
@@ -272,7 +295,7 @@ class GUI(BubbleMachine):
         self.frame_rate = 60
 
         self.rescale_arena()
-
+    
 
     ### dead ###
 

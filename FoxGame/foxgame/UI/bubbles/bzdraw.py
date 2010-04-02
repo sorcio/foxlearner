@@ -22,9 +22,13 @@ class BZManager(object):
         return self.contexts[name]
     
     def new_context(self, name='frame'):
+        self.remove_context(name)
+        return self.get_context(name)
+    
+    def remove_context(self, name):
         if self.contexts.has_key(name):
             del self.contexts[name]
-        return self.get_context(name)
+        
     
     def draw_all_under(self):
         for ctx in self.contexts.itervalues():
@@ -47,19 +51,19 @@ class BZPainter(object):
     def circle(self, pos, radius, options):
         surf = self.gui.arena
         scale = self.gui.scale
-        color = self.color
+        color = options.get('color', self.color)
         draw_circle(surf, radius(), color, *pos(), scale=scale)
     
     def line(self, points, options):
         surf = self.gui.arena
         scale = self.gui.scale
-        color = self.color
+        color = options.get('color', self.color)
         draw_lines(surf, color, False, (p() for p in points), scale=scale)
     
     def vector(self, pos, vec, options):
         surf = self.gui.arena
         scale = self.gui.scale
-        color = self.color
+        color = options.get('color', self.color)
         start = Vector(*pos())
         end = start + vec()
         draw_line(surf, color, start.x, start.y, end.x, end.y, scale=scale)
@@ -67,7 +71,7 @@ class BZPainter(object):
     def highlight(self, gameobj, options):
         surf = self.gui.arena
         scale = self.gui.scale
-        color = self.color
+        color = options.get('color', self.color)
         gameobj = gameobj()
         draw_circle(surf, game_obj.radius/2, color, gameobj.pos, scale=scale)
     
