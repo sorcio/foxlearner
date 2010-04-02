@@ -84,22 +84,17 @@ class Brain(object):
     ## new controller brain.                                               ##
     #########################################################################
 
-    def towards(self, other):
+    def towards(self, target):
         """
-        Return the Direction of other respectively to self.
+        Return the Direction of target respectively to self.
         """
-        return Direction.from_vector(other.pos - self.pawn.pos)
+        return Direction.from_vector(target - self.pawn.pos)
 
-    def navigate(self, other):
+    def navigate(self, target):
         """
-        Fax's aim is to follow the hare, so its directions is determined by
-        the hare's one.
+        Return the most officent Direction of target respectively to self
         """
-        dist_mod = (other.pos + other.speed/2) - self.pawn.pos
-        route = self.pawn.bspeed * (dist_mod/abs(dist_mod)) - self.pawn.speed
-
-        return  Direction.from_vector(route)
-
+        return Direction.from_vector(self.pawn.bspeed*target - self.pawn.speed)
 
     @property
     def nearest_fox(self):
