@@ -94,7 +94,6 @@ class Brain(object):
         """
         Return the most efficient Direction of target respectively to self
         """
-        self.game.brainz_draw().line(self.pawn, target, color=(255,255,255))
         route = target - self.pawn.pos
         correction = self.pawn.bspeed*route.normalize() - self.pawn.speed
         return Direction.from_vector(correction)
