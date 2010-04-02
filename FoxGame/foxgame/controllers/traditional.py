@@ -4,6 +4,7 @@ traditional.py: Brains which provide a simple algorithm
 """
 
 from foxgame.controller import Brain
+from foxgame.structures import Vector, Direction
 
 class FoxBrain(Brain):
     """
@@ -16,12 +17,7 @@ class FoxBrain(Brain):
         Fax's aim is to follow the hare, so its directions is determined by
         the hare's one.
         """
-        mydir = self.towards(self.game.hare)
-        
-        draw = self.game.brainz_draw()
-        draw.vector(self.pawn, mydir)
-        
-        return mydir
+        return self.navigate(self.game.hare)
 
 
 class HareBrain(Brain):
@@ -35,4 +31,4 @@ class HareBrain(Brain):
         Hare's aim is to get away from the fox, so it should go to the opposite
         position of the Fox.
         """
-        return -self.towards(self.nearest_fox)
+        return -self.navigate(self.nearest_fox)

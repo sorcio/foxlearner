@@ -79,15 +79,27 @@ class Brain(object):
         # removing old session
         self.pawn = self.game = None
 
-    ##                                                                   ##
-    # here starts common functions useful for an easy implementation of a #
-    # new controller brain.                                               #
-    ##                                                                   ##
-    def towards(self, othpawn):
+    #########################################################################
+    ## here starts common functions useful for an easy implementation of a ##
+    ## new controller brain.                                               ##
+    #########################################################################
+
+    def towards(self, other):
         """
         Return the Direction of other respectively to self.
         """
-        return Direction.from_vector(othpawn.pos - self.pawn.pos)
+        return Direction.from_vector(other.pos - self.pawn.pos)
+
+    def navigate(self, other):
+        """
+        Fax's aim is to follow the hare, so its directions is determined by
+        the hare's one.
+        """
+        dist_mod = (other.pos + other.speed/2) - self.pawn.pos
+        route = self.pawn.bspeed * (dist_mod/abs(dist_mod)) - self.pawn.speed
+
+        return  Direction.from_vector(route)
+
 
     @property
     def nearest_fox(self):
