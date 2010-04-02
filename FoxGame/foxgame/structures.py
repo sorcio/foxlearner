@@ -16,7 +16,7 @@ class Vector(object):
     def __setattr__(self, name, value):
         """
         Vector is an immutable object, so raises if user tries to
-        reassing components.
+        reassign components.
         """
         if name in 'xy':
             raise AttributeError('can\'t set attribute.')
@@ -92,6 +92,13 @@ class Vector(object):
         Return the euclidean distance.
         """
         return hypot(self.x, self.y)
+    
+    def normalize(self, norm=1):
+        """
+        Returns a Vector with same direction and specified norm.
+        """
+        factor = norm / abs(self)
+        return Vector(self.x * factor, self.y * factor)
 
     def __repr__(self):
         return '<Vector(x={0}, y={1})>'.format(self.x, self.y)

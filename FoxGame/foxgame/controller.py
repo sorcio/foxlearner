@@ -92,9 +92,11 @@ class Brain(object):
 
     def navigate(self, target):
         """
-        Return the most officent Direction of target respectively to self
+        Return the most efficient Direction of target respectively to self
         """
-        return Direction.from_vector(self.pawn.bspeed*target - self.pawn.speed)
+        route = target - self.pawn.pos
+        correction = self.pawn.bspeed*route.normalize() - self.pawn.speed
+        return Direction.from_vector(correction)
 
     @property
     def nearest_fox(self):
