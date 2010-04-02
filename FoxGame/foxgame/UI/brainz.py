@@ -40,7 +40,7 @@ def arg_V(vec):
     if callable(vec):
         # Callable
         return lambda : arg_V(vec())()
-    raise TypeError("argument is not a point")
+    raise TypeError('argument is not a point')
 
 
 def arg_Vector(vec, dir_len=50):
@@ -60,12 +60,12 @@ def arg_Vector(vec, dir_len=50):
     if hasattr(vec, '__iter__'):
         # Iterable with two elements
         vec = Vector(*vec)
-        return lambda : vec        
+        return lambda : vec
     if callable(vec):
         # Callable
         return lambda : arg_Vector(vec())()
-    raise TypeError("argument is not a vector")
-    
+    raise TypeError('argument is not a vector')
+
 
 def arg_R(radius):
     """
@@ -87,7 +87,7 @@ def arg_R(radius):
     if callable(radius):
         # Callable
         return lambda : arg_R(radius())()
-    raise TypeError("argument is not a radius")
+    raise TypeError('argument is not a radius')
 
 
 def arg_Object(obj):
@@ -101,35 +101,35 @@ class DrawingContext(object):
     """
     Manages drawing commands calls.
     """
-    
+
     def __init__(self, painter, options=None):
         self.queue_under = []
         self.queue_over = []
         self.painter = painter
         self.options = options
-        
+
     def circle(self, pos, radius, **kwargs):
         queue = self.queue_under if 'under' in kwargs else self.queue_over
         posV = arg_V(pos)
         radiusR = arg_R(radius)
         queue.append((self.painter.circle, (posV, radiusR, kwargs)))
-    
+
     def line(self, *points, **kwargs):
         queue = self.queue_under if 'under' in kwargs else self.queue_over
         pointsV = [arg_V(p) for p in points]
         queue.append((self.painter.line, (pointsV, kwargs)))
-    
+
     def vector(self, pos, vec, **kwargs):
         queue = self.queue_under if 'under' in kwargs else self.queue_over
         posV = arg_V(pos)
         vecVector = arg_Vector(vec, self.painter.dir_len)
         queue.append((self.painter.vector, (posV, vecVector, kwargs)))
-    
+
     def highlight(self, gameobj, **kwargs):
         queue = self.queue_under if 'under' in kwargs else self.queue_over
         objO = arg_Object(gameobj)
         queue.append((self.painter.highlight, (objO, kwargs)))
-        
+
     def draw_under(self):
         for cmd, args in self.queue_under:
             cmd(*args)

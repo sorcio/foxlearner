@@ -78,7 +78,7 @@ class GUI(BubbleMachine):
 
         # Setting up state machine
         self.statefuls.append('main')
-        
+
         self.register_state('welcome')
         self.register_state('running')
         self.register_state('paused')
@@ -87,7 +87,7 @@ class GUI(BubbleMachine):
         self.quitting = False
 
         self.arrows_ctl = None
-        
+
         self.bz = BZManager(self)
         self.gfact.brainz_get = self.bz.get_context
 
@@ -136,9 +136,9 @@ class GUI(BubbleMachine):
         """
         # Fill self.arena of black
         self.arena.fill((0, 0, 0))
-        
+
         self.bz.draw_all_under()
-        
+
         if self.game.collision:
             draw_circle(self.arena, self.game.hare.radius * self.scale * 3,
                         'WHITE', *self._coords(self.game.hare.pos))
@@ -156,24 +156,23 @@ class GUI(BubbleMachine):
 
     def _paint_hud(self):
         # Head-up display
-        score_msg = "Score %03d00" % self.game.hare.carrots
+        score_msg = 'Score: %03d00' % self.game.hare.carrots
         score = self.hud_font.render(score_msg, True, (255, 255, 255))
         score_rect = score.get_rect().copy()
         score_rect.top = self._screen.get_rect().top + 5
         score_rect.right = self._screen.get_rect().right - 5
-        
-        time_msg = "%4.2f" % self.game.time_elapsed
+
+        time_msg = 'Time Elapsed: %4.2f' %self.game.time_elapsed
         time = self.hud_font.render(time_msg, True, (255, 255, 255))
         time_rect = time.get_rect().copy()
         time_rect.top = self._screen.get_rect().top + 5
         time_rect.left = self._screen.get_rect().left + 5
 
-        clean_rect = pygame.Rect(time_rect.left, 
+        clean_rect = pygame.Rect(time_rect.left,
                                  time_rect.top,
                                  self._screen.get_rect().width,
-                                 max(time_rect.height, score_rect.height)
-                                 )
-                                 
+                                 max(time_rect.height, score_rect.height))
+
         pygame.draw.rect(self._screen, self.background_color, clean_rect)
 
         self._screen.blit(score, score_rect)
@@ -222,7 +221,7 @@ class GUI(BubbleMachine):
 
         subtitle_font = pygame.font.Font(None, 50)
         self.welcome_subtitle = subtitle_font.render(
-                        "Press spacebar to start playing", True, (255, 0, 0))
+                        'Press spacebar to start playing', True, (255, 0, 0))
         self.welcome_subtitle_rect = self.welcome_subtitle.get_rect().copy()
         self.welcome_subtitle_rect.centerx = self.welcome_title_rect.centerx
         self.welcome_subtitle_rect.top = self.welcome_title_rect.bottom
@@ -245,7 +244,7 @@ class GUI(BubbleMachine):
 
 
     ### running ###
-    
+
     def running_init(self):
         self.hud_font = pygame.font.Font(None, 32)
         self.score_rect = None
@@ -261,7 +260,7 @@ class GUI(BubbleMachine):
 
         self.update_arrows_ctl()
         alive = self.game.tick(time)
-        
+
         self._paint_gamefield()
         self._paint_hud()
 
@@ -329,6 +328,7 @@ def main(gfact):
     App's main function.
     """
     pygame.init()
+    # FIXME: warning ! if os.curdir != Foxgame/ fails
     pygame.display.set_icon(pygame.image.load('images/foxgame.png'))
 
     ui = GUI(gfact)
