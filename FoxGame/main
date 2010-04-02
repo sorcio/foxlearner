@@ -1,0 +1,100 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+   main.py: the main game.
+"""
+#
+# Copyright 2010 <Michele Orrù>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
+
+
+__author__ = 'Michele Orrù'
+__mail__ = 'maker.py@gmail.com'
+__appname__ = 'FoxGame'
+__version__ = 0.5
+__date__ = '01-04-2010'
+__license__ = 'GPLv2'
+
+from optparse import OptionParser
+
+# parsing arguments from stdin
+parser = OptionParser(usage='%prog [interface] [algorithm] [options]',
+                      version='%prog {0}'.format(__version__))
+
+# parser.add_option('-v', '--verbose', dest='verbose',
+#                   default=False, action='store_true',
+#                   help='lots of debug messages')
+# parser.add_option('-r', '--record', dest='record',
+#                   default='', action='store',
+#                   metavar='FILE', help='record gameplay')
+
+
+# interface
+parser.add_option('-i', '--ui', dest='interface',
+                  default='bubbles', action='store',
+                  metavar='GUI', help='select game interface')
+# brain
+parser.add_option('--fox-brain', dest='fox_brain',
+                  default='traditional', action='store',
+                  metavar='RAIN', help='select ai algorithm for the fox')
+parser.add_option('--hare-brain', dest='hare_brain',
+                  default='none', action='store',
+                  metavar='BRAIN', help='select ai algorithm for the hare')
+# postfilter
+parser.add_option('--fox-pfilter', dest='fox_pfilters',
+                  action='append',
+                  metavar='POSTFILTER', help='select postfilter for the fox')
+parser.add_option('--hare-pfilter', dest='hare_pfilters',
+                  action='append',
+                  metavar='POSTFILTER', help='select postfilter for the hare')
+#
+parser.add_option('-n', '--nfoxes', dest='foxes_num',
+                  type='int', default=1,
+                  metavar='NUM', help='select the number of foxes in the game')
+
+(options, args) = parser.parse_args()
+
+
+# ---- 1. setting up factories
+from foxgame.factories import GameFactory, ControllerFactory
+from foxgame.factories import load_brain, load_postfilters
+
+# fox and hare brains
+fox_brain = load_brain(options.fox_brain, 'FoxBrain')
+hare_brain = load_brain(options.hare_brain, 'HareBrain')
+
+# fox and hare postfilters
+fox_pfilters = load_postfilters(options.fox_pfilters)
+hare_pfilters = load_postfilters(options.hare_pfilters)
+
+# fox and hare controller factories
+cffactory = ControllerFactory(fox_brain, fox_pfilters)
+chfactory = ControllerFactory(hare_brain, hare_pfilters)
+
+# game factory
+gfactory = GameFactory((600, 400),
+                       fox_factory=cffactory,
+                       hare_factory=chfactory,
+                       foxnum=options.foxes_num)
+
+
+# ---- 2. creating game interface
+from foxgame.factories import load_ui
+ui_main = load_ui(options.interface)
+
+# ---- 3. launching main
+ui_main(gfactory)
