@@ -86,5 +86,6 @@ def load_ui(ui_name, main_name='main'):
     # XXX: throwing ImportError (and AttributeError), is this right?
     uis = __import__('foxgame.UI.' + ui_name).UI
     ui_module = getattr(uis, ui_name)
+    ui_module.foo = 1
     ui_main = getattr(ui_module, main_name)
     return ui_main

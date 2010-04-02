@@ -1,3 +1,5 @@
+import logging
+log = logging.getLogger(__name__)
 
 class BubbleMachine(object):
     """
@@ -34,7 +36,7 @@ class BubbleMachine(object):
 
     def goto_state(self, name):
         new_state = self.states[name]
-        print self.__class__.__name__, 'entering', name
+        log.info('{0} entering {1}'.format(self.__class__.__name__, name))
 
         # Call previous state exit
         if self.state:
