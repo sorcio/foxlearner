@@ -62,7 +62,7 @@ parser.add_option('--hare-pfilter', dest='hare_pfilters',
                   action='append',
                   metavar='POSTFILTER', help='select postfilter for the hare')
 #
-parser.add_option('--nfoxes', dest='foxes_num',
+parser.add_option('-n', '--nfoxes', dest='foxes_num',
                   type='int', default=1,
                   metavar='NUM', help='select the number of foxes in the game')
 

@@ -26,9 +26,16 @@ class HareBrain(Brain):
     to escape from the fox.
     """
 
+    threshold = 80
+
     def update(self):
         """
         Hare's aim is to get away from the fox, so it should go to the opposite
         position of the Fox.
         """
-        return -self.navigate(self.nearest_fox)
+
+        if all(self.pawn.distance(fox) > self.threshold for
+               fox in self.game.foxes):
+            return self.towards(self.game.carrot)
+        else:
+            return -self.navigate(self.nearest_fox)
