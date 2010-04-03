@@ -67,7 +67,7 @@ parser.add_option('--flog', dest='flog_level',
 # log stderr
 parser.add_option('-v', '--verbose', dest='slog_level',
                   type='int', default=0,
-                  metavar='NUM', help='verbosity level')
+                  metavar='NUM', help='verbosity level [1, 5]')
 
 (options, args) = parser.parse_args()
 
