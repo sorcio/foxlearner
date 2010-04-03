@@ -1,10 +1,7 @@
 """
 nn.py: Brains which provide a neural network
-<<<<<<< local
        to move foxes/hare.
-=======
-                to move foxes/hare.
->>>>>>> other
+
 """
 
 from foxgame.controller import Brain
