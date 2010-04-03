@@ -1,5 +1,5 @@
 # Back-Propagation Neural Networks
-# 
+#
 # BpnnPower - Modified version of Bpnn with some features added
 # By Otacon22
 
@@ -12,8 +12,6 @@ import shelve
 psyco.full()
 
 random.seed(0)
-
-class InvalidFile(Exception): pass
 
 def rand(a, b):
     """
@@ -36,13 +34,13 @@ def TanhFunction(x):
     """
     return tanh(x)
 
-# derivative of our tanh function, 
+# derivative of our tanh function,
 def TanhDerived(y):
     """
     Hyperbolic tangent - Transfer function derived
     """
     return 1.0 - y**2
-    
+
 # Funzione di trasferimento sigmoide logistica
 def SigmoidFunction(x):
     """
@@ -50,20 +48,20 @@ def SigmoidFunction(x):
     """
     return 1.0/(1.0+e**(-x))
 
-# derivative of our sigmoid function, 
+# derivative of our sigmoid function,
 def SigmoidDerived(y):
     """
     Sigmoid - Transfer function derived
     """
     return y-y**2
-    
+
 def IdentityFunction(x):
     """
     Identity - Transfer function
     """
     return x
 
-# derivata della funzione identita' 
+# derivata della funzione identita'
 def IdentityDerived(y):
     """
     Identity - Transfer function derived
@@ -76,7 +74,7 @@ class NeuralNetwork:
             self.bias = 1
         else:
             self.bias = 0
-        
+
         # number of input, hidden, and output nodes
         self.ni = ni + self.bias # +1 for bias node
         self.nh = nh
@@ -101,7 +99,7 @@ class NeuralNetwork:
             for k in range(self.no):
                 self.wo[j][k] = rand(-2.0, 2.0)
 
-        # last change in weights for momentum   
+        # last change in weights for momentum
         self.ci = makeMatrix(self.ni, self.nh)
         self.co = makeMatrix(self.nh, self.no)
 
@@ -122,7 +120,7 @@ class NeuralNetwork:
                     raise InvalidFile
             else:
                 raise InvalidFile
-                
+
             sh.close()
         else:
             raise IOError
@@ -232,6 +230,6 @@ class NeuralNetwork:
                 print 'error %-14f' % error
 
 
-	
+
 	return error, i
 

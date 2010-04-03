@@ -25,12 +25,13 @@
 __author__ = 'Michele Orrù'
 __mail__ = 'maker.py@gmail.com'
 __appname__ = 'cleaner'
-__version__ = '1.1r2'
+__version__ = '1.5'
 __date__ = '01-04-2010'
 __license__ = 'GPLv2'
 
 
 from optparse import OptionParser
+from fnmatch import fnmatch
 import os
 import os.path
 
@@ -46,7 +47,7 @@ parser.add_option('-q', '--quiet',
 (options, args) = parser.parse_args()
 
 if len(args) == 0:
-    ext = '.pyc'
+    ext = '*.pyc'
 elif len(args) == 1:
     ext, = args
 else:
@@ -54,7 +55,7 @@ else:
                      'got {1} instead'.format(__appname__, len(args)))
 
 for root, dirs, files in os.walk(options.root):
-    for file in filter(lambda x: x.endswith(ext), files):
+    for file in filter(lambda x : fnmatch(x, ext), files):
         if options.verbose:
-            print 'removing: {0}{1}{2}'.format(root, os.sep, file)
+            print 'removing:' + root + os.sep + file
         os.remove(os.path.join(root, file))
