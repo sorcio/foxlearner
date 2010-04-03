@@ -1,11 +1,12 @@
 """
-traditional.py: Brains which provide a neural network
+nn.py: Brains which provide a neural network
                 to move foxes/hare.
 """
 
 from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
-from libs.bpnnpower import *
+from libs.neuralnetwork import *
+import shelve
 
 class FoxBrain(Brain):
     """
@@ -13,9 +14,25 @@ class FoxBrain(Brain):
     """
     
     def __init__(self):
-        #8 inputs for now: coordinates of hare,nearest fox and carrot and hare speed
+        #8 inputs for now: coordinates of hare, nearest fox and carrot and hare speed
         #2 outputs like the Direction tuple
-        self.network = NeuralNetwork(8,10,2)
+
+        self.networkStructure = (8,10,2)
+        self.netFileName = "libs/synapsis.db"
+        
+        self.network = NeuralNetwork(*self.networkStructure)
+
+    def setUp(self):
+        """
+        Used to load neural network data from a file
+        """
+        self.network.load(self.netFileName)
+
+    def tearDown(self):
+        """
+        It saves the neural network weights into a file
+        """
+        self.network.save(self.netFileName)
 
     def update(self):
         """

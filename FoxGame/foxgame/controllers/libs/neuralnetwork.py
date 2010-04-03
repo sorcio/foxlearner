@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 neuralnetwork.py: Back-Propagation module for Neural Networks.
 """
@@ -7,7 +8,7 @@ __date__ = '03/4/2010'
 __contributors__ = []
 
 from math import e, tanh, tan
-from random import random, seed ad randomseed
+from random import random, seed as randomseed
 import string
 import psyco
 import shelve
@@ -132,7 +133,8 @@ class NeuralNetwork:
         for j in range(self.nh):
             print self.wo[j]
 
-    def train(self, patterns, desiredError=None, N=0.5, M=0.1, iterations=1000):
+    def train(self, patterns, desiredError=None, N=0.5, M=0.1, iterations=1000,
+		 epocsForExample=1, debug=False):
         # N: learning rate
         # M: momentum factor
         i = 0
@@ -140,24 +142,26 @@ class NeuralNetwork:
             i += 1
             error = 0.0
             for p in patterns:
-                inputs = p[0]
-                targets = p[1]
-                self.update(inputs)
-                error = error + self.backPropagate(targets, N, M)
+		for epoch in range(epocsForExample):
+                	inputs = p[0]
+                	targets = p[1]
+                	self.update(inputs)
+                	error = error + self.backPropagate(targets, N, M)
+
             if desiredError and ( error <= desiredError ):
                 break
             elif iterations == i:
                 break
 
-            if i % 100 == 0:
+            if (i % 100 == 0) and debug:
                 print 'error %-14f' % error
+
 	return error, i
 
     def load(self, filename):
         if exists(filename):
             db = shelve.open(filename)
             if all(key in ('wi', 'wo') key in db):
-
                 self.ni = len(db['wi'])
                 self.no = len(db['wo'])
 
