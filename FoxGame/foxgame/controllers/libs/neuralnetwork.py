@@ -1,86 +1,37 @@
-# Back-Propagation Neural Networks
-# 
-# BpnnPower - Modified version of Bpnn with some features added
-# By Otacon22
+"""
+neuralnetwork.py: Back-Propagation module for Neural Networks.
+"""
+
+__authors__ = 'Daniele Iamartino and Michele Orrù'
+__date__ = '03/4/2010'
+__contributors__ = []
 
 from math import e, tanh, tan
-import random
+from random import random, seed ad randomseed
 import string
+import psyco
+import shelve
 
-random.seed(0)
+from logging import getLogger
+log = getLogger('[libs-neuralnetwork]')
 
-class InvalidFile(Exception): pass
-
-def rand(a, b):
-    """
-    It calculates a random number between a and b
-    using the specified seed.
-    """
-    return (b-a)*random.random() + a
-
-def makeMatrix(I, J, fill=0.0):
-    """
-    Used to create a matrix.
-    """
-    m = []
-    for i in range(I):
-        m.append([fill]*J)
-    return m
-
-def TanhFunction(x):
-    """
-    Hyperbolic tangent - transfer function
-    """
-    return tanh(x)
-
-# derivative of our tanh function, 
-def TanhDerived(y):
-    """
-    Hyperbolic tangent - Transfer function derived
-    """
-    return 1.0 - y**2
-    
-# Funzione di trasferimento sigmoide logistica
-def SigmoidFunction(x):
-    """
-    Sigmoid - Transfer function
-    """
-    return 1.0/(1.0+e**(-x))
-
-# derivative of our sigmoid function, 
-def SigmoidDerived(y):
-    """
-    Sigmoid - Transfer function derived
-    """
-    return y-y**2
-    
-def IdentityFunction(x):
-    """
-    Identity - Transfer function
-    """
-    return x
-
-# derivata della funzione identita' 
-def IdentityDerived(y):
-    """
-    Identity - Transfer function derived
-    """
-    return 1
 
 class NeuralNetwork:
-    def __init__(self, ni, nh, no, bias=True, transferFunction=TanhFunction, derivateFunction=TanhDerived):
-        if bias:
-            self.bias = 1
-        else:
-            self.bias = 0
-        
+    """
+    A basic backpropagation NeuralNetwork class.
+    """
+
+    def __init__(self, ni, nh, no, bias=True, funct='tanh'):
+
+        randomseed(0)   # XXX: find the best value.
+
         # number of input, hidden, and output nodes
+        self.bias = int(bias)
         self.ni = ni + self.bias # +1 for bias node
         self.nh = nh
         self.no = no
 
-        self.transferFunction = transferFunction
-        self.derivateFunction = derivateFunction
+        self.tfunct, self.dfunct = self.tfunctions[funct]
 
         # activations for nodes
         self.ai = [1.0]*self.ni
@@ -88,19 +39,21 @@ class NeuralNetwork:
         self.ao = [1.0]*self.no
 
         # create weights
-        self.wi = makeMatrix(self.ni, self.nh)
-        self.wo = makeMatrix(self.nh, self.no)
-        # set them to random vaules
-        for i in range(self.ni):
-            for j in range(self.nh):
-                self.wi[i][j] = rand(-0.2, 0.2)
-        for j in range(self.nh):
-            for k in range(self.no):
-                self.wo[j][k] = rand(-2.0, 2.0)
+        self.wi = [[self._rand(-2.0, 2.0) for x in xrange(self.nh)]
+                                          for x in xrange(self.ni)]
+        self.wo = [[self._rand(-2.0, 2.0) for x in xrange(self.nh)]
+                                          for x in xrange(self.no)]  # correct?
 
-        # last change in weights for momentum   
+        # keep mementum or simply adjust epsilon?
+        # last change in weights for momentum
         self.ci = makeMatrix(self.ni, self.nh)
         self.co = makeMatrix(self.nh, self.no)
+
+    def _rand(a, b):
+       """
+       Calculate a random number where:  a <= rand < b.
+       """
+       return (b-a) * random() + a
 
     def update(self, inputs):
         if len(inputs) != self.ni-self.bias:
@@ -179,7 +132,7 @@ class NeuralNetwork:
         for j in range(self.nh):
             print self.wo[j]
 
-    def train(self, patterns, desiredError=None, N=0.5, M=0.1, iterations=1000, epocsForExample=1, debug=False):
+    def train(self, patterns, desiredError=None, N=0.5, M=0.1, iterations=1000):
         # N: learning rate
         # M: momentum factor
         i = 0
@@ -187,21 +140,103 @@ class NeuralNetwork:
             i += 1
             error = 0.0
             for p in patterns:
-                for epoch in range(epocsForExample):
-                    inputs = p[0]
-                    targets = p[1]
-                    self.update(inputs)
-                    error = error + self.backPropagate(targets, N, M)
-
+                inputs = p[0]
+                targets = p[1]
+                self.update(inputs)
+                error = error + self.backPropagate(targets, N, M)
             if desiredError and ( error <= desiredError ):
                 break
             elif iterations == i:
                 break
 
-            if (i % 100 == 0) and debug:
+            if i % 100 == 0:
                 print 'error %-14f' % error
-
-
-	
 	return error, i
 
+    def load(self, filename):
+        if exists(filename):
+            db = shelve.open(filename)
+            if all(key in ('wi', 'wo') key in db):
+
+                self.ni = len(db['wi'])
+                self.no = len(db['wo'])
+
+                self.wi = db['wi']
+                self.wo = db['wo']
+
+                db.close()
+                return True
+        raise IOError('File {0} broken or corrupted'.format(filename))
+
+    def save(self, filename):
+        db = shelve.open(filename)
+        db['wi'] = self.wi
+        db['wo'] = self.wo
+
+        db.close()
+
+
+    ########################
+    ## transfer functions ##
+    ########################
+
+    # TANH
+
+    @staticmethod
+    def TanhFunction(x):
+        """
+        Hyperbolic tangent - Transfer Function
+        """
+        return tanh(x)
+
+    @staticmethod
+    def TanhDerived(y):
+        """
+        Hyperbolic tangent - Transfer Function derived
+        """
+        return 1.0 - y**2
+
+    # SIGMOID
+
+    @staticmethod
+    def SigmoidFunction(x):
+        """
+        Sigmoid - Transfer Function
+        """
+        return 1.0/(1.0+e**(-x))
+
+    @staticmethod
+    def SigmoidDerived(y):
+        """
+        Sigmoid - Transfer Function derived
+        """
+        return y-y**2
+
+    # IDENTITY
+
+    @staticmethod
+    def IdentityFunction(x):
+        """
+        Identity - Transfer function
+        """
+        return x
+
+    @staticmethod
+    def IdentityDerived(y):
+        """
+        Identity - Transfer function derived
+        """
+        return 1
+
+
+    tfunctions = {
+            'identity' = (self.IdentityFuction, self.IdentityDerived),
+            'sigmoid'  = (self.SigmoidFunction, self.SigmoidDerived),
+            'tanh'     = (self.TanhFunction, self.TanhDerived)
+    }
+
+
+
+if __name__ == '__main__':
+    # test something
+    pass
