@@ -12,8 +12,6 @@ from foxgame.machine import StateMachine
 from draw import draw_circle
 from bzdraw import BZManager, BZPainter
 
-import logging
-log = logging.getLogger(__name__)
 class UserBrain(Brain):
     """
     Move a generic pawn using pygame's keyboard events.
@@ -34,7 +32,6 @@ class UserBrain(Brain):
         for direction, pressed in self.inputs.iteritems():
             if pressed:
                 keydir |= Direction(direction)
-            log.debug(str(keydir) + ' > ' + str(self.pawn.pos))
 
         # return the direction
         return keydir

@@ -62,7 +62,7 @@ parser.add_option('-n', '--nfoxes', dest='foxes_num',
 
 # log file
 parser.add_option('--flog', dest='flog_level',
-                  type='int', default=4,
+                  type='int', default=5,
                   metavar='NUM', help='select the verbosity level for the log file')
 # log stderr
 parser.add_option('-v', '--verbose', dest='slog_level',
