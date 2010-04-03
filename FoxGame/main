@@ -34,40 +34,40 @@ import logging
 
 
 # parsing arguments from stdin
-parser = OptionParser(usage='%prog [interface] [algorithm] [options]',
+parser = OptionParser(usage='%prog [options]',
                       version='%prog {0}'.format(__version__))
 
 # interface
 parser.add_option('-i', '--ui', dest='interface',
                   default='bubbles', action='store',
-                  metavar='GUI', help='select game interface')
+                  metavar='GUI', help='game interface')
 # brain
 parser.add_option('--fox-brain', dest='fox_brain',
                   default='traditional', action='store',
-                  metavar='RAIN', help='select ai algorithm for the fox')
+                  metavar='BRAIN', help='ai algorithm for the fox')
 parser.add_option('--hare-brain', dest='hare_brain',
                   default='none', action='store',
-                  metavar='BRAIN', help='select ai algorithm for the hare')
+                  metavar='BRAIN', help='ai algorithm for the hare')
 # postfilter
 parser.add_option('--fox-pfilter', dest='fox_pfilters',
                   action='append',
-                  metavar='POSTFILTER', help='select postfilter for the fox')
+                  metavar='POSTFILTER', help='postfilter for the fox')
 parser.add_option('--hare-pfilter', dest='hare_pfilters',
                   action='append',
-                  metavar='POSTFILTER', help='select postfilter for the hare')
+                  metavar='POSTFILTER', help='postfilter for the hare')
 # foxes number
 parser.add_option('-n', '--nfoxes', dest='foxes_num',
                   type='int', default=1,
-                  metavar='NUM', help='select the number of foxes in the game')
+                  metavar='NUM', help='number of foxes in the game')
 
 # log file
 parser.add_option('--flog', dest='flog_level',
                   type='int', default=5,
-                  metavar='NUM', help='select the verbosity level for the log file')
+                  metavar='NUM', help='verbosity level for the log file')
 # log stderr
 parser.add_option('-v', '--verbose', dest='slog_level',
                   type='int', default=0,
-                  metavar='NUM', help='select the verbosity level')
+                  metavar='NUM', help='verbosity level')
 
 (options, args) = parser.parse_args()
 
