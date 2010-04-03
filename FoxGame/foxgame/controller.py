@@ -21,6 +21,8 @@ class Controller(object):
         self.postfilters = postfilters
 
         self.brain.start_game(self.pawn)
+        for pfilter in self.postfilters:
+            pfilter.start_game(self.pawn)
 
 
     def __repr__(self):
