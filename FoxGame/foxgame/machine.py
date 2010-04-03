@@ -1,7 +1,5 @@
-import logging
-log = logging.getLogger(__name__)
 
-class BubbleMachine(object):
+class StateMachine(object):
     """
     Simple finite state machine with stateful methods.
     """
@@ -23,11 +21,10 @@ class BubbleMachine(object):
         pass
 
     def register_state(self, name):
-        methods = dict(
-                 ('state_' + meth_name,
-                  getattr(self, '%s_%s' % (name, meth_name), self.do_nothing))
-                 for meth_name in self.statefuls
-                )
+        methods = dict(('state_' + meth_name,
+                       getattr(self, '%s_%s' % (name, meth_name),
+                               self.do_nothing))
+                       for meth_name in self.statefuls)
 
         getattr(self, name + '_init', self.do_nothing)()
 
@@ -36,7 +33,6 @@ class BubbleMachine(object):
 
     def goto_state(self, name):
         new_state = self.states[name]
-        log.info('{0} entering {1}'.format(self.__class__.__name__, name))
 
         # Call previous state exit
         if self.state:

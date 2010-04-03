@@ -5,6 +5,9 @@ traditional.py: Brains which provide a simple algorithm
 
 from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
+import logging
+log = logging.getLogger(__name__)
+
 
 class FoxBrain(Brain):
     """
@@ -35,9 +38,11 @@ class HareBrain(Brain):
         position of the Fox.
         """
 
+        # choose between life and food :)
         if all(self.pawn.distance(fox) > self.threshold for
                fox in self.game.foxes):
             return self.navigate(self.game.carrot.pos)
         else:
             target = self.nearest_fox.pos + self.nearest_fox.speed/2
             return -self.navigate(target)
+

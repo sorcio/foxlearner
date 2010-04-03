@@ -7,11 +7,13 @@ from __future__ import division
 import pygame
 from foxgame.structures import Direction
 from foxgame.controller import Brain
+from foxgame.machine import StateMachine
 
 from draw import draw_circle
-from machine import BubbleMachine
 from bzdraw import BZManager, BZPainter
 
+import logging
+log = logging.getLogger(__name__)
 class UserBrain(Brain):
     """
     Move a generic pawn using pygame's keyboard events.
@@ -32,12 +34,13 @@ class UserBrain(Brain):
         for direction, pressed in self.inputs.iteritems():
             if pressed:
                 keydir |= Direction(direction)
+            log.debug(str(keydir) + ' > ' + str(self.pawn.pos))
 
         # return the direction
         return keydir
 
 
-class GUI(BubbleMachine):
+class GUI(StateMachine):
     """
     Provide a GUI to foxgame.Game using pygame.
     """
