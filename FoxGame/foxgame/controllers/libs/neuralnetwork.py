@@ -16,13 +16,15 @@ import shelve
 from logging import getLogger
 log = getLogger('[libs-neuralnetwork]')
 
+MINERROR = 0.2
+MAXEPOCHS = 1000
 
 class NeuralNetwork:
     """
     A basic backpropagation NeuralNetwork class.
     """
 
-    def __init__(self, ni, nh, no, bias=True, funct='tanh'):
+    def __init__(self, ni, nh, bias=True, funct='tanh'):
 
         randomseed(0)   # XXX: find the best value.
 
@@ -30,7 +32,7 @@ class NeuralNetwork:
         self.bias = int(bias)
         self.ni = ni + self.bias # +1 for bias node
         self.nh = nh
-        self.no = no
+        self.no = 2
 
         self.tfunct, self.dfunct = self.tfunctions[funct]
 
@@ -40,15 +42,23 @@ class NeuralNetwork:
         self.ao = [1.0]*self.no
 
         # create weights
-        self.wi = [[self._rand(-2.0, 2.0) for x in xrange(self.nh)]
-                                          for x in xrange(self.ni)]
-        self.wo = [[self._rand(-2.0, 2.0) for x in xrange(self.nh)]
-                                          for x in xrange(self.no)]  # correct?
+        # XXX: are the correct?
+        self.wi = [[self._rand(-2.0, 2.0) for x in xrange(self.ni)]
+                                          for x in xrange(self.nh)]
+        self.wo = [[self._rand(-2.0, 2.0) for x in xrange(self.no)]
+                                          for x in xrange(self.nh)]
 
         # keep mementum or simply adjust epsilon?
         # last change in weights for momentum
         self.ci = makeMatrix(self.ni, self.nh)
         self.co = makeMatrix(self.nh, self.no)
+
+    def __repr__(self):
+        return '<NeuralNetwork with inputs={0}, hidden={1}>'.format(self.ni, self.nh)
+
+    def __str__(self):
+        return ('Input weights: {0}\n'.format(', '.join(self.wi)) +
+                'Hidden weights: {0}\n'.format(', '.join(self.wh)))
 
     def _rand(a, b):
        """
@@ -56,112 +66,92 @@ class NeuralNetwork:
        """
        return (b-a) * random() + a
 
-    def update(self, inputs):
+    def put(self, inputs):
+        """
+        Update the nn propagating inputs given.
+        XXX: check if it's right, the remove this line.
+        """
         if len(inputs) != self.ni-self.bias:
-            raise ValueError, 'wrong number of inputs'
+            raise ValueError('wrong number of inputs')
 
         # input activations
-        for i in range(self.ni-self.bias):
-            self.ai[i] = inputs[i]
+        self.ai[:-(self.ni-self.bias)] = inputs
 
         # hidden activations
-        for j in range(self.nh):
-            sum = 0.0
-            for i in range(self.ni):
-                sum = sum + self.ai[i] * self.wi[i][j]
-            self.ah[j] = self.transferFunction(sum)
+        for j in xrange(self.nh):
+            self.ah[j] = self.transferfunct(sum(
+                            [ai * wi[j] for ai, wi in zip(self.ai, self._wi)]))
 
         # output activations
-        for k in range(self.no):
-            sum = 0.0
-            for j in range(self.nh):
-                sum = sum + self.ah[j] * self.wo[j][k]
-            self.ao[k] = self.transferFunction(sum)
+        for k in xrange(self.no):
+            self.ao[k] = self.transferfunct(sum(
+                            [ah * wo[k] for ah, wo in zip(self.ah, self._wo)]))
 
-        return self.ao[:]
+        return tuple(self.ao)
 
 
-    def backPropagate(self, targets, N, M):
+    def backPropagate(self, targets, eps):
+        """
+        XXX: check if it's right, then remove this line
+        """
         if len(targets) != self.no:
             raise ValueError, 'wrong number of target values'
 
-        # Calculates the input delta
-        output_deltas = [0.0] * self.no
-        for k in range(self.no):
-            error = targets[k]-self.ao[k]
-            output_deltas[k] = self.derivateFunction(self.ao[k]) * error
+        # calculate error terms for output
+        output_deltas = [(targets[k]-ao) * self.derivatefunct(ao)
+                            for k, ao in enumerate(self.ao)]
 
-        # Calculates the hidden delta
-        hidden_deltas = [0.0] * self.nh
-        for j in range(self.nh):
-            error = 0.0
-            for k in range(self.no):
-                error = error + output_deltas[k]*self.wo[j][k]
-            hidden_deltas[j] = self.derivateFunction(self.ah[j]) * error
+        # calculate error terms for hidden
+        hidden_deltas = []
+        for j in xrange(self.nh):
+            hidden_deltas.append(
+                            self.derivatefunct(self.ah[j]) * sum(
+                            od*w for od, w in zip(output_deltas, self._wo[j])))
 
-        # Changes weights between hidden and output
-        for j in range(self.nh):
-            for k in range(self.no):
-                change = output_deltas[k]*self.ah[j]
-                self.wo[j][k] = self.wo[j][k] + N*change + M*self.co[j][k]
-                self.co[j][k] = change
+        # update output weights
+        for j in xrange(self.nh):
+            for k in xrange(self.no):
+                self._wo[j][k] += eps*output_deltas[k]*self.ah[j]
 
-        # Changes weights between input and hidden
-        for i in range(self.ni):
-            for j in range(self.nh):
-                change = hidden_deltas[j]*self.ai[i]
-                self.wi[i][j] = self.wi[i][j] + N*change + M*self.ci[i][j]
-                self.ci[i][j] = change
+        # update input weights
+        for i in xrange(self.ni):
+            for j in xrange(self.nh):
+                self._wi[i][j] += eps*hidden_deltas[j]*self.ai[i]
 
-        # Calculates the medium quadratic error
-        error = 0.0
-        for k in range(len(targets)):
-            error = error + 0.5*(targets[k]-self.ao[k])**2
-        return error
+        # calculate error
+        return sum((t - ao)**2 / 2 for t, ao in zip(targets, self.ao))
 
+    def train(self, patterns, eps=0.32):
+        """
+        Teach network using the patterns given.
+        XXX: check if this method is correct, the remove this line.
+        """
+        for epoch in xrange(MAXEPOCHS):
 
-    def test(self, patterns):
-        for p in patterns:
-            print p[0], '->', self.update(p[0])
+            # train the network
+            error = 0
+            for i, o in patterns:
+                self.put(i)
+                error += self.backPropagate(o, eps)
 
-    def weights(self):
-        print 'Input weights:'
-        for i in range(self.ni):
-            print self.wi[i]
-        print
-        print 'Output weights:'
-        for j in range(self.nh):
-            print self.wo[j]
+            # debug infos
+            if epoch % 100 == 0:
+                log.info('error: {0}'.format(error))
 
-    def train(self, patterns, desiredError=None, N=0.5, M=0.1, iterations=1000,
-		 epocsForExample=1, debug=False):
-        # N: learning rate
-        # M: momentum factor
-        i = 0
-        while True:
-            i += 1
-            error = 0.0
-            for p in patterns:
-		for epoch in range(epocsForExample):
-                	inputs = p[0]
-                	targets = p[1]
-                	self.update(inputs)
-                	error = error + self.backPropagate(targets, N, M)
+            # XXX: what can we write here?
+            if error <= MINERROR:
+                log.debug('Network finished training'
+                          'in {0}th epochs'.format(epoch))
 
-            if desiredError and ( error <= desiredError ):
-                break
-            elif iterations == i:
-                break
-
-            if (i % 100 == 0) and debug:
-                print 'error %-14f' % error
-
-	return error, i
 
     def load(self, filename):
+        """
+        Load a shelve database with synapses.
+        TODO: improve doc about formatting
+        """
         if exists(filename):
             db = shelve.open(filename)
-            if all(key in ('wi', 'wo') key in db):
+            if all(key in ('wi', 'wo') for key in db):
                 self.ni = len(db['wi'])
                 self.no = len(db['wo'])
 
@@ -173,6 +163,10 @@ class NeuralNetwork:
         raise IOError('File {0} broken or corrupted'.format(filename))
 
     def save(self, filename):
+        """
+        Save a shelve db with synapses.
+        TODO: improve doc about formatting
+        """
         db = shelve.open(filename)
         db['wi'] = self.wi
         db['wo'] = self.wo
@@ -234,11 +228,10 @@ class NeuralNetwork:
 
 
     tfunctions = {
-            'identity' = (self.IdentityFuction, self.IdentityDerived),
-            'sigmoid'  = (self.SigmoidFunction, self.SigmoidDerived),
-            'tanh'     = (self.TanhFunction, self.TanhDerived)
+            'identity': (IdentityFunction, IdentityDerived),
+            'sigmoid' : (SigmoidFunction, SigmoidDerived),
+            'tanh'    : (TanhFunction, TanhDerived)
     }
-
 
 
 if __name__ == '__main__':

@@ -1,25 +1,29 @@
 """
 nn.py: Brains which provide a neural network
+<<<<<<< local
+       to move foxes/hare.
+=======
                 to move foxes/hare.
+>>>>>>> other
 """
 
 from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
-from libs.neuralnetwork import *
-import shelve
+from libs.neuralnetwork import NeuralNetwork
 
 class FoxBrain(Brain):
     """
     A controller which uses a neural network to follow the hare.
     """
-    
-    def __init__(self):
-        #8 inputs for now: coordinates of hare, nearest fox and carrot and hare speed
-        #2 outputs like the Direction tuple
 
-        self.networkStructure = (8,10,2)
+    def __init__(self):
+        # 8 inputs for now: coordinates of hare,nearest fox and carrot and hare speed
+        # 2 outputs like the Direction tuple
+        self.network = NeuralNetwork(8, 10)
+
+        self.networkStructure = (8, 10)
         self.netFileName = "libs/synapsis.db"
-        
+
         self.network = NeuralNetwork(*self.networkStructure)
 
     def setUp(self):
@@ -54,7 +58,7 @@ class FoxBrain(Brain):
             else:
                 output.append(0)
 
-        return Direction(output) 
+        return Direction(output)
 
 
 class HareBrain(Brain):
@@ -64,7 +68,5 @@ class HareBrain(Brain):
 
     def update(self):
         """
-        
         """
-
         return Direction(Direction.NULL) #TODO
