@@ -25,7 +25,7 @@
 __author__ = 'Michele Orrù'
 __mail__ = 'maker.py@gmail.com'
 __appname__ = 'cleaner'
-__version__ = '1.5'
+__version__ = 1.5
 __date__ = '01-04-2010'
 __license__ = 'GPLv2'
 
@@ -36,7 +36,7 @@ import os
 import os.path
 
 parser = OptionParser(usage='%prog [ext]',
-                      version='%prog %f' % __version__)
+                      version='%%prog %f' % __version__)
 
 parser.add_option('-r','--root-dir', dest='root',
                   default=os.curdir, action='store',
