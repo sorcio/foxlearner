@@ -26,7 +26,7 @@ class Controller(object):
 
 
     def __repr__(self):
-        return '<Controller object at {0}>'.format(self.__class__.__module__)
+        return '<Controller object at %s>' % self.__class__.__module__
 
     def update(self, time):
         """

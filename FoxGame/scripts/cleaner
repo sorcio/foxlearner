@@ -36,7 +36,7 @@ import os
 import os.path
 
 parser = OptionParser(usage='%prog [ext]',
-                      version='%prog {0}'.format(__version__))
+                      version='%prog %f' % __version__)
 
 parser.add_option('-r','--root-dir', dest='root',
                   default=os.curdir, action='store',
@@ -51,8 +51,8 @@ if len(args) == 0:
 elif len(args) == 1:
     ext, = args
 else:
-    raise ValueError('{0} must be called  with 1 argument at maximum,'
-                     'got {1} instead'.format(__appname__, len(args)))
+    raise ValueError('%s must be called  with 1 argument at maximum,'
+                     'got %d instead' % (__appname__, len(args)))
 
 for root, dirs, files in os.walk(options.root):
     for file in filter(lambda x : fnmatch(x, ext), files):

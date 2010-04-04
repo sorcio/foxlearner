@@ -54,11 +54,11 @@ class NeuralNetwork:
         self.co = makeMatrix(self.nh, self.no)
 
     def __repr__(self):
-        return '<NeuralNetwork with inputs={0}, hidden={1}>'.format(self.ni, self.nh)
+        return '<NeuralNetwork with inputs=%d, hidden=%d>'.format(self.ni, self.nh)
 
     def __str__(self):
-        return ('Input weights: {0}\n'.format(', '.join(self.wi)) +
-                'Hidden weights: {0}\n'.format(', '.join(self.wh)))
+        return ('Input weights: %f\n Hidden weights: %f\n' %
+                (', '.join(self.wi), ', '.join(self.wh)))
 
     def _rand(a, b):
        """
@@ -136,12 +136,12 @@ class NeuralNetwork:
 
             # debug infos
             if epoch % 100 == 0:
-                log.info('error: {0}'.format(error))
+                log.info('error: %f' % error)
 
             # XXX: what can we write here?
             if error <= MINERROR:
                 log.debug('Network finished training'
-                          'in {0}th epochs'.format(epoch))
+                          'in %dth epochs' % epoch)
 
 
     def load(self, filename):

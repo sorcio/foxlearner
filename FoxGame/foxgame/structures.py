@@ -94,10 +94,10 @@ class Vector(object):
         return hypot(self.x, self.y)
 
     def __repr__(self):
-        return '<Vector(x={0}, y={1})>'.format(self.x, self.y)
+        return '<Vector(x=%f, y=%f)>' % (self.x, self.y)
 
     def __str__(self):
-        return 'Vector(x={0}, y={1})'.format(self.x, self.y)
+        return 'Vector(x=%f, y=%f)' %(self.x, self.y)
 
     def __iter__(self):
         """
@@ -159,7 +159,7 @@ class Direction(object):
             raise AttributeError('can\'t set attribute.')
 
     def __repr__(self):
-        return '<Direction object ({0}, {1})>'.format(self.hor, self.vert)
+        return '<Direction object (%d, %d)>' % (self.hor, self.vert)
 
     def __str__(self):
         """

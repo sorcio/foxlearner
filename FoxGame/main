@@ -35,7 +35,7 @@ import logging
 
 # parsing arguments from stdin
 parser = OptionParser(usage='%prog [options]',
-                      version='%prog {0}'.format(__version__))
+                      version='%%prog %f' % __version__)
 
 # interface
 parser.add_option('-i', '--ui', dest='interface',
@@ -77,7 +77,7 @@ parser.add_option('-v', '--verbose', dest='slog_level',
 logging.basicConfig(level=(5 - options.flog_level)*10,
                     format='%(asctime)s %(name)-30s %(levelname)-8s %(message)s',
                     datefmt='%m-%d %H:%M',
-                    filename='{0}.log'.format(__appname__),
+                    filename=__appname__ + '.log',
                     filemode='w')
 
 #  stderr logger
