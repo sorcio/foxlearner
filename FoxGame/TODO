@@ -1,0 +1,28 @@
+
+# 1. Create the basic framework
+- recycle old code, fitting to this new structure (described in DESIGN file) -
+    : check whether classes like BasicGame, BasicFox, etc. are correct
+    : check whether pygame.Game class is correct
+    : write the main function for the pygame interface
+    : check whethr main file can cantrol each possible feature in the game
+- write pygamei using pygame.Sprite class for the fox and the hare           -
+- code pre/post filters and controllers                                      -
+    : follow DESIGN file.
+- write lots and lots of tests, about physis of game                         -
+    : write tests foreach function
+- code nulli for a "void" interface
+    : allow simple output, for displaying some informations
+- improve documentation                                                      -
+    : avoid nonsensical docstrings
+    : explain and re-write sentences in bad-english
+- make a new ncurses interface
+    : follow pygame file
+
+
+# 2. Make algorithms
+Make some libs, with related functions whitch uses the following approaches:
+   - traditional meccanic library (tradlib)   - Ed and maker
+   - fuzzy logic library          (fuzzylib)  - maker
+   - neuralnetwork library        (annlib)    - Ota and maker
+   - q-learn library              (qlearnlib) - il_sorcio
+   - genetic algorithm library    (gaslib)    - il_sorcio
