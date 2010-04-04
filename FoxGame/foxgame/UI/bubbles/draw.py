@@ -15,16 +15,16 @@ def draw_circle_gfx(surf, radius, color, pos_x, pos_y, scale=1.0, width=0):
     Circle drawing primitive (with anti-aliasing).
     """
     args = (surf, int(pos_x*scale), int(pos_y*scale), int(radius*scale),
-             pygame.Color(color))
+            color)
     if width == 0:
         filled_circle(*args)
-    aacircle(*args)    
+    aacircle(*args)
 
 def draw_circle_old(surf, radius, color, pos_x, pos_y, scale=1.0, width=0):
     """
     Circle drawing primitive.
     """
-    circle(surf, pygame.Color(color), (int(pos_x*scale), int(pos_y*scale)),
+    circle(surf, color, (int(pos_x*scale), int(pos_y*scale)),
            int(radius*scale))
 
 def draw_lines(surf, color, closed, points, scale=1.0):

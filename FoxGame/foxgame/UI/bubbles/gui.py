@@ -144,7 +144,7 @@ class GUI(StateMachine):
 
         if self.game.collision:
             draw_circle(self.arena, self.game.hare.radius * self.scale * 3,
-                        'WHITE', *self._coords(self.game.hare.pos))
+                        (255, )*3, *self._coords(self.game.hare.pos))
 
         # Drawing pawns
         #self._draw_tracks()

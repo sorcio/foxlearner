@@ -167,7 +167,7 @@ class Fox(MovingPawn):
     baccel = 300.0
     brake = 75.0
     radius = 18
-    color = 'RED'
+    color = 250, 50, 0   # 'RED'
 
 
 class Hare(MovingPawn):
@@ -178,7 +178,7 @@ class Hare(MovingPawn):
     baccel = 560.0
     brake = 240.0
     radius = 15
-    color = 'GREY'
+    color = 192, 192, 192    # 'GREY'
 
     # a attribute of any Hare istance counting carrots eaten
     carrots = 0
@@ -189,7 +189,7 @@ class Carrot(GameObject):
     A carrot.
     """
     radius = 10
-    color = 'ORANGE'
+    color = 220, 140, 0    # 'ORANGE'
 
 
 class Game(object):
