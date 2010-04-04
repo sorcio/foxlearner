@@ -2,11 +2,18 @@ from unittest import TestCase
 from foxgame.controllers.libs.neuralnetwork import NeuralNetwork
 
 class TestNeuralNetwork(TestCase):
-
+    """
+    Test NeuralNetwork library functions
+    """
     def setUp(self):
+        """
+        """
         self.threshold = 0.1
 
     def test_XOR(self):
+        """
+        Function used to test neuralnetwork library with XOR rule
+        """
         pat = (
             ((0, 0), (0, )),
             ((0, 1), (1, )),
