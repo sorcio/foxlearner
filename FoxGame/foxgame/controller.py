@@ -73,6 +73,8 @@ class Brain(object):
         self.pawn = pawn
         self.game = pawn.game
 
+        self.setUp()
+
     def end_game(self):
         """
         End the previously created game,
@@ -81,6 +83,26 @@ class Brain(object):
         # removing old session
         self.pawn = self.game = None
 
+        self.tearDown()
+
+    def update(self):
+        """
+        The method update is called each single time the pawn needs a new
+        direction to move to.
+        """
+        raise NotImplementedError('update method not overwritten.')
+
+    def setUp(self):
+        """
+        The method setUp is called when a new game is instantiated.
+        """
+        pass
+
+    def tearDown(self):
+        """
+        The method tearDown is called when the game is ended.
+        """
+        pass
 
     #########################################################################
     ## here starts common functions useful for an easy implementation of a ##
