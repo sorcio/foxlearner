@@ -92,13 +92,6 @@ class Vector(object):
         Return the euclidean distance.
         """
         return hypot(self.x, self.y)
-    
-    def normalize(self, norm=1):
-        """
-        Returns a Vector with same direction and specified norm.
-        """
-        factor = norm / abs(self)
-        return Vector(self.x * factor, self.y * factor)
 
     def __repr__(self):
         return '<Vector(x={0}, y={1})>'.format(self.x, self.y)
@@ -118,6 +111,14 @@ class Vector(object):
         Return the distance between two vectors.
         """
         return abs(self - other)
+
+    def normalize(self, norm=1):
+        """
+        Returns a Vector with same direction and specified norm.
+        """
+        return self * (norm / abs(self))
+
+
 
 
 class Direction(object):

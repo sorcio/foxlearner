@@ -43,6 +43,9 @@ class Controller(object):
         # finally return the new direction
         return dir
 
+    def __del__(self):
+        self.brain.end_game()
+
 
 class Brain(object):
     """
