@@ -67,8 +67,8 @@ class Brain(object):
 
     def start_game(self, pawn):
         """
-        Set up a the controlelr for a new game.
-        The brain will give inputs according to events redarding this one.
+        Set up a the controller for a new game.
+        The brain will give inputs according to events regarding this one.
         """
         self.pawn = pawn
         self.game = pawn.game
@@ -80,6 +80,7 @@ class Brain(object):
         """
         # removing old session
         self.pawn = self.game = None
+
 
     #########################################################################
     ## here starts common functions useful for an easy implementation of a ##
@@ -132,8 +133,8 @@ class PostFilter(object):
 
     def start_game(self, pawn):
         """
-        Set up a the controlelr for a new game.
-        The brain will give inputs according to events redarding this one.
+        Set up a the controller for a new game.
+        The brain will give inputs according to events regarding this one.
         """
         self.pawn = pawn
         self.game = pawn.game
