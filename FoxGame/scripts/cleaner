@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+   cleaner: clean useless files.
+"""
+#
+# Copyright 2010 <Michele Orrù>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
+
+
+__author__ = 'Michele Orrù'
+__mail__ = 'maker.py@gmail.com'
+__appname__ = 'cleaner'
+__version__ = '1.5'
+__date__ = '01-04-2010'
+__license__ = 'GPLv2'
+
+
+from optparse import OptionParser
+from fnmatch import fnmatch
+import os
+import os.path
+
+parser = OptionParser(usage='%prog [ext]',
+                      version='%prog %f' % __version__)
+
+parser.add_option('-r','--root-dir', dest='root',
+                  default=os.curdir, action='store',
+                  metavar='DIR', help='select root directory')
+parser.add_option('-q', '--quiet',
+                  action='store_false', dest='verbose', default=True,
+                  help='don\'t print status messages to stdout')
+(options, args) = parser.parse_args()
+
+if len(args) == 0:
+    ext = '*.pyc'
+elif len(args) == 1:
+    ext, = args
+else:
+    raise ValueError('%s must be called  with 1 argument at maximum,'
+                     'got %d instead' % (__appname__, len(args)))
+
+for root, dirs, files in os.walk(options.root):
+    for file in filter(lambda x : fnmatch(x, ext), files):
+        if options.verbose:
+            print 'removing:' + root + os.sep + file
+        os.remove(os.path.join(root, file))
