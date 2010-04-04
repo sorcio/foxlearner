@@ -54,7 +54,7 @@ class NeuralNetwork:
         self.co = makeMatrix(self.nh, self.no)
 
     def __repr__(self):
-        return '<NeuralNetwork with inputs=%d, hidden=%d>'.format(self.ni, self.nh)
+        return '<NeuralNetwork with inputs=%d, hidden=%d>' % (self.ni, self.nh)
 
     def __str__(self):
         return ('Input weights: %f\n Hidden weights: %f\n' %
@@ -160,7 +160,7 @@ class NeuralNetwork:
 
                 db.close()
                 return True
-        raise IOError('File {0} broken or corrupted'.format(filename))
+        raise IOError('File %s broken or corrupted' % filename)
 
     def save(self, filename):
         """

@@ -4,7 +4,6 @@ gamecore.py: basic classes for pawns and game logic (GL).
 from __future__ import division
 
 from random import randrange
-from itertools import combinations
 from foxgame.structures import Vector
 
 
@@ -247,12 +246,16 @@ class Game(object):
     def _randomlocate(self, mindist):
         """
         Put the hare and the fox into random positions.
+        XXX: rewrite this function: check for walls, improve algorithm.
         """
-        obj_combs = combinations(self.pawns, 2)
+        # obj_combs = combinations(self.pawns, 2)
+        #
+        # while not all(x.distance(y) >= mindist for x, y in obj_combs):
+        #     for pawn in self.pawns:
+        #         pawn.pos = self._randompoint()
+        for pawn in self.pawns:
+            pawn.pos = self._randompoint()
 
-        while not all(x.distance(y) >= mindist for x, y in obj_combs):
-            for pawn in self.pawns:
-                pawn.pos = self._randompoint()
     @property
     def objects(self):
         """
