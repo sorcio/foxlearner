@@ -1,14 +1,47 @@
-#                   #
-#  1. Introduction  #
-#                   #
+INTRODUCTION
+------------------------------------------------------------------------------
 
-This software aims to provide a simple but useful interface to experiment
- various kinks of ai, linke NeuralNetworks, or Q-learning.
+    This software aims to privide a simple interface in a trivial game in order
+    to test multiple types of Artificial Intelligence implementations.
+    For more informations see <http://code.google.com/p/foxlearner/>
 
-The code should be commented as much as possible, in order to explain how
- and why an approach is better than another.
 
-#                   #
-# BULABULABULA      #
-#                   #
 
+DEPENDECIES
+-------------------------------------------------------------------------------
+
+    In order to run this software, you should previously install:
+        - python: 2.6 or higher   (we are working on retrocompatibility with 2.5)
+        - pygame: 1.9.1 or higher (we are working on retrocompatibility with 1.8.1)
+        - psyco: [optional] to speed up our neuralnetwork library
+
+    As soon as possible we should implement other kinds of GUI, so pygame
+    won't be required.
+
+
+
+INSTALL
+-------------------------------------------------------------------------------
+    To run the software,
+        on windows systems: "python.exe main"
+        on *nix    systems: "./main" OR "python main"
+
+    For more informations about options, see "main --help" or "main -h"
+
+
+
+LICENSE
+-------------------------------------------------------------------------------
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; version 2 dated June, 1991.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program;  if not, write to the Free Software
+   Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.
