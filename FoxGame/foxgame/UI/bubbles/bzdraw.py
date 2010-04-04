@@ -52,7 +52,8 @@ class BZPainter(object):
         surf = self.gui.arena
         scale = self.gui.scale
         color = options.get('color', self.color)
-        draw_circle(surf, radius(), color, *pos(), scale=scale)
+        posx, posy = pos()
+        draw_circle(surf, radius(), color, posx, posy, scale=scale)
 
     def line(self, points, options):
         surf = self.gui.arena
