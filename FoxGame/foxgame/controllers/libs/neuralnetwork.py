@@ -9,7 +9,6 @@ __contributors__ = []
 
 from math import e, tanh, tan
 from random import random, seed as randomseed
-import string
 import psyco
 import shelve
 
@@ -41,13 +40,13 @@ def sigmoid_function(x):
     """
     Sigmoid - Transfer function
     """
-    return 1.0/(1.0+e**(-x))
+    return 1.0 / (1.0 + e**(-x))
 
 def sigmoid_derived(y):
     """
     Sigmoid - Transfer function derived
     """
-    return y-y**2
+    return y - y**2
     
     
 # IDENTITY
@@ -72,7 +71,7 @@ class NeuralNetwork(object):
             'tanh'    : (tanh_function, tanh_derived)
     }
     
-    def __init__(self, ni, nh, no, bias=True, funct='tanh'):
+    def __init__(self, ni, nh, no=2, bias=True, funct='tanh'):
         self.bias = int(bias)
         
         randomseed(0)
@@ -90,8 +89,10 @@ class NeuralNetwork(object):
         self.ao = [1.0]*self.no
 
         # create weights and set them into random values
-        self.wi = [[self._rand(-2.0, 2.0) for x in xrange(self.nh)]  for x in xrange(self.ni)]
-        self.wo = [[self._rand(-2.0, 2.0) for x in xrange(self.no)]  for x in xrange(self.nh)]
+        self.wi = [[self._rand(-2.0, 2.0) for x in xrange(self.nh)]
+                                          for x in xrange(self.ni)]
+        self.wo = [[self._rand(-2.0, 2.0) for x in xrange(self.no)]
+                                          for x in xrange(self.nh)]
     
     def __repr__(self):
         return '<NeuralNetwork with inputs=%d, hidden=%d>' % (self.ni, self.nh)
@@ -105,7 +106,7 @@ class NeuralNetwork(object):
         It calculates a random number between a and b
         using the specified seed.
         """
-        return (b-a)*random() + a
+        return (b - a) * random() + a
 
     def put(self, inputs):
 
@@ -156,23 +157,19 @@ class NeuralNetwork(object):
         # Medium quadratic error
         return sum((t - ao)**2 / 2 for t, ao in zip(targets, self.ao))
 
-    def train(self, patterns, iterations=1000, eps=0.5, desiredError=None):
+    def train(self, patterns, iterations=1000, eps=0.5, des_err=None):
         # eps: learning rate
         # XXX: Maybe change this function?
         epoch = 0
-        while True:
+        error = 0
+        while ((des_err and error >= des_err) or 
+               (not des_err and epoch < iterations)):
             epoch += 1
             error = 0
             for inputs,targets in patterns:
                 self.put(inputs)
                 error = error + self.backPropagate(targets, eps)
-                
-            if desiredError and (error <= desiredError):
-                break
-                
-            elif not desiredError and iterations == epoch :
-                break
-
+            
             if epoch % 100 == 0:
                 log.info('error: %f' % error)
                 
