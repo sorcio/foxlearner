@@ -1,5 +1,5 @@
 INTRODUCTION
-------------------------------------------------------------------------------
+------------
 
     This software aims to privide a simple interface in a trivial game in order
     to test multiple types of Artificial Intelligence implementations.
@@ -8,11 +8,11 @@ INTRODUCTION
 
 
 DEPENDECIES
--------------------------------------------------------------------------------
+-----------
 
     In order to run this software, you should previously install:
         - python: 2.6 or higher   (we are working on retrocompatibility with 2.5)
-        - pygame: 1.9.1 or higher (we are working on retrocompatibility with 1.8.1)
+        - pygame: 1.8.1 or higher
         - psyco: [optional] to speed up our neuralnetwork library
 
     As soon as possible we should implement other kinds of GUI, so pygame
@@ -21,7 +21,7 @@ DEPENDECIES
 
 
 INSTALL
--------------------------------------------------------------------------------
+-------
     To run the software,
         on windows systems: "python.exe main"
         on *nix    systems: "./main" OR "python main"
@@ -31,7 +31,7 @@ INSTALL
 
 
 LICENSE
--------------------------------------------------------------------------------
+-------
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
