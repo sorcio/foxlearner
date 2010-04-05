@@ -76,7 +76,7 @@ class Brain(object):
         self.pawn = pawn
         self.game = pawn.game
 
-        self.setUp()
+        self.set_up()
 
     def end_game(self):
         """
@@ -86,7 +86,7 @@ class Brain(object):
         # removing old session
         self.pawn = self.game = None
 
-        self.tearDown()
+        self.tear_down()
 
     def update(self):
         """
@@ -95,15 +95,15 @@ class Brain(object):
         """
         raise NotImplementedError('update method not overwritten.')
 
-    def setUp(self):
+    def set_up(self):
         """
-        The method setUp is called when a new game is instantiated.
+        The method set_up is called when a new game is instantiated.
         """
         pass
 
-    def tearDown(self):
+    def tear_down(self):
         """
-        The method tearDown is called when the game is ended.
+        The method tear_down is called when the game is ended.
         """
         pass
 

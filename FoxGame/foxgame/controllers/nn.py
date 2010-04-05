@@ -23,13 +23,13 @@ class FoxBrain(Brain):
 
         self.network = NeuralNetwork(*self.networkStructure)
 
-    def setUp(self):
+    def set_up(self):
         """
         Used to load neural network data from a file
         """
         self.network.load(self.netFileName)
 
-    def tearDown(self):
+    def tear_down(self):
         """
         It saves the neural network weights into a file
         """
