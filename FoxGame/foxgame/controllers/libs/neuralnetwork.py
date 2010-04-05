@@ -9,16 +9,22 @@ __contributors__ = []
 
 from math import e, tanh, tan
 from random import random, seed as randomseed
-import psyco
 import shelve
 
 from logging import getLogger
 log = getLogger('[libs-neuralnetwork]')
 
 
-##########################
-#   TRANSFER FUNCTIONS   #
-##########################
+try:
+    import psyco
+    psyco.full()
+except ImportError:
+    log.critical('You should install psyco to speed up our neuralnet library.')
+
+
+############################
+##   TRANSFER FUNCTIONS   ##
+############################
 
 #HYPERBOLIC TANGENT
 
@@ -33,8 +39,8 @@ def tanh_derived(y):
     Hyperbolic tangent - Transfer function derived
     """
     return 1.0 - y**2
-    
-    
+
+
 # SIGMOID
 def sigmoid_function(x):
     """
@@ -47,10 +53,10 @@ def sigmoid_derived(y):
     Sigmoid - Transfer function derived
     """
     return y - y**2
-    
-    
+
+
 # IDENTITY
-    
+
 def identity_function(x):
     """
     Identity - Transfer function
@@ -70,12 +76,12 @@ class NeuralNetwork(object):
             'sigmoid' : (sigmoid_function, sigmoid_derived),
             'tanh'    : (tanh_function, tanh_derived)
     }
-    
+
     def __init__(self, ni, nh, no=2, bias=True, funct='tanh'):
         self.bias = int(bias)
-        
+
         randomseed(0)
-        
+
         # number of input, hidden, and output nodes
         self.ni = ni + self.bias # +1 for bias node
         self.nh = nh
@@ -93,14 +99,14 @@ class NeuralNetwork(object):
                                           for x in xrange(self.ni)]
         self.wo = [[self._rand(-2.0, 2.0) for x in xrange(self.no)]
                                           for x in xrange(self.nh)]
-    
+
     def __repr__(self):
         return '<NeuralNetwork with inputs=%d, hidden=%d>' % (self.ni, self.nh)
-    
+
     def __str__(self):
         return ('Input weights: %f\n Hidden weights: %f\n' %
-                (', '.join(self.wi), ', '.join(self.wh)))        
-        
+                (', '.join(self.wi), ', '.join(self.wh)))
+
     def _rand(self, a, b):
         """
         It calculates a random number between a and b
@@ -162,22 +168,22 @@ class NeuralNetwork(object):
         # XXX: Maybe change this function?
         epoch = 0
         error = 0
-        while ((des_err and error >= des_err) or 
+        while ((des_err and error >= des_err) or
                (not des_err and epoch < iterations)):
             epoch += 1
             error = 0
             for inputs,targets in patterns:
                 self.put(inputs)
                 error = error + self.backPropagate(targets, eps)
-            
+
             if epoch % 100 == 0:
                 log.info('error: %f' % error)
-                
+
         log.debug('Network finished training'
-                          'in %dth epochs' % epoch)   
-        
+                          'in %dth epochs' % epoch)
+
         return error, epoch
-    
+
     def load(self, filename):
         """
         Load a shelve database with synapses.
@@ -206,5 +212,5 @@ class NeuralNetwork(object):
         db['wo'] = self.wo
 
         db.close()
-	
+
 
