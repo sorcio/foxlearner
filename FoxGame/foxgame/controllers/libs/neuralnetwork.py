@@ -21,13 +21,6 @@ except ImportError:
     log.critical('You should install psyco to speed up our neuralnet library.')
 
 
-try:
-    import psyco
-    psyco.full()
-except ImportError:
-    log.critical('You should install psyco to speed up our neuralnet library.')
-
-
 ############################
 ##   TRANSFER FUNCTIONS   ##
 ############################
