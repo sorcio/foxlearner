@@ -55,7 +55,7 @@ class MouseBrain(Brain):
     
     def update(self):
         self.game.brainz_draw().line(self.pawn, self.pointer)
-        return self.navigate2(self.pointer)
+        return self.navigate(self.pointer)
 
 
 class GUI(StateMachine):
