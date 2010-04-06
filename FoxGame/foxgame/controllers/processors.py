@@ -74,6 +74,8 @@ class SaveData(PostFilter):
             self.db['carrot.pos'] = []
             self.db['hare.speed'] = []
             self.db['fox.speed']  = []
+            self.db['fox.dir']    = []
+            self.db['hare.dir']   = []
 
     def update(self, direction, time):
         """
@@ -84,6 +86,8 @@ class SaveData(PostFilter):
         self.db['carrot.pos'].append(self.game.carrot.pos)
         self.db['hare.speed'].append(self.nearest_fox.speed)
         self.db['fox.speed'].append(self.game.hare.speed)
+        self.db['fox.dir'].append(Direction.from_vector(self.nearest_fox.speed))
+        self.db['hare.dir'].append(Direction.from_vector(self.game.hare.speed))
 
         return direction
 

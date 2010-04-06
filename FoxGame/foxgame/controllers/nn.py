@@ -1,28 +1,40 @@
 """
-traditional.py: Brains which provide a neural network
-                to move foxes/hare.
+nn.py: Brains which provide a neural network
+       to move foxes/hare.
+
 """
 
 from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
-from libs.bpnnpower import *
+from libs.neuralnetwork import NeuralNetwork
 
 class FoxBrain(Brain):
     """
     A controller which uses a neural network to follow the hare.
     """
-    
-    def __init__(self):
-        #8 inputs for now: coordinates of hare,nearest fox and carrot and hare speed
-        #2 outputs like the Direction tuple
-        self.network = NeuralNetwork(8,10,2)
+
+    _net_struct = 8, 10
+    _net_data = 'libs/synapsis.db'
+
+    def set_up(self):
+        """
+        Used to load neural network data from a file
+        """
+        self.network = NeuralNetwork(*self._net_struct)
+        self.network.load(self._net_data)
+
+    def tear_down(self):
+        """
+        It saves the neural network weights into a file
+        """
+        self.network.save(self.netFileName)
 
     def update(self):
         """
         The neural network recives in input the following data:
         Hare position, Fox position, Carrot position and hare speed.
         """
-        #TODO
+
         data = (self.game.hare.pos.x, self.game.hare.pos.y,
                 self.pawn.pos.x, self.pawn.pos.y,
                 self.game.carrot.pos.x, self.game.carrot.pos.y,
@@ -30,12 +42,14 @@ class FoxBrain(Brain):
 
         output = []
         for value in self.network.update(data):
-            if value>0.5:
+            if value > 0.5:
                 output.append(1)
+            elif value < -0.5:
+                output.append(-1)
             else:
                 output.append(0)
 
-        return Direction(output) 
+        return Direction(output)
 
 
 class HareBrain(Brain):
@@ -45,7 +59,5 @@ class HareBrain(Brain):
 
     def update(self):
         """
-        
         """
-
         return Direction(Direction.NULL) #TODO

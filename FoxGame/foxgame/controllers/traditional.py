@@ -41,8 +41,22 @@ class HareBrain(Brain):
         # choose between life and food :)
         if all(self.pawn.distance(fox) > self.threshold for
                fox in self.game.foxes):
-            return self.navigate(self.game.carrot.pos)
+            dir = self.navigate(self.game.carrot.pos)
         else:
             target = self.nearest_fox.pos + self.nearest_fox.speed/2
-            return -self.navigate(target)
+            dir = -self.navigate(target)
 
+        # correct diretion for walls
+        wallx, wally = self.game.size
+        if (self.pawn.pos.x - self.pawn.radius in range(10) and
+             dir.hor == Direction.LEFT[0] or
+            self.pawn.pos.x + self.pawn.radius in range(wallx-10, wallx) and
+             dir.hor == Direction.RIGHT[0]):
+               dir = Direction((-dir.hor, dir.vert))
+        if (self.pawn.pos.y - self.pawn.radius in range(10) and
+             dir.vert == Direction.UP[1] or
+            self.pawn.pos.y + self.pawn.radius in range(wally-10, wally) and
+             dir.vert == Direction.DOWN[1]):
+               dir = Direction((dir.hor, -dir.vert))
+
+        return dir

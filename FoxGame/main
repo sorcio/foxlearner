@@ -6,20 +6,20 @@
 #
 # Copyright 2010 <Michele Orrù>
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; version 2 dated June, 1991.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-# MA 02110-1301, USA.
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program;  if not, write to the Free Software
+#   Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.
+
 
 
 __author__ = 'Michele Orrù'
@@ -35,7 +35,7 @@ import logging
 
 # parsing arguments from stdin
 parser = OptionParser(usage='%prog [options]',
-                      version='%prog {0}'.format(__version__))
+                      version='%%prog %f' % __version__)
 
 # interface
 parser.add_option('-i', '--ui', dest='interface',
@@ -67,7 +67,7 @@ parser.add_option('--flog', dest='flog_level',
 # log stderr
 parser.add_option('-v', '--verbose', dest='slog_level',
                   type='int', default=0,
-                  metavar='NUM', help='verbosity level')
+                  metavar='NUM', help='verbosity level [1, 5]')
 
 (options, args) = parser.parse_args()
 
@@ -77,7 +77,7 @@ parser.add_option('-v', '--verbose', dest='slog_level',
 logging.basicConfig(level=(5 - options.flog_level)*10,
                     format='%(asctime)s %(name)-30s %(levelname)-8s %(message)s',
                     datefmt='%m-%d %H:%M',
-                    filename='{0}.log'.format(__appname__),
+                    filename=__appname__ + '.log',
                     filemode='w')
 
 #  stderr logger

@@ -26,7 +26,7 @@ class Controller(object):
 
 
     def __repr__(self):
-        return '<Controller object at {0}>'.format(self.__class__.__module__)
+        return '<Controller object at %s>' % self.__class__.__module__
 
     def update(self, time):
         """
@@ -42,6 +42,9 @@ class Controller(object):
 
         # finally return the new direction
         return dir
+
+    def __del__(self):
+        self.brain.end_game()
 
 
 class Brain(object):
@@ -67,11 +70,13 @@ class Brain(object):
 
     def start_game(self, pawn):
         """
-        Set up a the controlelr for a new game.
-        The brain will give inputs according to events redarding this one.
+        Set up a the controller for a new game.
+        The brain will give inputs according to events regarding this one.
         """
         self.pawn = pawn
         self.game = pawn.game
+
+        self.set_up()
 
     def end_game(self):
         """
@@ -80,6 +85,27 @@ class Brain(object):
         """
         # removing old session
         self.pawn = self.game = None
+
+        self.tear_down()
+
+    def update(self):
+        """
+        The method update is called each single time the pawn needs a new
+        direction to move to.
+        """
+        raise NotImplementedError('update method not overwritten.')
+
+    def set_up(self):
+        """
+        The method set_up is called when a new game is instantiated.
+        """
+        pass
+
+    def tear_down(self):
+        """
+        The method tear_down is called when the game is ended.
+        """
+        pass
 
     #########################################################################
     ## here starts common functions useful for an easy implementation of a ##
@@ -132,8 +158,8 @@ class PostFilter(object):
 
     def start_game(self, pawn):
         """
-        Set up a the controlelr for a new game.
-        The brain will give inputs according to events redarding this one.
+        Set up a the controller for a new game.
+        The brain will give inputs according to events regarding this one.
         """
         self.pawn = pawn
         self.game = pawn.game
