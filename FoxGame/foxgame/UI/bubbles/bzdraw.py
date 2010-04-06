@@ -10,9 +10,9 @@ from foxgame.structures import Vector
 
 class BZManager(object):
 
-    def __init__(self, gui):
-        self.gui = gui
-        self.bzpainter = BZPainter(gui)
+    def __init__(self, arena):
+        self.arena = arena
+        self.bzpainter = BZPainter(arena)
         self.contexts = defaultdict(lambda : DrawingContext(self.bzpainter))
 
     def get_context(self, name='frame'):
@@ -44,37 +44,37 @@ class BZPainter(object):
     Painter for brainz interface.
     """
 
-    def __init__(self, gui):
-        self.gui = gui
-        self.color = (100, 100, 100)
+    def __init__(self, arena):
+        self.arena = arena
+        self.color = 'dimgray'
 
     def circle(self, pos, radius, options):
-        surf = self.gui.arena
-        scale = self.gui.scale
+        surf = self.arena._surf
+        scale = self.arena.scale
         color = options.get('color', self.color)
         draw_circle(surf, radius(), color, *pos(), scale=scale)
 
     def line(self, points, options):
-        surf = self.gui.arena
-        scale = self.gui.scale
+        surf = self.arena._surf
+        scale = self.arena.scale
         color = options.get('color', self.color)
         draw_lines(surf, color, False, (p() for p in points), scale=scale)
 
     def vector(self, pos, vec, options):
-        surf = self.gui.arena
-        scale = self.gui.scale
+        surf = self.arena._surf
+        scale = self.arena.scale
         color = options.get('color', self.color)
         start = Vector(*pos())
         end = start + vec()
         draw_line(surf, color, start.x, start.y, end.x, end.y, scale=scale)
 
     def highlight(self, gameobj, options):
-        surf = self.gui.arena
-        scale = self.gui.scale
+        surf = self.arena._surf
+        scale = self.arena.scale
         color = options.get('color', self.color)
         gameobj = gameobj()
         draw_circle(surf, game_obj.radius/2, color, gameobj.pos, scale=scale)
 
     @property
     def dir_len(self):
-        return self.gui.screen_size[0] / 6
+        return self.arena.rect.x / 6
