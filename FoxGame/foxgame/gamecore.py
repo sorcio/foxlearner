@@ -164,9 +164,9 @@ class Fox(MovingPawn):
     """
     A fox.
     """
-    bspeed = 250.0
+    bspeed = 300.0
     baccel = 300.0
-    brake = 75.0
+    brake = 100.0
     radius = 18
     color = 'RED'
 
