@@ -11,7 +11,7 @@ DEPENDECIES
 -----------
 
     In order to run this software, you should previously install:
-        - python: 2.6 or higher   (we are working on retrocompatibility with 2.5)
+        - python: 2.5 or higher
         - pygame: 1.8.1 or higher
         - psyco: [optional] to speed up our neuralnetwork library
 
