@@ -9,6 +9,7 @@ __contributors__ = []
 
 from math import e, tanh, tan
 from random import random, seed as randomseed
+from os.path import exists
 import shelve
 
 from logging import getLogger

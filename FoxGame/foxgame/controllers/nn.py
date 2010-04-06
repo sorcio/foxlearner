@@ -13,21 +13,15 @@ class FoxBrain(Brain):
     A controller which uses a neural network to follow the hare.
     """
 
-    def __init__(self):
-        # 8 inputs for now: coordinates of hare,nearest fox and carrot and hare speed
-        # 2 outputs like the Direction tuple
-        self.network = NeuralNetwork(8, 10)
-
-        self.networkStructure = (8, 10)
-        self.netFileName = "libs/synapsis.db"
-
-        self.network = NeuralNetwork(*self.networkStructure)
+    _net_struct = 8, 10
+    _net_data = 'libs/synapsis.db'
 
     def set_up(self):
         """
         Used to load neural network data from a file
         """
-        self.network.load(self.netFileName)
+        self.network = NeuralNetwork(*self._net_struct)
+        self.network.load(self._net_data)
 
     def tear_down(self):
         """
