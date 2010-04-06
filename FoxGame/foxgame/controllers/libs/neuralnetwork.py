@@ -141,7 +141,7 @@ class NeuralNetwork(object):
 
         # Input delta
         output_deltas = [(targets[k]-ao) * self.dfunct(ao)
-                            for k, ao in enumerate(self.ao)]
+                         for k, ao in enumerate(self.ao)]
 
         # Hidden delta
         hidden_deltas = []
@@ -153,12 +153,12 @@ class NeuralNetwork(object):
         # Weights between hidden and output
         for j in range(self.nh):
             for k in xrange(self.no):
-                self.wo[j][k] += eps*output_deltas[k]*self.ah[j]
+                self.wo[j][k] += eps * output_deltas[k] * self.ah[j]
 
         # Weights between input and hidden
         for i in xrange(self.ni):
             for j in xrange(self.nh):
-                self.wi[i][j] += eps*hidden_deltas[j]*self.ai[i]
+                self.wi[i][j] += eps * hidden_deltas[j] * self.ai[i]
 
         # Medium quadratic error
         return sum((t - ao)**2 / 2 for t, ao in zip(targets, self.ao))
@@ -184,7 +184,7 @@ class NeuralNetwork(object):
                 log.info('error: %f' % error)
 
         log.debug('Network finished training'
-                          'in %dth epochs' % epoch)
+                  'in %dth epochs' % epoch)
 
         return error, epoch
 
