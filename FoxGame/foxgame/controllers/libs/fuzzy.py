@@ -1,6 +1,10 @@
 from __future__ import division
 from functools import wraps
+from math import sqrt
 
+
+__authors__ = 'Michele Orrù'
+__date__ = '08/4/2010'
 
 PRECISION = 0.5
 
@@ -41,25 +45,43 @@ def gaussian(cls, x):
 ############
 
 def hedge(modifier):
+    """
+    Hedges are devices commonly used to weaken or strengthen
+    the impact of an statement.
+    """
 
-    @wraps(modifier)
+    @wraps(hedge)
     def modify(set):
         return FuzzySet(set.parent, '%s_%s' %(modifier.func_name, set.name),
                         set.range, mfunct=lambda x:modifier(set.mfunct(x)))
     return modify
 
 @hedge
-def very(x):
-    """
-    Return x^2
-    """
-    return pow(x, 2)
+def indeed(x):
+    if 0 <= x <= 0.5:
+        return 2 * x**2
+    if 0.5 < x <= 1:
+        return 1 - 2 * (1 - x)**2
 
 @hedge
 def little(x):
-    """
-    """
-    return pow(x, 0.5)
+    return x ** 1.3
+
+@hedge
+def slighty(x):
+    return x ** 1.7
+
+@hedge
+def very(x):
+    return x ** 2
+
+@hedge
+def extremely(x):
+    return x ** 3
+
+@hedge
+def somewhat(x):
+    return sqrt(x)
 
 
 class FuzzySet(object):
@@ -74,7 +96,12 @@ class FuzzySet(object):
     """
 
     def __new__(cls, parent, name, range, mfunct):
-
+        """
+        Set up a new fuzzy set, with:
+          - name                 => 'name'
+          - range                => 'range'
+          - memebership function => 'mfunct'
+        """
         cls.parent = parent
         cls.name = name
         cls.range = range
@@ -141,6 +168,7 @@ class FuzzySet(object):
                False otherwise.
         """
         return other <= self
+
 
 class FuzzyVariable:     # (object) (type)
     """
