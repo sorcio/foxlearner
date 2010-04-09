@@ -30,6 +30,12 @@ class TestFuzzySet(TestCase):
         self.assertNotEqual(self.short.u(xl + 1), 0)
         self.assertNotEqual(self.short.u(xr -1), 1)
 
+    def test_nonzero(self):
+        """
+        Test __nonzero__ method.
+        """
+        self.assertTrue(self.short)
+
     def test_operators(self):
         """
         Test operators |, &, and ~.

@@ -298,3 +298,9 @@ class Game(object):
             self.hare.carrots += 1
             self.place_carrot()
             return True
+
+    def end(self):
+        for pawn in self.pawns:
+            pawn.controller.detroy()
+
+

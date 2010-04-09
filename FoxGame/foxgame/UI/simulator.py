@@ -37,6 +37,7 @@ def main(gfact):
     try:
         while True:
             if not ui.tick(60):
+                ui.game.end()
                 print 'game ended.'
                 break
     except KeyboardInterrupt:

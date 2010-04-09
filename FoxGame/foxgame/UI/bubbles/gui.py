@@ -120,6 +120,8 @@ class GUI(StateMachine):
         self.game = self.gfact.new_game()
     
     def clean_game(self):
+        if self.game:
+            game.end()
         if self.arena:
             self.arena.remove()
             self.arena = None

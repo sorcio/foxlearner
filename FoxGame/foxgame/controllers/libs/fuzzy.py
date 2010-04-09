@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
-from functools import wraps
+from functools import wraps, partial
+from operator import sub
 from math import sqrt
 
 
@@ -84,6 +87,7 @@ def somewhat(x):
     return sqrt(x)
 
 
+
 class FuzzySet(object):
     """
     A Fuzzy set is a set whose vaues have a degree of membership.
@@ -114,7 +118,7 @@ class FuzzySet(object):
         Return False if u(value) == 0 for each value in the FuzzySet,
                True otherwise.
         """
-        return not any(y != 0 for x, y in self)
+        return any(y != 0 for x, y in self)
 
     def __lt__(self, other):
         return (self.range <= other.range and
@@ -140,16 +144,38 @@ class FuzzySet(object):
                 any(x != y for (a, x), (b, y) in zip(self, other)))
 
     def __and__(self, other):
-        raise NotImplementedError
+        and_func = staticmethod(lambda cls, x: min(self.u(x), other.u(x)))
+        # FIXME
+        and_range = map(and_func, zip(self.range, other.range))
+
+        return FuzzySet(self.parent,
+                        '%s&%s' % (self.name, other.name),
+                        and_range, and_func)
 
     def __or__(self, other):
+        or_func = staticmethod(lambda x: max(self.u(x), other.u(x)))
+        #FIXME
+        or_range = map(or_func, zip(self.range, other.range))
+
+        return FuzzySet(self.parent,
+                        '%s|%s' % (self.name, other.name),
+                        or_range, or_func)
+
+    def __inverse__(self):
+        # TODO: use partial and sub?
+        inv_func = staticmethod(lambda x: 1 - self.u(x))
+        inv_range = map(inv_func, zip(self.range, other.range))
+
+        return FuzzySet(self.parent, '!' + self.name,
+                        inv_range, inv_func)
+
+    def __add__(self, other):
         raise NotImplementedError
 
-    def __iniverse__(self, other):
-        """
-        Return a FuzzySet with the same range,
-        but opposite degree of membership.
-        """
+    def __sub__(self, other):
+        raise NotImplementedError
+
+    def __mul__(self, other):
         raise NotImplementedError
 
     def __iter__(self):
@@ -160,7 +186,7 @@ class FuzzySet(object):
         counter = self.range[0]
         while counter != self.range[1]:
             yield counter, self.u(counter)
-            counter += precision
+            counter += PRECISION
 
     def __contains__(self, other):
         """

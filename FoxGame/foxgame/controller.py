@@ -43,8 +43,10 @@ class Controller(object):
         # finally return the new direction
         return dir
 
-    def __del__(self):
+    def destroy(self):
         self.brain.end_game()
+        for postfilter in self.postfilters:
+            postfilter.end_game()
 
 
 class Brain(object):
@@ -164,6 +166,8 @@ class PostFilter(object):
         self.pawn = pawn
         self.game = pawn.game
 
+        self.set_up()
+
     def end_game(self):
         """
         End the previously created game,
@@ -171,6 +175,8 @@ class PostFilter(object):
         """
         # removing old session
         self.pawn = self.game = None
+
+        self.tear_down()
 
 
     #########################################################################
