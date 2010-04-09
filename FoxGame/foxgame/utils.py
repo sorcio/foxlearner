@@ -12,21 +12,17 @@ class ShortDequeImpl(deque):
     """
     
     def __init__(self, iterable='', maxlen=0):
-        if maxlen < 0:
-            raise ValueError('maxlen must be non-negative')
+        if maxlen:
+            if maxlen < 0:
+                raise ValueError('maxlen must be non-negative')
+            self._maxlen = maxlen
+        else:
+            self._maxlen = 0
         super(ShortDequeImpl, self).__init__()
-        self._maxlen = maxlen
+        self.clear()
+        assert len(self) == 0
         if iterable:
             self.extend(iterable)
-
-    def __new__(cls, iterable='', maxlen=0, **kwargs):
-        if not maxlen:
-            #q = deque.__new__(cls, iterable, **kwargs)
-            q = deque(iterable)
-        else:
-            q = deque.__new__(cls, iterable, maxlen, **kwargs)
-
-        return q
 
     def __copy__(self):
         if hasattr(self, '_maxlen'):
@@ -44,18 +40,21 @@ class ShortDequeImpl(deque):
 
         return result
 
-    #TODO
     def __repr__(self):
-        s = "deque(%s, maxlen=%d)" % (list(self), self._maxlen)
+        lrepr = ', '.join(repr(x) if x is not self else '[...]' for x in self)
+        if self._maxlen:
+            s = "deque([%s], maxlen=%d)" % (lrepr, self._maxlen)
+        else:
+            s = "deque([%s])" % (lrepr,)
         return s
 
     def append(self, x):
-        if len(self) == self._maxlen:
+        if self._maxlen and len(self) == self._maxlen:
             self.popleft()
         super(ShortDequeImpl, self).append(x)
     
     def appendleft(self, x):
-        if len(self) == self._maxlen:
+        if self._maxlen and len(self) == self._maxlen:
             self.pop()
         super(ShortDequeImpl, self).appendleft(x)
     
@@ -67,8 +66,16 @@ class ShortDequeImpl(deque):
         for x in iterable:
             self.appendleft(x)
 
-# TODO
-ShortDeque = ShortDequeImpl
+
+try:
+    # Are we on a platform that supports deque with maxlen?
+    # (e.g. CPython >= 2.6)
+    deque(maxlen=1)
+    ShortDeque = deque
+except TypeError:
+    # If not then assume we have CPython 2.5 compatibility
+    # and use our compatibility class.
+    ShortDeque = ShortDequeImpl
 
 from functools import partial
 class ProxyTestSD(object):

@@ -495,40 +495,35 @@ class TestSubclass(unittest.TestCase):
     def test_copy_pickle(self):
 
         d = Deque('abc')
-        
+
         e = d.__copy__()
         self.assertEqual(type(d), type(e))
         self.assertEqual(list(d), list(e))
-        
+
         e = Deque(d)
         self.assertEqual(type(d), type(e))
         self.assertEqual(list(d), list(e))
-        
+
         s = pickle.dumps(d)
         e = pickle.loads(s)
         self.assertNotEqual(id(d), id(e))
         self.assertEqual(type(d), type(e))
         self.assertEqual(list(d), list(e))
 
-        print "\nDeque('abcde', maxlen=4)"
         d = Deque('abcde', maxlen=4)
-        print "d =", d
-        print "type(d)", type(d), "id(d)", id(d)
-        print "d.__copy__()"
+
         e = d.__copy__()
-        print "e =", e
-        print "type(e)", type(e), "id(e)", id(e)
         self.assertEqual(type(d), type(e))
         self.assertEqual(list(d), list(e))
 
         e = Deque(d)
-        self.assertNotEqual(type(d), type(e))
+        self.assertEqual(type(d), type(e))
         self.assertEqual(list(d), list(e))
 
         s = pickle.dumps(d)
         e = pickle.loads(s)
         self.assertNotEqual(id(d), id(e))
-        self.assertNotEqual(type(d), type(e))
+        self.assertEqual(type(d), type(e))
         self.assertEqual(list(d), list(e))
 
 ##    def test_pickle(self):
