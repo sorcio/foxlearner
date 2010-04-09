@@ -114,6 +114,8 @@ class GUI(StateMachine):
         self.arrows_ctl = None
         self.wasd_ctl = None
         self.mouse_ctl = []
+        
+        self.game = None
 
     def setup_game(self):
         self.clean_game()
@@ -121,7 +123,7 @@ class GUI(StateMachine):
     
     def clean_game(self):
         if self.game:
-            game.end()
+            self.game.end()
         if self.arena:
             self.arena.remove()
             self.arena = None
