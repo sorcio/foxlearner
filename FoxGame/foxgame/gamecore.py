@@ -301,6 +301,6 @@ class Game(object):
 
     def end(self):
         for pawn in self.pawns:
-            pawn.controller.detroy()
+            pawn.controller.destroy()
 
 
