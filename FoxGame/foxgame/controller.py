@@ -34,7 +34,7 @@ class Controller(object):
         then elaborates the output using postfilters.
         """
         # get the diorection from Brain
-        dir = self.brain.update()
+        dir = self.brain.update(time)
 
         # modify the direction using Postfilter
         for postfilter in self.postfilters:

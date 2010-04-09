@@ -7,7 +7,7 @@ from foxgame.structures import Direction
 
 class FoxBrain(Brain):
 
-    def update(self):
+    def update(self, time):
         """
         Always return Direction.NULL.
         """
@@ -18,7 +18,7 @@ class FoxBrain(Brain):
 class HareBrain(Brain):
     # threshold = 80
 
-    def update(self):
+    def update(self, time):
         """
         Alwaysreturn Direction.NULL
         """

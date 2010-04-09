@@ -38,14 +38,14 @@ class Delay(PostFilter):
     """
     A simple postfilter which adds a delay to the commands.
     """
-    
+
     delay = 5
-    
+
     def __init__(self, *args):
         super(Delay, self).__init__(*args)
 
         self.buffer = deque([Direction(Direction.NULL)] * self.delay)
-        
+
     def update(self, direction, time):
         ret = self.buffer.popleft()
         self.buffer.append(direction)
@@ -68,7 +68,7 @@ class SaveData(PostFilter):
 
         if any(key not in self.db for key in ('fox.pos', 'hare.pos',
                                               'fox.speed', 'hare.speed',
-                                               'carrot.pos')):
+                                              'carrot.pos')):
             self.db['fox.pos']    = []
             self.db['hare.pos']   = []
             self.db['carrot.pos'] = []

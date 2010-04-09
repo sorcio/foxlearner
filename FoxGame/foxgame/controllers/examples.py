@@ -41,7 +41,7 @@ class FoxBrain(Brain):
 
         log.debug('Brain controller created!')
 
-    def update(self):
+    def update(self, time):
         # update counter
         self.counter += 1
 
