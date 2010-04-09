@@ -168,12 +168,12 @@ class Direction(object):
         dirs = {
                 self.UP       : 'N',
                 self.DOWN     : 'S',
-                self.RIGHT    : 'W',
-                self.LEFT     : 'L',
-                self.UPRIGHT  : 'NW',
-                self.UPLEFT   : 'NE',
-                self.DOWNRIGHT: 'SW',
-                self.DOWNLEFT : 'SE',
+                self.RIGHT    : 'E',
+                self.LEFT     : 'W',
+                self.UPRIGHT  : 'NE',
+                self.UPLEFT   : 'NW',
+                self.DOWNRIGHT: 'SE',
+                self.DOWNLEFT : 'SW',
                 self.NULL     : '-'
         }
         return dirs[self.hor, self.vert]
