@@ -10,7 +10,12 @@ class ShortDequeImpl(deque):
     a corresponding number of items are discarded from 
     the opposite end.
     """
-    
+    def __new__(cls, iterable=None, maxlen=0):
+        if not maxlen:
+            return deque(iterable)
+        else:
+            return ShortDequeImpl(iterable, maxlen)
+            
     def __init__(self, iterable=None, maxlen=0):
         # XXX: deque.__init__ fails with None
         super(ShortDequeImpl, self).__init__()
