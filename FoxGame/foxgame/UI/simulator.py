@@ -3,12 +3,25 @@
 simulator.py: a masochistic GUI. Used mainly for tests/controller learning
 """
 from foxgame.controller import Brain
+from foxgame.structures import Direction
 
 class RawBrain(Brain):
     """
     Move the pawn using manual inputs from stdin.
     """
-    pass
+
+    def update(self, time):
+        #
+        for n, fox in enumerate(self.game.foxes):
+            print 'Fox %d is in %s (distance: %d, speed: %d)' % (
+                   n, fox.pos, self.pawn.distance(fox), abs(fox.speed))
+        hare = self.game.hare
+        print 'Hare is in %s (distance: %d, speed: %d)' % (
+                   hare.pos, self.pawn.distance(hare), abs(hare.speed))
+
+        # get input from the user
+        strdir = raw_input('\n Direction> ')
+        return Direction(map(int, strdir.split()))
 
 
 class GUI():
@@ -22,6 +35,7 @@ class GUI():
         """
         #  factories
         self.gfact = game_factory
+        self.gfact.harefact.brain = self.gfact.harefact.brain or RawBrain
         #  game
         self.game = self.gfact.new_game()
         #  shortcuts
@@ -36,9 +50,10 @@ def main(gfact):
     ui = GUI(gfact)
     try:
         while True:
-            if not ui.tick(60):
+            if ui.tick(60) == False:
                 ui.game.end()
                 print 'game ended.'
                 break
     except KeyboardInterrupt:
+        print
         exit()
