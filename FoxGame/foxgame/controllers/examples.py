@@ -14,7 +14,7 @@ from foxgame.controller import Brain
 from foxgame.structures import Direction
 
 # import libraries useful for our Brains
-from random import choice as randchoice
+from random import choice as randomchoice
 
 # set up logger
 from logging import getLogger
@@ -41,17 +41,18 @@ class FoxBrain(Brain):
 
         log.debug('Brain controller created!')
 
-    def update(self, time):
-        """
-        Return a new direction each 'self.times' times.
-        """
+    def update(self):
+        # update counter
         self.counter += 1
 
+        # change direction each 'self.times' times
         if self.counter % self.times == 0:
-            self.choice = Direction(randomchoice(range(-1, +2)),
-                                    randomchoice(range(-1, +2)))
+            self.choice = Direction((randomchoice(range(-1, +2)),
+                                     randomchoice(range(-1, +2))))
+            # display in a log message the new direction
             log.info('New Direction: %s' % self.choice)
 
+        # return a Direction object
         return self.choice
 
     def tear_down(self):
@@ -67,5 +68,4 @@ class HareBrain(Brain):
     """
     Description of our Brain.
     """
-
-    raise NotImplementedError
+    pass
