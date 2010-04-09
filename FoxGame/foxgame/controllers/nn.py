@@ -23,13 +23,7 @@ class FoxBrain(Brain):
         self.network = NeuralNetwork(*self._net_struct)
         self.network.load(self._net_data)
 
-    def tear_down(self):
-        """
-        It saves the neural network weights into a file
-        """
-        self.network.save(self.netFileName)
-
-    def update(self):
+    def update(self, time):
         """
         The neural network recives in input the following data:
         Hare position, Fox position, Carrot position and hare speed.
@@ -51,13 +45,18 @@ class FoxBrain(Brain):
 
         return Direction(output)
 
+    def tear_down(self):
+        """
+        It saves the neural network weights into a file
+        """
+        self.network.save(self.netFileName)
+
 
 class HareBrain(Brain):
     """
     A controller which uses a neural network to escape from the fox.
     """
 
-    def update(self):
-        """
-        """
-        return Direction(Direction.NULL) #TODO
+    def update(self, time):
+        raise NotImplementedError
+

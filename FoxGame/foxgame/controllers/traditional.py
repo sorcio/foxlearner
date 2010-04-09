@@ -15,9 +15,9 @@ class FoxBrain(Brain):
     to follow the hare.
     """
 
-    def update(self):
+    def update(self, time):
         """
-        Fax's aim is to follow the hare, so its directions is determined by
+        Fox's aim is to follow the hare, so its directions is determined by
         the hare's one.
         """
         target = self.game.hare.pos + self.game.hare.speed/4
@@ -32,7 +32,7 @@ class HareBrain(Brain):
 
     threshold = 100
 
-    def update(self):
+    def update(self, time):
         """
         Hare's aim is to get away from the fox, so it should go to the opposite
         position of the Fox.

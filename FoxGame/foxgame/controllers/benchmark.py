@@ -4,7 +4,7 @@ from foxgame.controller import PostFilter
 
 class Benchmark (PostFilter):
     """
-    A simple postfilter which invertes the direction given.
+    A simple postfilter which stores and returns datasuseful for benchmarking.
     """
 
     def update(self, direction, time):
