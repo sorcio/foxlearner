@@ -6,6 +6,26 @@ from __future__ import division
 from random import randrange
 from foxgame.structures import Vector
 
+from logging import getLogger
+log = getLogger('gamecore')
+
+
+class FoxGameError(Exception):
+    """
+    A Simple Exception raised if some components of the game fail.
+    """
+
+    def __init__(self, component, msg):
+        self.component = component
+        self.msg = msg
+
+    def __str__(self):
+        serror = '%sError: %s' % (self.component, self.msg)
+
+        # store the error and retrun it.
+        log.critical(serror)
+        return serror
+
 
 class GameObject(object):
     """
