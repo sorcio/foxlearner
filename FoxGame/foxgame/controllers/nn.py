@@ -65,7 +65,7 @@ class HareBrain(Brain):
         if TRAINING:
             self.train_network()
         self.network = NeuralNetwork(*self._net_struct)
-        #self.network.load(self._net_data)
+        self.network.load(self._net_data)
 
     def update(self, time):
         """
@@ -77,6 +77,7 @@ class HareBrain(Brain):
                 self.game.carrot.pos.x, self.game.carrot.pos.y,
                 self.pawn.pos.x, self.pawn.pos.y,
                 self.game.hare.speed.x, self.game.hare.speed.y)
+        # XXX
         output = []
         for value in self.network.put(data):
             output.append(int(round(value)))
@@ -92,23 +93,26 @@ class HareBrain(Brain):
 
     def train_network(self):
         logfile = 'data.db'
-        
+
         pattern = []
-        
+
         db = shelve.open(logfile)
         if db == {}:
             raise IOError('File %s empty' % logfile)
-            
-        for f_pos, h_pos, c_pos, h_spd, h_dir in zip(db['fox.pos'], db['hare.pos'],
-                                db['carrot.pos'], db['hare.speed'], db['hare.dir']):
-            
+
+        for f_pos, h_pos, c_pos, h_spd, h_dir in zip(db['fox.pos'],
+                                                     db['hare.pos'],
+                                                     db['carrot.pos'],
+                                                     db['hare.speed'],
+                                                     db['hare.dir']):
+
             example = [[f_pos.x/self.game.size.x, f_pos.y/self.game.size.y,
                         h_pos.x/self.game.size.x, h_pos.y/self.game.size.y,
                         c_pos.x/self.game.size.x, c_pos.y/self.game.size.y,
                         h_spd.x/self.game.size.x, h_spd.y/self.game.size.y],
                        [a for a in h_dir]]
             pattern.append(example)
-            
+
         n = NeuralNetwork(*HareBrain._net_struct)
         n.train(pattern, 5)
         n.save(HareBrain._net_data)

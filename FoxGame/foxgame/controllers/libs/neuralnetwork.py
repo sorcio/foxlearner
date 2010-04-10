@@ -128,7 +128,9 @@ class NeuralNetwork(object):
                             [ai * wi[j] for ai, wi in zip(self.ai, self.wi)]))
 
         # output activations
+        print self.nh, self.no
         for k in xrange(self.no):
+            print k
             self.ao[k] = self.tfunct(sum(
                             [ah * wo[k] for ah, wo in zip(self.ah, self.wo)]))
 
@@ -165,12 +167,13 @@ class NeuralNetwork(object):
 
     def train(self, patterns, iterations=1000, eps=0.5, des_err=None):
         # eps: learning rate
-
         epoch = 0
 
         # define error for first iteration
         if des_err is not None:
             error = des_err + 1
+
+        log.debug('Network started training.')
 
         while ((des_err and error >= des_err) or
                (not des_err and epoch < iterations)):
