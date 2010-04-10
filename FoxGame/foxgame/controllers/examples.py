@@ -10,7 +10,7 @@ __date__ = '00/00/00'
 
 
 # import basics foxgame modules
-from foxgame.controller import Brain, PostFilter
+from foxgame.controller import Brain, PostFilter, ControllerOption
 from foxgame.structures import Direction
 
 # import libraries useful for our Brains
@@ -21,7 +21,7 @@ from logging import getLogger
 log = getLogger(__name__)
 
 # export options
-# TODO
+__extraopts__ = { 'times': ControllerOption('times', clstype='int')}
 
 # brain classes
 

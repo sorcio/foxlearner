@@ -12,7 +12,7 @@ class ControllerOption(object):
 
     def __init__(self, name,
                  dest=None,
-                 type='string',
+                 clstype='string',
                  default=None,
                  action='store',
                  description=''):
@@ -22,8 +22,21 @@ class ControllerOption(object):
         self.name = name
         self.dest = dest or name
         self.description = description
-        self._parse_action(action)
-        self._parse_type(type)
+        #self._parse_action(action)
+        self._parse_clstype(clstype)
+
+    def _parse_clstype(self, clstype):
+        if clstype == 'string':
+            self.cls = string
+        elif clstype == 'int':
+            self.cls = int
+        else:
+            raise NotImplementedError
+        # TODO: vector, direction, ...
+
+    def __call__(self, foo):
+        return self.cls(foo)
+
 
 class Controller(object):
     """

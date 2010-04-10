@@ -29,36 +29,59 @@ __version__ = 0.5
 __date__ = '01-04-2010'
 __license__ = 'GPLv2'
 
-from optparse import OptionParser
+from optparse import OptionParser, make_option
+from itertools import takewhile
 import logging
 
+def extra_option(option, opt_str, value, parser):
 
-# parsing arguments from stdin
-parser = OptionParser(usage='%prog [options]',
-                      version='%%prog %f' % __version__)
+    # set the main option
+    setattr(parser.values, option.dest, value)
+
+    # extend with non-standard options
+    args = takewhile(lambda x: not x.startswith('-') and ':' in x,
+                     parser.rargs)
+    option.extra_options = dict(arg.split(':') for arg in args)
+
+
 
 # interface
-parser.add_option('-i', '--ui', dest='interface',
-                  default='bubbles', action='store',
-                  metavar='GUI', help='game interface')
-# brain
-parser.add_option('--fox-brain', dest='fox_brain',
-                  default='traditional', action='store',
+interface = make_option('-i', '--ui', dest='interface',
+                        default='bubbles', action='store',
+                        metavar='GUI', help='game interface')
+
+# brains
+fox_brain = make_option('--fox-brain', dest='fox_brain',
+                  nargs=1, type='string', default='traditional',
+                  action='callback', callback=extra_option,
                   metavar='BRAIN', help='ai algorithm for the fox')
-parser.add_option('--hare-brain', dest='hare_brain',
-                  default='none', action='store',
+fox_brain.extra_options = None
+
+hare_brain = make_option('--hare-brain', dest='hare_brain',
+                  nargs=1, type='string', default='none',
+                  action='callback', callback=extra_option,
                   metavar='BRAIN', help='ai algorithm for the hare')
-# postfilter
-parser.add_option('--fox-pfilter', dest='fox_pfilters',
+hare_brain.extra_options = None
+
+# postfilters
+fox_pfilters = make_option('--fox-pfilter', dest='fox_pfilters',
                   default='', action='store',
                   metavar='POSTFILTER', help='postfilter for the fox')
-parser.add_option('--hare-pfilter', dest='hare_pfilters',
+hare_pfilters = make_option('--hare-pfilter', dest='hare_pfilters',
                   default='', action='store',
                   metavar='POSTFILTER', help='postfilter for the hare')
 # foxes number
-parser.add_option('-n', '--nfoxes', dest='foxes_num',
+nfox = make_option('-n', '--nfoxes', dest='foxes_num',
                   type='int', default=1,
                   metavar='NUM', help='number of foxes in the game')
+
+# creating parser
+parser = OptionParser(usage='%prog [options]',
+                      version='%%prog %f' % __version__,
+                      option_list=[interface, nfox,
+                                   fox_brain, hare_brain,
+                                   fox_pfilters, hare_pfilters])
+
 
 # log file
 parser.add_option('--flog', dest='flog_level',
@@ -96,8 +119,8 @@ from foxgame.factories import GameFactory, ControllerFactory
 from foxgame.factories import load_brain, load_postfilters
 
 # fox and hare brains
-fox_brain = load_brain(options.fox_brain, 'FoxBrain')
-hare_brain = load_brain(options.hare_brain, 'HareBrain')
+fox_brain = load_brain(options.fox_brain, 'FoxBrain', fox_brain.extra_options)
+hare_brain = load_brain(options.hare_brain, 'HareBrain', hare_brain.extra_options)
 
 # fox and hare postfilters
 fox_pfilters = load_postfilters(pfilter for pfilter in

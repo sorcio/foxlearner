@@ -50,17 +50,31 @@ class ControllerFactory(object):
         return Controller(parent_pawn, self.brain(), postfilters)
 
 
-def load_brain(brain_name, cls_name='Brain'):
+def load_extraopts(module, klass, options):
+    """
+    Sets extra options in the module 'module'.
+    """
+    exported = getattr(module, '__extraopts__')
+    for option in options:
+        if option not in exported:
+            # XXX raise?
+            continue
+        setattr(klass, option, exported[option](options[option]))
+
+def load_brain(brain_name, cls_name='Brain', extraopts=None):
     """
     Dynamically loads brain class with given name.
     """
     if brain_name == 'none':
         return None
 
-    # XXX: throwing ImportError (and AttributeError), is this right?
     controllers = __import__('foxgame.controllers.' + brain_name).controllers
     brain_module = getattr(controllers, brain_name)
+    # loading the game class
     brain = getattr(brain_module, cls_name)
+    # set extra options
+    if extraopts:
+        load_extraopts(brain_module, brain, extraopts)
     return brain
 
 def load_postfilters(pfilter_names):
@@ -71,7 +85,6 @@ def load_postfilters(pfilter_names):
         if not '.' in pfilter_name:
             raise AttributeError, 'invalid postfilter format'
         module, cls_name = pfilter_name.split('.')
-        # XXX: throwing ImportError (and AttributeError), is this right?
         controllers = __import__('foxgame.controllers.' + module).controllers
         pfilter_module = getattr(controllers, module)
         pfilter = getattr(pfilter_module, cls_name)
