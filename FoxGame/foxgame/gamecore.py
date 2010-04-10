@@ -6,6 +6,9 @@ from __future__ import division
 from random import randrange
 from foxgame.structures import Vector
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class GameObject(object):
     """
@@ -217,7 +220,7 @@ class Game(object):
 
         # place objects
         self.place_carrot()
-        self._randomlocate(10)
+        self._randomlocate(abs(self.size) / 4)
 
         # starting up time elapsed
         self.time_elapsed = 0
@@ -237,24 +240,50 @@ class Game(object):
         """
         return any(self._collision(self.hare, fox) for fox in self.foxes)
 
-    def _randompoint(self):
+    def _randompoint(self, wall_dist=0):
         """
-        Return a random point.
+        Return a random point in the arena at least wall_dist distant
+        from each wall.
         """
-        return Vector(randrange(self.size.x), randrange(self.size.y))
+        return Vector(randrange(wall_dist, self.size.x - wall_dist),
+                       randrange(wall_dist, self.size.y - wall_dist))
 
     def _randomlocate(self, mindist):
         """
-        Put the hare and the fox into random positions.
-        XXX: rewrite this function: check for walls, improve algorithm.
+        Choice random positions for hare and foxing
+        avoiding collision and fox crowding.
         """
-        # obj_combs = combinations(self.pawns, 2)
-        #
-        # while not all(x.distance(y) >= mindist for x, y in obj_combs):
-        #     for pawn in self.pawns:
-        #         pawn.pos = self._randompoint()
-        for pawn in self.pawns:
-            pawn.pos = self._randompoint()
+        self.hare.pos = self._randompoint(self.hare.radius)
+        
+        # Choose (a bit arbitrarily) a maximum number of
+        # retries for fox collision avoiding.
+        max_retries = 2 * len(self.foxes)
+        retries_left = max_retries
+        
+        # Fox-to-fox minimum distance
+        fox_dist = mindist / 4
+        # Fox-to-hare minimum distance
+        hare_dist = mindist
+        
+        for i, fox in enumerate(self.foxes):
+            fox.pos = self._randompoint(fox.radius)
+            must_retry = self.hare.distance(fox) < hare_dist
+            may_retry = (must_retry or
+                         any(fox.distance(other) < fox_dist
+                             for other in self.foxes[:i])
+                        )
+            while must_retry or (retries_left > 0 and may_retry):
+                if not must_retry and may_retry:
+                    retries_left -= 1
+                fox.pos = self._randompoint(fox.radius)
+                must_retry = self.hare.distance(fox) < hare_dist
+                may_retry = (must_retry or
+                             any(fox.distance(other) < fox_dist
+                                 for other in self.foxes[:i])
+                            )
+        
+        log.debug('Random location of foxes, %d retries',
+                  max_retries - retries_left)
 
     @property
     def objects(self):
