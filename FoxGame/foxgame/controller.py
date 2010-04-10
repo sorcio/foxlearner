@@ -2,6 +2,28 @@
 controller.py: basic clases for managing inputs (CTL).
 """
 from foxgame.structures import Direction
+# from foxgame.gamecore import FoxGameError
+
+class ControllerOption(object):
+    """
+    A Controller Options provides some attributes
+    useful for parsing and configuring somespecific constants on the game.
+    """
+
+    def __init__(self, name,
+                 dest=None,
+                 type='string',
+                 default=None,
+                 action='store',
+                 description=''):
+        """
+        Set up ControllerOption attributes.
+        """
+        self.name = name
+        self.dest = dest or name
+        self.description = description
+        self._parse_action(action)
+        self._parse_type(type)
 
 class Controller(object):
     """
@@ -23,7 +45,6 @@ class Controller(object):
         self.brain.start_game(self.pawn)
         for pfilter in self.postfilters:
             pfilter.start_game(self.pawn)
-
 
     def __repr__(self):
         return '<Controller object at %s>' % self.__class__.__module__
@@ -177,6 +198,18 @@ class PostFilter(object):
         self.pawn = self.game = None
 
         self.tear_down()
+
+    def set_up(self):
+        """
+        The method set_up is called when a new game is instantiated.
+        """
+        pass
+
+    def tear_down(self):
+        """
+        The method tear_down is called when the game is ended.
+        """
+        pass
 
 
     #########################################################################

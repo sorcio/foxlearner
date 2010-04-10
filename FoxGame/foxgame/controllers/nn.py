@@ -63,7 +63,7 @@ class HareBrain(Brain):
         """
         Used to load neural network data from a file
         """
-        
+
         # XXX Change this!!!
         if HareBrain.training:
             print "Addestramento"
@@ -85,9 +85,8 @@ class HareBrain(Brain):
                 self.game.carrot.pos.x, self.game.carrot.pos.y,
                 self.pawn.pos.x, self.pawn.pos.y,
                 self.game.hare.speed.x, self.game.hare.speed.y)
-                
-        output = [int(round(value)) for value in self.network.put(data)]
 
+        output = [int(round(value)) for value in self.network.put(data)]
 
         return Direction(output)
 
@@ -98,19 +97,19 @@ class HareBrain(Brain):
         self.network.save(self._net_data)
 
     def train_network(self):
-        """
-        """
-        
         logfile = SaveData.logfile
         pattern = []
-        
+
         db = shelve.open(logfile)
         if db == {}:
             raise IOError('File %s empty' % logfile)
-            
-        for f_pos, h_pos, c_pos, h_spd, h_dir in zip(db['fox.pos'], db['hare.pos'],
-                                db['carrot.pos'], db['hare.speed'], db['hare.dir']):
-            
+
+        for f_pos, h_pos, c_pos, h_spd, h_dir in zip(db['fox.pos'],
+                                                     db['hare.pos'],
+                                                     db['carrot.pos'],
+                                                     db['hare.speed'],
+                                                     db['hare.dir']):
+
             example = [[f_pos.x/self.game.size.x, f_pos.y/self.game.size.y,
                         h_pos.x/self.game.size.x, h_pos.y/self.game.size.y,
                         c_pos.x/self.game.size.x, c_pos.y/self.game.size.y,
