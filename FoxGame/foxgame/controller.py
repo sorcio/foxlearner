@@ -20,7 +20,7 @@ class ControllerOption(object):
         Set up ControllerOption attributes.
         """
         self.name = name
-        self.dest = dest or name
+        self.dest = dest
         self.description = description
         #self._parse_action(action)
         self._parse_clstype(clstype)
@@ -30,12 +30,13 @@ class ControllerOption(object):
             self.cls = string
         elif clstype == 'int':
             self.cls = int
+        # elif clstype == 'vector':
+        # elif clstype == 'direction'
         else:
-            raise NotImplementedError
-        # TODO: vector, direction, ...
+            raise TypeError('Unknown type.')
 
-    def __call__(self, foo):
-        return self.cls(foo)
+    def __call__(self, value):
+        return self.cls(value)
 
 
 class Controller(object):
