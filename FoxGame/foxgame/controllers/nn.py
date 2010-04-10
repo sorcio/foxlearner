@@ -4,13 +4,19 @@ nn.py: Brains which provide a neural network
 
 """
 
-from foxgame.controller import Brain
-from foxgame.structures import Vector, Direction
-from libs.neuralnetwork import NeuralNetwork
-from foxgame.controllers.processors import SaveData
 import shelve
 from os.path import join, exists
 from os import remove
+
+from foxgame.controller import Brain, ControllerOption
+from foxgame.structures import Vector, Direction
+from libs.neuralnetwork import NeuralNetwork
+from foxgame.controllers.processors import SaveData
+
+
+__extraopts__ = { 'training': ControllerOption('train', clstype='bool')}
+
+
 
 class FoxBrain(Brain):
     """
