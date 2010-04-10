@@ -178,6 +178,18 @@ class PostFilter(object):
 
         self.tear_down()
 
+    def set_up(self):
+        """
+        The method set_up is called when a new game is instantiated.
+        """
+        pass
+
+    def tear_down(self):
+        """
+        The method tear_down is called when the game is ended.
+        """
+        pass
+
 
     #########################################################################
     ## here starts common functions useful for an easy implementation of a ##

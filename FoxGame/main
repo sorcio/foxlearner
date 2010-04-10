@@ -50,10 +50,10 @@ parser.add_option('--hare-brain', dest='hare_brain',
                   metavar='BRAIN', help='ai algorithm for the hare')
 # postfilter
 parser.add_option('--fox-pfilter', dest='fox_pfilters',
-                  action='append',
+                  default='', action='store',
                   metavar='POSTFILTER', help='postfilter for the fox')
 parser.add_option('--hare-pfilter', dest='hare_pfilters',
-                  action='append',
+                  default='', action='store',
                   metavar='POSTFILTER', help='postfilter for the hare')
 # foxes number
 parser.add_option('-n', '--nfoxes', dest='foxes_num',
@@ -100,8 +100,10 @@ fox_brain = load_brain(options.fox_brain, 'FoxBrain')
 hare_brain = load_brain(options.hare_brain, 'HareBrain')
 
 # fox and hare postfilters
-fox_pfilters = load_postfilters(options.fox_pfilters)
-hare_pfilters = load_postfilters(options.hare_pfilters)
+fox_pfilters = load_postfilters(pfilter for pfilter in
+                                options.fox_pfilters.split(',') if pfilter)
+hare_pfilters = load_postfilters(pfilter for pfilter in
+                                 options.hare_pfilters.split(',') if pfilter)
 
 # fox and hare controller factories
 cffactory = ControllerFactory(fox_brain, fox_pfilters)
