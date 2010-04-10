@@ -10,7 +10,7 @@ __date__ = '00/00/00'
 
 
 # import basics foxgame modules
-from foxgame.controller import Brain
+from foxgame.controller import Brain, PostFilter
 from foxgame.structures import Direction
 
 # import libraries useful for our Brains
@@ -68,4 +68,18 @@ class HareBrain(Brain):
     """
     Description of our Brain.
     """
-    pass
+
+    def set_up(self):
+        raise NotImplementedError
+
+
+class PFilterExample(PostFilter):
+    """
+    Description of the PostFilter.
+    """
+
+    def update(self, dir, time):
+        """
+        Return the opposite direction given.
+        """
+        return -dir
