@@ -23,8 +23,8 @@ DEPENDECIES
 INSTALL
 -------
     To run the software,
-        on windows systems: "python.exe main"
-        on *nix    systems: "./main" OR "python main"
+        on windows systems: "python.exe -O main"
+        on *nix    systems: "./main" OR "python -O main"
 
     For more informations about options, see "main --help" or "main -h"
 
