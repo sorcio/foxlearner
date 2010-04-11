@@ -118,9 +118,13 @@ logging.getLogger('').addHandler(console)
 from foxgame.factories import GameFactory, ControllerFactory
 from foxgame.factories import load_brain, load_postfilters
 
-# fox and hare brains
-fox_brain = load_brain(options.fox_brain, 'FoxBrain', fox_brain.extra_options)
-hare_brain = load_brain(options.hare_brain, 'HareBrain', hare_brain.extra_options)
+try:
+    # fox and hare brains
+    fox_brain = load_brain(options.fox_brain, 'FoxBrain', fox_brain.extra_options)
+    hare_brain = load_brain(options.hare_brain, 'HareBrain', hare_brain.extra_options)
+except ImportError, e:
+    parser.error('Invalid Brain: %s' % e)
+
 
 # fox and hare postfilters
 fox_pfilters = load_postfilters(pfilter for pfilter in

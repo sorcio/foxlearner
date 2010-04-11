@@ -2,7 +2,7 @@
 factories.py: factory classes used to store and configure controllers.
 """
 
-from foxgame.gamecore import Game
+from foxgame.gamecore import Game, FoxGameError
 from foxgame.controller import Controller
 
 
@@ -57,8 +57,7 @@ def load_extraopts(module, klass, options):
     exported = getattr(module, '__extraopts__')
     for option in options:
         if option not in exported:
-            # XXX raise?
-            continue
+            raise FoxGameError('Controller', 'option %s unknown' % option)
         setattr(klass, option, exported[option](options[option]))
 
 def load_brain(brain_name, cls_name='Brain', extraopts=None):
