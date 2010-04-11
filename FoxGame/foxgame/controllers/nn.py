@@ -8,13 +8,14 @@ import shelve
 from os.path import join, exists
 from os import remove
 
-from foxgame.controller import Brain, ControllerOption
+from foxgame.gamecore import FoxgameOption
+from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
 from libs.neuralnetwork import NeuralNetwork
 from foxgame.controllers.processors import SaveData
 
 
-__extraopts__ = { 'training': ControllerOption('train', clstype='bool')}
+__extraopts__ = (FoxgameOption('training', type='bool')}
 
 
 
@@ -25,6 +26,7 @@ class FoxBrain(Brain):
     # TODO: Not working, rewrite the class looking at the other.
     _net_struct = 8, 10
     _net_data = join('foxgame', 'controllers', 'libs', 'synapsis_fox.db')
+    training = False
 
     def set_up(self):
         """

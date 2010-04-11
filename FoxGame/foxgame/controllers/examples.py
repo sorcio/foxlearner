@@ -10,8 +10,9 @@ __date__ = '00/00/00'
 
 
 # import basics foxgame modules
-from foxgame.controller import Brain, PostFilter, ControllerOption
+from foxgame.controller import Brain, PostFilter
 from foxgame.structures import Direction
+from foxgame.gamecore import FoxgameOption
 
 # import libraries useful for our Brains
 from random import choice as randomchoice
@@ -21,7 +22,7 @@ from logging import getLogger
 log = getLogger(__name__)
 
 # export options
-__extraopts__ = { 'times': ControllerOption('times', clstype='int')}
+__extraopts__ = (FoxgameOption('times', type='int'), )
 
 # brain classes
 
@@ -39,7 +40,8 @@ class FoxBrain(Brain):
         self.counter = 0
         self.choice = Direction(Direction.NULL)
 
-        log.debug('Brain controller created!')
+        log.debug('Brain created!')
+        # log.debug('changing pos each %d times' % self.times)
 
     def update(self, time):
         # update counter

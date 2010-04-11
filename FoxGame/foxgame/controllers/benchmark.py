@@ -2,7 +2,9 @@ from foxgame.structures import Direction
 from foxgame.controller import PostFilter, ControllerOption
 from sys import stdout
 
-__extraopts__ = {'formatter': ControllerOption('format', type='function')}
+__extraopts__ = (ControllerOption('formatter', type='function'), )
+
+
 def simple_print(dst, data):
     """
     Print data 'as it is'.

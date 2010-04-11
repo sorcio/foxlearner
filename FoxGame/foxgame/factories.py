@@ -55,10 +55,16 @@ def load_extraopts(module, klass, options):
     Sets extra options in the module 'module'.
     """
     exported = getattr(module, '__extraopts__')
-    for option in options:
-        if option not in exported:
-            raise FoxGameError('Controller', 'option %s unknown' % option)
-        setattr(klass, option, exported[option](options[option]))
+
+    # check if all options are in __extraopts__ list
+    if not all(x in exported for x in options):
+        raise FoxGameError('Controller', '%s module avaible options are: %s' %
+                           (module.__name__, exported))
+
+    # assign options to the class klass
+    for option, value in ((opt, options[opt.name]) for opt in exported
+                          if opt.name in options):
+        setattr(klass, option.name, option(value))
 
 def load_brain(brain_name, cls_name='Brain', extraopts=None):
     """

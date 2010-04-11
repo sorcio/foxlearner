@@ -27,6 +27,61 @@ class FoxGameError(Exception):
         return serror
 
 
+class FoxgameOption(object):
+    """
+    A FoxgameOption provides some attributes
+    useful for parsing and configuring somespecific constants on the game.
+    """
+
+    def __init__(self,
+                 name,
+                 type='string',
+                 # action='store',
+                 description=''):
+        """
+        Set up FoxgameOption attributes.
+        """
+        self.name = name
+        self.description = description
+        # self._parse_action(action)
+        self._parse_clstype(type)
+
+    def __eq__(self, other):
+        """
+        Compare self.name with another string.
+        """
+        return self.name == other
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __call__(self, value):
+        """
+        Return a new object according to the type given.
+        """
+        return self.factory(value)
+
+
+    def _parse_clstype(self, sfactory):
+        if sfactory == 'string':
+            self.factory = string
+        elif sfactory == 'int':
+            self.factory = int
+        # elif sfactory == 'vector':
+        #     self.factory = Vector
+        # elif sfactory == 'direction':
+        #     self.factory = Direction
+        else:
+            raise TypeError('Unknown type.')
+
+    @property
+    def doc(self):
+        return self.description
+
+
+# ---------- Game Logic components --------------------------------------------
+
+
 class GameObject(object):
     """
     Something on the board.

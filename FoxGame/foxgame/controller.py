@@ -4,40 +4,6 @@ controller.py: basic clases for managing inputs (CTL).
 from foxgame.structures import Direction
 # from foxgame.gamecore import FoxGameError
 
-class ControllerOption(object):
-    """
-    A Controller Options provides some attributes
-    useful for parsing and configuring somespecific constants on the game.
-    """
-
-    def __init__(self, name,
-                 dest=None,
-                 clstype='string',
-                 default=None,
-                 action='store',
-                 description=''):
-        """
-        Set up ControllerOption attributes.
-        """
-        self.name = name
-        self.dest = dest
-        self.description = description
-        #self._parse_action(action)
-        self._parse_clstype(clstype)
-
-    def _parse_clstype(self, clstype):
-        if clstype == 'string':
-            self.cls = string
-        elif clstype == 'int':
-            self.cls = int
-        # elif clstype == 'vector':
-        # elif clstype == 'direction'
-        else:
-            raise TypeError('Unknown type.')
-
-    def __call__(self, value):
-        return self.cls(value)
-
 
 class Controller(object):
     """
