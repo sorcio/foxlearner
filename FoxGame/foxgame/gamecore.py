@@ -46,6 +46,10 @@ class FoxgameOption(object):
         # self._parse_action(action)
         self._parse_clstype(type)
 
+    def __repr__(self):
+        return '<FoxgameOption object name=\'%s\', type=\'%s\'>' % (
+               self.name, self.factory.__name__)
+
     def __eq__(self, other):
         """
         Compare self.name with another string.
