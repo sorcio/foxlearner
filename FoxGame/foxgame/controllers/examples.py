@@ -59,8 +59,9 @@ class FoxBrain(Brain):
         """
         Things to do just when the controller is destroyed.
         """
-        self.counter = 0
         log.info ('Brain done %d moves' % self.counter)
+
+        self.counter = 0
         log.debug('Brain controller destroyed!')
 
 

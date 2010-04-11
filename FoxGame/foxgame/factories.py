@@ -82,7 +82,7 @@ def load_postfilters(pfilter_names):
         return postfilters
     for pfilter_name in pfilter_names:
         if not '.' in pfilter_name:
-            raise AttributeError, 'invalid postfilter format'
+            raise AttributeError('invalid postfilter format')
         module, cls_name = pfilter_name.split('.')
         controllers = __import__('foxgame.controllers.' + module).controllers
         pfilter_module = getattr(controllers, module)

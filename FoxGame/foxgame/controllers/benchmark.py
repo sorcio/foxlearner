@@ -1,8 +1,8 @@
 from foxgame.structures import Direction
-from foxgame.controller import PostFilter
+from foxgame.controller import PostFilter, ControllerOption
 from sys import stdout
 
-
+__extraopts__ = {'formatter': ControllerOption('format', type='function')}
 def simple_print(dst, data):
     """
     Print data 'as it is'.
@@ -20,7 +20,7 @@ def core_print(dst, data):
         dst.writeline('\t%s : %s;' % (key, val))
 
 
-class Benchmark (PostFilter):
+class Benchmark(PostFilter):
     """
     A simple postfilter which stores and returns datas useful for benchmarking.
     """
