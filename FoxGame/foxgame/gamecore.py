@@ -7,7 +7,7 @@ from random import randrange
 from foxgame.structures import Vector
 
 import logging
-log = logging.getLogger(__name__)
+log = logging.getLogger('CORE')
 
 
 class FoxGameError(Exception):
@@ -271,17 +271,17 @@ class Game(object):
         avoiding collision and fox crowding.
         """
         self.hare.pos = self._randompoint(self.hare.radius)
-        
+
         # Choose (a bit arbitrarily) a maximum number of
         # retries for fox collision avoiding.
         max_retries = 2 * len(self.foxes)
         retries_left = max_retries
-        
+
         # Fox-to-fox minimum distance
         fox_dist = mindist / 4
         # Fox-to-hare minimum distance
         hare_dist = mindist
-        
+
         for i, fox in enumerate(self.foxes):
             fox.pos = self._randompoint(fox.radius)
             must_retry = self.hare.distance(fox) < hare_dist
@@ -298,7 +298,7 @@ class Game(object):
                              any(fox.distance(other) < fox_dist
                                  for other in self.foxes[:i])
                             )
-        
+
         log.debug('Random location of foxes, %d retries',
                   max_retries - retries_left)
 

@@ -123,7 +123,7 @@ try:
     fox_brain = load_brain(options.fox_brain, 'FoxBrain', fox_brain.extra_options)
     hare_brain = load_brain(options.hare_brain, 'HareBrain', hare_brain.extra_options)
 except ImportError, e:
-    parser.error('Invalid Brain: %s' % e)
+    parser.error('invalid Brain: %s' % e)
 
 
 # fox and hare postfilters
