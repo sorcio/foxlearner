@@ -47,8 +47,10 @@ def extra_option(option, opt_str, value, parser):
 
 # interface
 interface = make_option('-i', '--ui', dest='interface',
-                        default='bubbles', action='store',
+                        nargs=1, type='string', default='bubbles',
+                        action='callback', callback=extra_option,
                         metavar='GUI', help='game interface')
+interface.extra_options = None
 
 # brains
 fox_brain = make_option('--fox-brain', dest='fox_brain',
@@ -145,7 +147,7 @@ gfactory = GameFactory((600, 400),
 
 # ---- 2. creating game interface
 from foxgame.factories import load_ui
-ui_main = load_ui(options.interface)
+ui_main = load_ui(options.interface, extraopts=interface.extra_options)
 
 # ---- 3. launching main
 logging.info('Starting game')
