@@ -36,7 +36,6 @@ class FoxgameOption(object):
     def __init__(self,
                  name,
                  type='string',
-                 # action='store',
                  description=''):
         """
         Set up FoxgameOption attributes.
@@ -68,11 +67,13 @@ class FoxgameOption(object):
 
     def _parse_clstype(self, sfactory):
         if sfactory == 'string':
-            self.factory = string
+            self.factory = str
         elif sfactory == 'int':
             self.factory = int
         elif sfactory == 'bool':
             self.factory = bool
+        elif sfactory == 'function':
+            self.factory = eval
         # elif sfactory == 'vector':
         #     self.factory = Vector
         # elif sfactory == 'direction':
