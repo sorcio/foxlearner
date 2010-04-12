@@ -13,10 +13,12 @@ from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
 from libs.neuralnetwork import NeuralNetwork
 from foxgame.controllers.processors import SaveData
+from logging import getLogger
+log = getLogger('[nn]')
 
 
-__extraopts__ = (FoxgameOption('training', type='bool'), )
-
+__extraopts__ = (FoxgameOption('training', type='bool'),
+                 FoxgameOption('hiddens', type='int'), )
 
 
 class FoxBrain(Brain):
@@ -26,7 +28,7 @@ class FoxBrain(Brain):
     # TODO: Not working, rewrite the class looking at the other.
     _net_struct = 8, 10
     _net_data = join('foxgame', 'controllers', 'libs', 'synapsis_fox.db')
-    training = False
+    _net_training = False
 
     def set_up(self):
         """
@@ -63,8 +65,9 @@ class HareBrain(Brain):
     """
     A controller which uses a neural network to escape from the fox.
     """
-    training = True
-    _net_struct = 8, 20
+    training = False
+    hiddens = 20
+    _net_struct = 8, hiddens
     _net_data = join('foxgame', 'controllers', 'libs', 'synapsis_hare.db')
 
     def set_up(self):
@@ -72,11 +75,12 @@ class HareBrain(Brain):
         Used to load neural network data from a file
         """
 
-        # XXX Change this!!!
         if HareBrain.training:
-            print "Addestramento"
+            print "Training starting.."
             if exists(self._net_data):
+                log.debug('Removing old net data.')
                 remove(self._net_data)
+            print "Training with structure: "+str(self._net_struct)
             self.train_network()
             HareBrain.training = False
 

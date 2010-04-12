@@ -128,9 +128,7 @@ class NeuralNetwork(object):
                             [ai * wi[j] for ai, wi in zip(self.ai, self.wi)]))
 
         # output activations
-        print self.nh, self.no
         for k in xrange(self.no):
-            print k
             self.ao[k] = self.tfunct(sum(
                             [ah * wo[k] for ah, wo in zip(self.ah, self.wo)]))
 
