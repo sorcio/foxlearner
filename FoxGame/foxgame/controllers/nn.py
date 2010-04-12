@@ -15,7 +15,7 @@ from libs.neuralnetwork import NeuralNetwork
 from foxgame.controllers.processors import SaveData
 
 
-__extraopts__ = (FoxgameOption('training', type='bool')}
+__extraopts__ = (FoxgameOption('training', type='bool'), )
 
 
 

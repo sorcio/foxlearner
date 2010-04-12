@@ -71,6 +71,8 @@ class FoxgameOption(object):
             self.factory = string
         elif sfactory == 'int':
             self.factory = int
+        elif sfactory == 'bool':
+            self.factory = bool
         # elif sfactory == 'vector':
         #     self.factory = Vector
         # elif sfactory == 'direction':
