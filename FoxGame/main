@@ -54,24 +54,24 @@ interface.extra_options = None
 
 # brains
 fox_brain = make_option('--fox-brain', dest='fox_brain',
-                  nargs=1, type='string', default='traditional',
-                  action='callback', callback=extra_option,
-                  metavar='BRAIN', help='ai algorithm for the fox')
+                        nargs=1, type='string', default='traditional',
+                        action='callback', callback=extra_option,
+                        metavar='BRAIN', help='ai algorithm for the fox')
 fox_brain.extra_options = None
 
 hare_brain = make_option('--hare-brain', dest='hare_brain',
-                  nargs=1, type='string', default='none',
-                  action='callback', callback=extra_option,
-                  metavar='BRAIN', help='ai algorithm for the hare')
+                         nargs=1, type='string', default='none',
+                         action='callback', callback=extra_option,
+                         metavar='BRAIN', help='ai algorithm for the hare')
 hare_brain.extra_options = None
 
 # postfilters
 fox_pfilters = make_option('--fox-pfilter', dest='fox_pfilters',
-                  default='', action='store',
-                  metavar='POSTFILTER', help='postfilter for the fox')
+                           default='', action='store',
+                           metavar='POSTFILTER', help='fox postfilter')
 hare_pfilters = make_option('--hare-pfilter', dest='hare_pfilters',
-                  default='', action='store',
-                  metavar='POSTFILTER', help='postfilter for the hare')
+                            default='', action='store',
+                            metavar='POSTFILTER', help='hare postfilter')
 # foxes number
 nfox = make_option('-n', '--nfoxes', dest='foxes_num',
                   type='int', default=1,
