@@ -1,25 +1,28 @@
 from foxgame.structures import Direction
-from foxgame.controller import PostFilter, ControllerOption
+from foxgame.gamecore import FoxgameOption
+from foxgame.controller import PostFilter
 from sys import stdout
 
-__extraopts__ = (ControllerOption('formatter', type='function'), )
+__extraopts__ = (FoxgameOption('formatter', type='function'),
+                 FoxgameOption('dest'))
 
-
+@staticmethod
 def simple_print(dst, data):
     """
     Print data 'as it is'.
     """
     dst.write('\n'.join(data.values()))
 
-
+@staticmethod
 def core_print(dst, data):
     """
     Print data with a simple formatting.
     """
-    dst.writeline(pawn_name)
+    print 'whoa!'
+    #dst.writeline(pawn_name)
 
-    for key, val in data.iteritems():
-        dst.writeline('\t%s : %s;' % (key, val))
+    #for key, val in data.iteritems():
+    #    dst.writeline('\t%s : %s;' % (key, val))
 
 
 class Benchmark(PostFilter):
@@ -58,7 +61,8 @@ class Benchmark(PostFilter):
 
     def tear_down(self):
         out = self._parse_data()
-        simple_print(self.file, out)
+        print self.formatter, self.dest
+        #self.formatter(self.file, out)
 
 
 

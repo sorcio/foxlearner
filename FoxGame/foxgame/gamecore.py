@@ -71,7 +71,7 @@ class FoxgameOption(object):
         elif sfactory == 'int':
             self.factory = int
         elif sfactory == 'bool':
-            self.factory = bool
+            self.factory = lambda x: 'true'.startswith(x.lower())
         elif sfactory == 'function':
             self.factory = eval
         # elif sfactory == 'vector':

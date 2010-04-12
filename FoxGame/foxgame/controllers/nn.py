@@ -18,7 +18,7 @@ log = getLogger('[nn]')
 
 
 __extraopts__ = (FoxgameOption('training', type='bool'),
-                 FoxgameOption('hiddens', type='int'), )
+                 FoxgameOption('hiddens', type='int'))
 
 
 class FoxBrain(Brain):
@@ -72,15 +72,14 @@ class HareBrain(Brain):
 
     def set_up(self):
         """
-        Used to load neural network data from a file
+        Load neural network data from a file
         """
 
         if HareBrain.training:
-            print "Training starting.."
+            log.info('Training with structure: '  + str(self._net_struct))
             if exists(self._net_data):
                 log.debug('Removing old net data.')
                 remove(self._net_data)
-            print "Training with structure: "+str(self._net_struct)
             self.train_network()
             HareBrain.training = False
 
