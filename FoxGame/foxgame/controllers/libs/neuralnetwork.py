@@ -8,7 +8,6 @@ __date__ = '03/4/2010'
 __contributors__ = []
 
 from math import e, tanh, tan
-from random import random, seed as randomseed
 from os.path import exists
 import shelve
 
@@ -20,6 +19,12 @@ try:
     psyco.full()
 except ImportError:
     log.critical('You should install psyco to speed up our neuralnet library.')
+
+# Use our own random generator so we can mess with its state
+from random import Random
+random_gen = Random()
+random = random_gen.random
+randomseed = random_gen.seed
 
 
 ############################
@@ -194,18 +199,16 @@ class NeuralNetwork(object):
         Load a shelve database with synapses.
         TODO: improve doc about formatting
         """
-        if exists(filename):
-            db = shelve.open(filename)
-            if all(key in ('wi', 'wo') for key in db):
-                self.ni = len(db['wi'])
-                self.nh = len(db['wo'])
+        db = shelve.open(filename, 'r')
+        if all(key in ('wi', 'wo') for key in db):
+            self.ni = len(db['wi'])
+            self.nh = len(db['wo'])
 
-                self.wi = db['wi']
-                self.wo = db['wo']
+            self.wi = db['wi']
+            self.wo = db['wo']
 
-                db.close()
-                return True
-        raise IOError('File %s broken or corrupted' % filename)
+            db.close()
+            return True
 
     def save(self, filename):
         """
