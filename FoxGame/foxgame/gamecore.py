@@ -164,7 +164,7 @@ class MovingPawn(GameObject):
         else:            # Want to move...
             if dpoint * speed >= 0:       # ...in the same direction
                 return dpoint * self.baccel
-            if dpoint * speed < 0:         # ...in the opposite direction
+            if dpoint * speed < 0:        # ...in the opposite direction
                 return dpoint * self.brake
 
 
@@ -361,7 +361,7 @@ class Game(object):
                                  for other in self.foxes[:i])
                             )
 
-        log.debug('Random location of foxes, %d retries',
+        log.info('Random location of foxes, %d retries',
                   max_retries - retries_left)
 
     @property

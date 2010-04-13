@@ -128,8 +128,7 @@ class TestGame(TestCase):
         """
         Set up a basic Game instance
         """
-        self.foxnum = 3
-        self.mindist = 10
+        self.foxnum = 10
         self.game = Game((300, 300),
                          ControllerFactory(HareBrain),
                          ControllerFactory(FoxBrain),
@@ -147,13 +146,17 @@ class TestGame(TestCase):
         """
         Test random locating.
         """
-        self.game._randomlocate(self.mindist)
-        for x in self.game.pawns:
+        dist = 50
+
+        # test randompoint
+        for x in xrange(10):
+            self.assertTrue(self.game._randompoint(10) < self.game.size)
+
+        self.game._randomlocate(dist)
+
+        for x in self.game.foxes:
             self.assertTrue((0, 0) <= x.pos < self.game.size)
-            for y in self.game.pawns:
-                if x == y:
-                    continue
-                self.assertTrue(x.distance(y) >= self.mindist)
+            self.assertTrue(self.game.hare.distance(x) >= dist)
 
     def test_collision(self):
         """
