@@ -1,0 +1,192 @@
+#!/usr/bin/python -O
+# -*- coding: utf-8 -*-
+"""
+   main.py: the main game.
+"""
+#
+# Copyright 2010 <Michele Orrù>
+#
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; version 2 dated June, 1991.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program;  if not, write to the Free Software
+#   Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.
+
+
+
+__author__ = 'Michele Orrù'
+__mail__ = 'maker.py@gmail.com'
+__appname__ = 'FoxGame'
+__version__ = 0.5
+__date__ = '01-04-2010'
+__license__ = 'GPLv2'
+
+from optparse import OptionParser, make_option
+from itertools import takewhile
+from collections import defaultdict
+import logging
+
+# handle extraoptions
+extra_options = defaultdict(dict)
+
+
+def extra_option(option, opt_str, value, parser):
+
+    # set the main option
+    setattr(parser.values, option.dest, value)
+
+    # extend with non-standard options
+    args = tuple(takewhile(lambda x: (not x.startswith('-')
+                                       and ':' in x and '/' not in x),
+                           parser.rargs))
+    for arg in args:
+        key, val = arg.split(':')
+        extra_options[option.dest][key] = val
+    del parser.rargs[:len(args)]
+
+
+
+# interface
+interface = make_option('-i', '--ui', dest='interface',
+                        nargs=1, type='string', default='bubbles',
+                        action='callback', callback=extra_option,
+                        metavar='GUI', help='game interface')
+
+# brains
+f_brain = make_option('--fox-brain', dest='fox_brain',
+                      nargs=1, type='string', default='traditional',
+                      action='callback', callback=extra_option,
+                      metavar='BRAIN', help='ai algorithm for the fox')
+
+h_brain = make_option('--hare-brain', dest='hare_brain',
+                      nargs=1, type='string', default='none',
+                      action='callback', callback=extra_option,
+                      metavar='BRAIN', help='ai algorithm for the hare')
+
+# postfilters
+f_pfilter = make_option('--fox-pfilter', dest='fox_pfilters',
+                        default='', action='store',
+                        metavar='POSTFILTER', help='fox postfilter')
+h_pfilter = make_option('--hare-pfilter', dest='hare_pfilters',
+                        default='', action='store',
+                        metavar='POSTFILTER', help='hare postfilter')
+# foxes number
+nfox = make_option('-n', '--nfoxes', dest='foxes_num',
+                   type='int', default=1,
+                   metavar='NUM', help='number of foxes in the game')
+
+# creating parser
+parser = OptionParser(usage='%prog [options]',
+                      version='%%prog %f' % __version__,
+                      option_list=[interface, nfox,
+                                   f_brain, h_brain,
+                                   f_pfilter, h_pfilter])
+
+
+# log file
+parser.add_option('--flog', dest='flog_level',
+                  type='int', default=5,
+                  metavar='NUM', help='verbosity level for the log file')
+# log stderr
+parser.add_option('-v', '--verbose', dest='slog_level',
+                  type='int', default=0,
+                  metavar='NUM', help='verbosity level [1, 5]')
+
+(options, args) = parser.parse_args()
+
+for argv in args:
+    if '/' not in argv:
+        parser.error('argument without a parent')
+
+    scomponent, opts = argv.split('/')
+    # extract the real component...
+
+    # ... if the component is a postfilter
+    if (scomponent.startswith(f_pfilter.dest) or
+        scomponent.startswith(h_pfilter.dest) and
+        x[-1].isdigit() and x[:-1].isalpha()):
+        component = scomponent
+
+    # ... otherwise
+    else:
+        listcomps = filter(lambda x: x.startswith(scomponent),
+                           (x.dest for x in parser.option_list if x.dest))
+        # check for ambiguous terms
+        if len(listcomps) != 1:
+            parser.error('invalid option %s: %s' % (
+                         scomponent, str(listcomps) if listcomps
+                                                    else 'unknown'))
+        else:
+            component, = listcomps
+
+    key, val = opts.split(':')
+    extra_options[component][key] = val
+
+# logger
+
+#  file logger
+logging.basicConfig(level=(5 - options.flog_level)*10,
+                    format='%(asctime)s %(name)-30s %(levelname)-8s %(message)s',
+                    datefmt='%m-%d %H:%M',
+                    filename=__appname__+'.log',
+                    filemode='w')
+
+#  stderr logger
+console = logging.StreamHandler()
+console.setLevel((5 - options.slog_level)*10)
+# set a format which is simpler for console use
+formatter = logging.Formatter('%(name)-30s: %(levelname)-8s %(message)s')
+# tell the handler to use this format
+console.setFormatter(formatter)
+# add the handler to the root logger
+logging.getLogger('').addHandler(console)
+
+
+# ---- 1. setting up factories
+from foxgame.factories import GameFactory, ControllerFactory
+from foxgame.factories import load_brain, load_postfilters
+
+try:
+    # fox and hare brains
+    fox_brain = load_brain(options.fox_brain, 'FoxBrain',
+                           extra_options[f_brain.dest])
+    hare_brain = load_brain(options.hare_brain, 'HareBrain',
+                            extra_options[h_brain.dest])
+except ImportError, e:
+    parser.error('invalid Brain: %s' % e)
+
+
+# fox and hare postfilters
+fpfs = load_postfilters((pfilter, extra_options[f_pfilter.dest + str(i+1)])
+                        for i, pfilter in enumerate(
+                            options.fox_pfilters.split(',')) if pfilter)
+hpfs = load_postfilters((pfilter, extra_options[h_pfilter.dest + str(i+1)])
+                        for i, pfilter in enumerate(
+                            options.hare_pfilters.split(',')) if pfilter)
+
+# fox and hare controller factories
+cffactory = ControllerFactory(fox_brain, fpfs)
+chfactory = ControllerFactory(hare_brain, hpfs)
+
+# game factory
+gfactory = GameFactory((600, 400),
+                       fox_factory=cffactory,
+                       hare_factory=chfactory,
+                       foxnum=options.foxes_num)
+
+
+# ---- 2. creating game interface
+from foxgame.factories import load_ui
+ui_main = load_ui(options.interface, extraopts=extra_options[interface.dest])
+
+# ---- 3. launching main
+logging.info('Starting game')
+ui_main(gfactory)
