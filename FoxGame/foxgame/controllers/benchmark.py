@@ -61,8 +61,7 @@ class Benchmark(PostFilter):
 
     def tear_down(self):
         out = self._parse_data()
-        print self.formatter, self.dest
-        #self.formatter(self.file, out)
+        self.formatter(self.file, out)
 
 
 

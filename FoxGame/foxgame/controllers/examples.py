@@ -41,7 +41,7 @@ class FoxBrain(Brain):
         self.choice = Direction(Direction.NULL)
 
         log.debug('Brain created!')
-        # log.debug('changing pos each %d times' % self.times)
+        log.debug('changing pos each %d times' % self.times)
 
     def update(self, time):
         # update counter

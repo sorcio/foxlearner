@@ -86,13 +86,14 @@ def load_postfilters(pfilter_names):
     postfilters = []
     if not pfilter_names:
         return postfilters
-    for pfilter_name in pfilter_names:
+    for pfilter_name, extraopts in pfilter_names:
         if not '.' in pfilter_name:
             raise AttributeError('invalid postfilter format')
         module, cls_name = pfilter_name.split('.')
         controllers = __import__('foxgame.controllers.' + module).controllers
         pfilter_module = getattr(controllers, module)
         pfilter = getattr(pfilter_module, cls_name)
+        load_extraopts(pfilter_module, pfilter, extraopts)
         postfilters.append(pfilter)
     return postfilters
 
