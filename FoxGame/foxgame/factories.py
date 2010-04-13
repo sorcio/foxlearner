@@ -93,7 +93,8 @@ def load_postfilters(pfilter_names):
         controllers = __import__('foxgame.controllers.' + module).controllers
         pfilter_module = getattr(controllers, module)
         pfilter = getattr(pfilter_module, cls_name)
-        load_extraopts(pfilter_module, pfilter, extraopts)
+        if extraopts:
+            load_extraopts(pfilter_module, pfilter, extraopts)
         postfilters.append(pfilter)
     return postfilters
 

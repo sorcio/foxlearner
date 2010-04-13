@@ -42,7 +42,6 @@ class FoxgameOption(object):
         """
         self.name = name
         self.description = description
-        # self._parse_action(action)
         self._parse_clstype(type)
 
     def __repr__(self):
@@ -63,7 +62,6 @@ class FoxgameOption(object):
         Return a new object according to the type given.
         """
         return self.factory(value)
-
 
     def _parse_clstype(self, sfactory):
         if sfactory == 'string':
