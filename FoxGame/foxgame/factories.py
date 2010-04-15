@@ -50,6 +50,8 @@ class ControllerFactory(object):
         return Controller(parent_pawn, self.brain(), postfilters)
 
 
+# --------- "loading" methods -------------------------------------------------
+
 def load_extraopts(module, klass, options):
     """
     Sets extra options in the module 'module'.
@@ -110,3 +112,6 @@ def load_ui(ui_name, main_name='main', extraopts=None):
     if extraopts:
         load_extraopts(ui_module, ui_main, extraopts)
     return ui_main
+
+def load_task(task_name, taskcls):
+    return getattr(taskcls, 'task_'+task_name)

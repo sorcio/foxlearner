@@ -61,10 +61,17 @@ class FoxBrain(Brain):
         """
         Things to do just when the controller is destroyed.
         """
-        log.info ('Brain done %d moves' % self.counter)
+        log.info('Brain done %d moves' % self.counter)
 
         self.counter = 0
         log.debug('Brain controller destroyed!')
+
+    @staticmethod
+    def task_useless():
+        """
+        A trivial example of task.
+        """
+        log.debug('A task was here')
 
 
 class HareBrain(Brain):
