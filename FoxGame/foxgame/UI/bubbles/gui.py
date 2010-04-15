@@ -17,6 +17,8 @@ from draw import draw_circle
 from bzdraw import BZManager, BZPainter
 from graphics import Font, Screen, GameField, Text, Rectangle
 
+from os.path import join
+
 
 class UserBrain(Brain):
     """
@@ -394,9 +396,10 @@ def main(gfact):
     """
     from foxgame import __path__
     path = __path__[0].split('foxgame')[0]
+    logo = join('images','foxgame.png')
 
     pygame.init()
-    pygame.display.set_icon(pygame.image.load(path+'/images/foxgame.png'))
+    pygame.display.set_icon(pygame.image.load(join(path, logo)))
 
     ui = GUI(gfact)
     ui.run()
