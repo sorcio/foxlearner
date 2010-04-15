@@ -88,8 +88,7 @@ class Brain(object):
 
     def end_game(self):
         """
-        End the previously created game,
-        cleaning attributes regarding this one.
+        End the previously created game.
         """
         self.tear_down()
 
@@ -174,8 +173,7 @@ class PostFilter(object):
 
     def end_game(self):
         """
-        End the previously created game,
-        cleaning attributes regarding this one.
+        End the previously created game.
         """
         self.tear_down()
 

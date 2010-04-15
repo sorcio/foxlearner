@@ -17,6 +17,7 @@ def core_print(dst, data):
     """
     for key, val in data.iteritems():
         print >> dst, '\t%s : %s;' % (key, val)
+    print >> dst
 
 
 class Benchmark(PostFilter):
