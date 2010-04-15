@@ -1,6 +1,8 @@
 """
 options.py: provides extra options for the controllers
 """
+from foxgame.gamecore import FoxGameError
+from foxgame.structures import Direction, Vector
 
 class FoxgameOption(object):
     """
@@ -11,13 +13,18 @@ class FoxgameOption(object):
     def __init__(self,
                  name,
                  type='string',
+                 choices=None,
                  description=''):
         """
         Set up FoxgameOption attributes.
         """
         self.name = name
         self.description = description
-        self._parse_clstype(type)
+        self.choices = choices
+        if self.choices is not None:
+            self.factory = self._parse_choice
+        else:
+            self._parse_clstype(type)
 
     def __repr__(self):
         return '<FoxgameOption object name=\'%s\', type=\'%s\'>' % (
@@ -44,15 +51,31 @@ class FoxgameOption(object):
         elif sfactory == 'int':
             self.factory = int
         elif sfactory == 'bool':
-            self.factory = lambda x: 'true'.startswith(x.lower())
-        elif sfactory == 'function':
-            self.factory = lambda x: lambda *x: eval(*x)
-        # elif sfactory == 'vector':
-        #     self.factory = Vector
-        # elif sfactory == 'direction':
-        #     self.factory = Direction
+            self.factory = self._factory_bool
+        elif sfactory == 'vector':
+            self.factory = self._factory_vector
+        elif sfactory == 'direction':
+             self.factory = Direction.from_string
         else:
             raise TypeError('Unknown type.')
+
+    def _parse_choice(self, x):
+        return self.choices[x]
+
+    @staticmethod
+    def _factory_bool(x):
+        if x.lower() in ('yes', 'on', 'true'):
+            return True
+        elif x.lower() in ('no', 'off', 'false'):
+            return False
+        else:
+            raise FoxgameError('FoxgameOption', 'invalid bool string %s' % x)
+
+    @staticmethod
+    def _factory_vector(x):
+        x = x.strip('( )')
+        x = (float(x.strip()) for x in x.split(','))
+        return Vector(*x)
 
     @property
     def doc(self):

@@ -21,8 +21,6 @@ from random import choice as randomchoice
 from logging import getLogger
 log = getLogger(__name__)
 
-# export options
-__extraopts__ = (FoxgameOption('times', type='int'), )
 
 # brain classes
 
@@ -94,3 +92,10 @@ class PFilterExample(PostFilter):
         Return the opposite direction given.
         """
         return -dir
+
+
+
+# export options
+__extraopts__ = (FoxgameOption('times', type='int'), )
+
+

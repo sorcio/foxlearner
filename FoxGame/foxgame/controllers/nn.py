@@ -17,10 +17,6 @@ from logging import getLogger
 log = getLogger('[nn]')
 
 
-__extraopts__ = (FoxgameOption('training', type='bool'),
-                 FoxgameOption('hiddens', type='int'))
-
-
 class FoxBrain(Brain):
     """
     A controller which uses a neural network to follow the hare.
@@ -131,4 +127,9 @@ class HareBrain(Brain):
         n = NeuralNetwork(*HareBrain._net_struct)
         n.train(pattern, 10)
         n.save(HareBrain._net_data)
+
+
+__extraopts__ = (FoxgameOption('training', type='bool'),
+                 FoxgameOption('hiddens', type='int'))
+
 

@@ -3,26 +3,20 @@ from foxgame.options import FoxgameOption
 from foxgame.controller import PostFilter
 from sys import stdout
 
-__extraopts__ = (FoxgameOption('formatter', type='function'),
-                 FoxgameOption('dest'))
-
 @staticmethod
 def simple_print(dst, data):
     """
     Print data 'as it is'.
     """
-    dst.write('\n'.join(data.values()))
+    print >> dst, '\n'.join(data.values())
 
 @staticmethod
 def core_print(dst, data):
     """
     Print data with a simple formatting.
     """
-    print 'whoa!'
-    #dst.writeline(pawn_name)
-
-    #for key, val in data.iteritems():
-    #    dst.writeline('\t%s : %s;' % (key, val))
+    for key, val in data.iteritems():
+        print >> dst, '\t%s : %s;' % (key, val)
 
 
 class Benchmark(PostFilter):
@@ -47,6 +41,12 @@ class Benchmark(PostFilter):
                 'enemied'  : []
         }
 
+    def tear_down(self):
+        """
+        Close 'dest' file.
+        """
+        self.file.close()
+
     def update(self, direction, time):
         self.datas['position'].append(self.pawn.pos)
         self.datas['speed'].append(self.pawn.speed)
@@ -63,5 +63,13 @@ class Benchmark(PostFilter):
         out = self._parse_data()
         self.formatter(self.file, out)
 
+
+
+
+__extraopts__ = [FoxgameOption('formatter',
+                               choices={'simple':simple_print,
+                                        'core':core_print}),
+                 FoxgameOption('dest')
+                ]
 
 

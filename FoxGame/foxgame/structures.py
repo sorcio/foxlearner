@@ -130,6 +130,7 @@ class Direction(object):
       0 -> void
     """
 
+    # define constants directions
     UP        = ( 0, -1)
     DOWN      = ( 0,  1)
     RIGHT     = ( 1,  0)
@@ -139,6 +140,19 @@ class Direction(object):
     DOWNRIGHT = ( 1,  1)
     DOWNLEFT  = (-1,  1)
     NULL      = ( 0,  0)
+
+    # define constants direction string
+    dirs = {
+            UP       : 'N',
+            DOWN     : 'S',
+            RIGHT    : 'E',
+            LEFT     : 'W',
+            UPRIGHT  : 'NE',
+            UPLEFT   : 'NW',
+            DOWNRIGHT: 'SE',
+            DOWNLEFT : 'SW',
+            NULL     : '-'
+    }
 
     def __init__(self, dir):
         h, v = dir
@@ -165,18 +179,8 @@ class Direction(object):
         """
         Print the direction using cool Unicode characters.
         """
-        dirs = {
-                self.UP       : 'N',
-                self.DOWN     : 'S',
-                self.RIGHT    : 'E',
-                self.LEFT     : 'W',
-                self.UPRIGHT  : 'NE',
-                self.UPLEFT   : 'NW',
-                self.DOWNRIGHT: 'SE',
-                self.DOWNLEFT : 'SW',
-                self.NULL     : '-'
-        }
-        return dirs[self.hor, self.vert]
+
+        return self.dirs[self.hor, self.vert]
 
     def __neg__(self):
         """
@@ -208,17 +212,25 @@ class Direction(object):
         yield self.hor
         yield self.vert
 
-    @classmethod
-    def from_vector(cls, vec):
+    @staticmethod
+    def from_vector(vec):
         """
         Convert a Vector into a Direction object.
         """
         return Direction(sign(x) for x in vec)
 
+    @staticmethod
+    def from_string(s):
+        """
+        Convert a str into a Direction object.
+        """
+        strdirs = dict((y, x) for x, y in self.dirs)
+        return strdirs[x]
+
 
 def sign(num):
     """
-    sgn function
+    sign function
     """
     if num > 0:
         return +1
