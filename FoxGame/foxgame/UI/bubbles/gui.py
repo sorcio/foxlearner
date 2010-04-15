@@ -120,28 +120,38 @@ class GUI(StateMachine):
         self.game = None
 
     def setup_game(self):
-        # self.clean_game()
+        self.clean_game()
         self.game = self.gfact.new_game()
 
     def clean_game(self):
-        if self.game:
+        if self.game and not self.game.ended:
             self.game.end()
         if self.arena:
             self.arena.remove()
             self.arena = None
+    
+    def quit(self):
+        log.info('Shutting down')
+        self.clean_game()
+        pygame.quit()
 
     def run(self):
         self.goto_state('welcome')
-        while not self.quitting:
-            self._process_events()
-            time = float(self.clock.get_time()) / 1000.0
-            # Execute state main handler
-            self.state_main(time)
+        try:
+            while not self.quitting:
+                self._process_events()
+                time = float(self.clock.get_time()) / 1000.0
+                # Execute state main handler
+                self.state_main(time)
 
-            self._screen.do_painting()
+                self._screen.do_painting()
 
-            pygame.display.update()
-            self.clock.tick(self.frame_rate)
+                pygame.display.update()
+                self.clock.tick(self.frame_rate)
+        except KeyboardInterrupt:
+            pass
+        finally:
+            self.quit()
 
     def _process_events(self):
         self.hit_keys = []

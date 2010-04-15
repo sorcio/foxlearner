@@ -243,6 +243,8 @@ class Game(object):
 
         # starting up time elapsed
         self.time_elapsed = 0
+        
+        self.ended = False
 
     def _collision(self, pawn1, pawn2):
         """
@@ -349,9 +351,13 @@ class Game(object):
 
     def end(self):
         """
-        Desroy controllers present on the game.
+        Cleans up objects owned by the game.
         """
-        for pawn in self.pawns:
-            pawn.controller.destroy()
+        if self.ended:
+            log.debug("Game.end() called on already ended game!")
+        else:
+            self.ended = True
+            for pawn in self.pawns:
+                pawn.controller.destroy()
 
 
