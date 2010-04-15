@@ -224,8 +224,8 @@ class Direction(object):
         """
         Convert a str into a Direction object.
         """
-        strdirs = dict((y, x) for x, y in self.dirs)
-        return strdirs[x]
+        strdirs = dict((y, x) for x, y in Direction.dirs.iteritems())
+        return strdirs[s]
 
 
 def sign(num):

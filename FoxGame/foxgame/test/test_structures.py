@@ -125,6 +125,15 @@ class TestDirection(TestCase):
         self.assertEqual(Direction.from_vector(-vec-rvec), Direction.DOWNLEFT)
         self.assertEqual(Direction.from_vector(vec * 0), Direction.NULL)
 
+    def test_from_string(self):
+        self.assertEqual(Direction.from_string(Direction.dirs[Direction.UP]),
+                         Direction.UP)
+        self.assertEqual(Direction.from_string(Direction.dirs[Direction.UPRIGHT]),
+                         Direction.UPRIGHT)
+
+        self.assertRaises(KeyError, Direction.from_string, (2, 1))
+
+
     def test_setattr(self):
         """
         A  Direction _must_ be an immutable object, so check for it.

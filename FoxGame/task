@@ -88,7 +88,6 @@ logging.getLogger().addHandler(console)
 # setting up factories
 
 try:
-    # XXX: maybe there is cooler way, using iterools
     stask, = filter(lambda x : ':' not in x, args)
     args.remove(stask)
     extraopts = dict(map(lambda x : x.split(':'), args))

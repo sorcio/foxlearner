@@ -5,7 +5,8 @@ nn.py: Brains which provide a neural network
 """
 
 import shelve
-from os.path import join, exists
+from os.path import join as osjoin
+from os.path import exists
 from os import remove
 
 from foxgame.options import FoxgameOption
@@ -23,7 +24,7 @@ class FoxBrain(Brain):
     """
     # TODO: Not working, rewrite the class looking at the other.
     _net_struct = 8, 10
-    _net_data = join('foxgame', 'controllers', 'libs', 'synapsis_fox.db')
+    _net_data = osjoin('foxgame', 'controllers', 'libs', 'synapsis_fox.db')
     _net_training = False
 
     def set_up(self):
