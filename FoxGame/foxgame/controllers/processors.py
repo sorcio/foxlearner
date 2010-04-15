@@ -76,7 +76,7 @@ class SaveData(PostFilter):
             self.db['fox.speed']  = []
             self.db['fox.dir']    = []
             self.db['hare.dir']   = []
-    
+
     def tear_down(self):
         self.db.sync()
         self.db.close()

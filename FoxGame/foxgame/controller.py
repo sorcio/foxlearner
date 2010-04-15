@@ -49,6 +49,11 @@ class Controller(object):
         for postfilter in self.postfilters:
             postfilter.end_game()
 
+        # removing old values
+        self.pawn = None
+
+
+
 
 class Brain(object):
     """
@@ -86,10 +91,8 @@ class Brain(object):
         End the previously created game,
         cleaning attributes regarding this one.
         """
-        # removing old session
-        self.pawn = self.game = None
-
         self.tear_down()
+
 
     def update(self):
         """
@@ -174,10 +177,8 @@ class PostFilter(object):
         End the previously created game,
         cleaning attributes regarding this one.
         """
-        # removing old session
-        self.pawn = self.game = None
-
         self.tear_down()
+
 
     def set_up(self):
         """
