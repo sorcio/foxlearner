@@ -48,7 +48,7 @@ argvs = [
       ]
 
 # creating parser
-parser = OptionParser(usage='%prog [brain|postfilter] task_name',
+parser = OptionParser(usage='%prog [brain|postfilter] [extraopts] task_name',
                       option_list=argvs)
 
 
@@ -88,18 +88,21 @@ logging.getLogger().addHandler(console)
 # setting up factories
 
 try:
-    stask, = args
+    # XXX: maybe there is cooler way, using iterools
+    stask, = filter(lambda x : ':' not in x, args)
+    args.remove(stask)
+    extraopts = dict(map(lambda x : x.split(':'), args))
     opt_task, = [x for x in argvs if getattr(options, x.dest)]
     value = getattr(options, opt_task.dest)
     if opt_task.metavar == 'POSTFITLER':
         from foxgame.factories import load_postfilters
-        taskcls = load_pfilter([value, None])
+        taskcls = load_pfilter([value, extraopts])
     elif opt_task.metavar == 'BRAIN':
         from foxgame.factories import load_brain
         taskcls = load_brain(value,
                              'FoxBrain' if 'fox' in opt_task.dest
                                         else 'HareBrain',
-                             None)
+                             extraopts)
     task = load_task(stask, taskcls)
 
 except ValueError:

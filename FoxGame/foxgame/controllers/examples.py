@@ -72,6 +72,7 @@ class FoxBrain(Brain):
         A trivial example of task.
         """
         log.debug('A task was here')
+        log.debug('Times = %d' % FoxBrain.times)
 
 
 class HareBrain(Brain):

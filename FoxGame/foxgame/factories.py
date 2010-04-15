@@ -109,7 +109,6 @@ def load_ui(ui_name, main_name='main', extraopts=None):
     """
     Dynamically loads UI class with given name.
     """
-    # XXX: throwing ImportError (and AttributeError), is this right?
     uis = __import__('foxgame.UI.' + ui_name).UI
     ui_module = getattr(uis, ui_name)
     ui_main = getattr(ui_module, main_name)

@@ -160,17 +160,16 @@ try:
                            extra_options[f_brain.dest])
     hare_brain = load_brain(options.hare_brain, 'HareBrain',
                             extra_options[h_brain.dest])
+    # fox and hare postfilters
+    fpfs = load_postfilters((pfilter, extra_options[f_pfilter.dest + str(i+1)])
+                            for i, pfilter in enumerate(
+                                options.fox_pfilters.split(',')) if pfilter)
+    hpfs = load_postfilters((pfilter, extra_options[h_pfilter.dest + str(i+1)])
+                            for i, pfilter in enumerate(
+                                options.hare_pfilters.split(',')) if pfilter)
 except ImportError, e:
-    parser.error('invalid Brain: %s' % e)
+    parser.error('Error loading Controller components: %s' % e)
 
-
-# fox and hare postfilters
-fpfs = load_postfilters((pfilter, extra_options[f_pfilter.dest + str(i+1)])
-                        for i, pfilter in enumerate(
-                            options.fox_pfilters.split(',')) if pfilter)
-hpfs = load_postfilters((pfilter, extra_options[h_pfilter.dest + str(i+1)])
-                        for i, pfilter in enumerate(
-                            options.hare_pfilters.split(',')) if pfilter)
 
 # fox and hare controller factories
 cffactory = ControllerFactory(fox_brain, fpfs)
