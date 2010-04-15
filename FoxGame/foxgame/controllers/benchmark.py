@@ -1,5 +1,5 @@
 from foxgame.structures import Direction
-from foxgame.gamecore import FoxgameOption
+from foxgame.options import FoxgameOption
 from foxgame.controller import PostFilter
 from sys import stdout
 

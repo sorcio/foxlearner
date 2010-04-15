@@ -12,7 +12,7 @@ __date__ = '00/00/00'
 # import basics foxgame modules
 from foxgame.controller import Brain, PostFilter
 from foxgame.structures import Direction
-from foxgame.gamecore import FoxgameOption
+from foxgame.options import FoxgameOption
 
 # import libraries useful for our Brains
 from random import choice as randomchoice

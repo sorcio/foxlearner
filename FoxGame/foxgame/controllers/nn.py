@@ -8,7 +8,7 @@ import shelve
 from os.path import join, exists
 from os import remove
 
-from foxgame.gamecore import FoxgameOption
+from foxgame.options import FoxgameOption
 from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
 from libs.neuralnetwork import NeuralNetwork
