@@ -24,46 +24,39 @@ class Benchmark(PostFilter):
     A simple postfilter which stores and returns datas useful for benchmarking.
     """
 
-    formatter = simple_print
+    formatter = core_print
     dest = None
 
     def _parse_data(self):
-        # TODO
-        return dict((key, str(val)) for key, val in self.datas.iteritems())
+        ret = dict()
+
+        ret['time'] = str(self.game.time_elapsed)
+        ret['carrots'] = str(self.game.hare.carrots)
+
+        return ret
 
     def set_up(self):
         self.file = open(self.dest, 'w') if self.dest else stdout
         self.datas = {
-                'name'     : self.pawn.__class__,
-                'position' : [],
-                'speed'    : [],
-                'accel'    : [],
-                'enemied'  : []
+                'name': self.pawn.__class__
+                # other data
         }
 
     def tear_down(self):
         """
         Close 'dest' file.
         """
-        self.file.close()
+        out = self._parse_data()
+        self.formatter(self.file, out)
+        if self.file != stdout:
+            self.file.close()
 
     def update(self, direction, time):
-        self.datas['position'].append(self.pawn.pos)
-        self.datas['speed'].append(self.pawn.speed)
-        self.datas['accel'].append(self.pawn.acc)
-        if self.pawn.__class__.__name__ == 'Fox':
-            self.datas['enemied'] = self.pawn.distance(self.game.hare)
-        else:
-            self.datas['enemied'] = self.pawn.distance(self.nearest_fox)
+        # store some useful data
+        # TODO
 
         # return the same direction
         return direction
-
-    def tear_down(self):
-        out = self._parse_data()
-        self.formatter(self.file, out)
-
-
 
 
 __extraopts__ = [FoxgameOption('formatter',

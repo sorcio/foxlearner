@@ -94,7 +94,6 @@ class PFilterExample(PostFilter):
         return -dir
 
 
-
 # export options
 __extraopts__ = (FoxgameOption('times', type='int'), )
 
