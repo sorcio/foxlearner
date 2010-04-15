@@ -65,7 +65,7 @@ class HareBrain(Brain):
     training = False
     hiddens = 20
     _net_struct = 8, hiddens
-    _net_data = join('foxgame', 'controllers', 'libs', 'synapsis_hare.db')
+    _net_data = osjoin('foxgame', 'controllers', 'libs', 'synapsis_hare.db')
 
     def set_up(self):
         """
