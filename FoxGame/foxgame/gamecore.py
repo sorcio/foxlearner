@@ -29,8 +29,8 @@ class FoxGameError(Exception):
 
 class FoxgameOption(object):
     """
-    A FoxgameOption provides some attributes
-    useful for parsing and configuring somespecific constants on the game.
+    A FoxgameOption provides some attributes useful for
+    parsing and configuring some specific constants on the game.
     """
 
     def __init__(self,
@@ -406,6 +406,9 @@ class Game(object):
             return True
 
     def end(self):
+        """
+        Desroy controllers present on the game.
+        """
         for pawn in self.pawns:
             pawn.controller.destroy()
 

@@ -85,6 +85,10 @@ def load_brain(brain_name, cls_name='Brain', extraopts=None):
     return brain
 
 def load_postfilters(pfilter_names):
+    """
+    Dynamically loads various PostFilter classes
+    with given names.
+    """
     postfilters = []
     if not pfilter_names:
         return postfilters
@@ -114,4 +118,8 @@ def load_ui(ui_name, main_name='main', extraopts=None):
     return ui_main
 
 def load_task(task_name, taskcls):
+    """
+    Dynamically laods a task with name 'taskname'
+    from the taskcls may be a (Brain or a PostFilter).
+    """
     return getattr(taskcls, 'task_'+task_name)
