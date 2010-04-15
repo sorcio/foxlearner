@@ -17,7 +17,7 @@ from draw import draw_circle
 from bzdraw import BZManager, BZPainter
 from graphics import Font, Screen, GameField, Text, Rectangle
 
-from os.path import join as osjoin
+from os.path import join
 
 
 class UserBrain(Brain):
@@ -49,12 +49,12 @@ class MouseBrain(Brain):
     """
     Move a generic pawn navigating towards a pointer.
     """
-
+    
     def __init__(self, *args, **kwargs):
         super(MouseBrain, self).__init__(*args, **kwargs)
-
+        
         self.pointer = Vector(0, 0)
-
+    
     def update(self, time):
         self.game.brainz_draw().line(self.pawn, self.pointer)
         return self.navigate(self.pointer)
@@ -116,13 +116,13 @@ class GUI(StateMachine):
         self.arrows_ctl = None
         self.wasd_ctl = None
         self.mouse_ctl = []
-
+        
         self.game = None
 
     def setup_game(self):
         self.clean_game()
         self.game = self.gfact.new_game()
-
+    
     def clean_game(self):
         if self.game:
             self.game.end()
@@ -137,9 +137,9 @@ class GUI(StateMachine):
             time = float(self.clock.get_time()) / 1000.0
             # Execute state main handler
             self.state_main(time)
-
+            
             self._screen.do_painting()
-
+            
             pygame.display.update()
             self.clock.tick(self.frame_rate)
 
@@ -170,11 +170,11 @@ class GUI(StateMachine):
     def arrows_ctl_factory(self):
         self.arrows_ctl = UserBrain()
         return self.arrows_ctl
-
+    
     def wasd_ctl_factory(self):
         self.wasd_ctl = UserBrain()
         return self.wasd_ctl
-
+    
     def mouse_ctl_factory(self):
         ctl = MouseBrain()
         self.mouse_ctl.append(ctl)
@@ -195,11 +195,11 @@ class GUI(StateMachine):
             inp[Direction.DOWN] = pygame.K_s in self.pressed_keys
             inp[Direction.LEFT] = pygame.K_a in self.pressed_keys
             inp[Direction.RIGHT] = pygame.K_d in self.pressed_keys
-
+    
     def update_mouse_ctl(self):
         if not self.mouse_ctl:
             return
-
+        
         screen_pos = pygame.mouse.get_pos()
         if self.arena.rect.collidepoint(screen_pos):
             arena_pos = Vector(screen_pos[0] - self.arena.rect.x,
@@ -212,7 +212,7 @@ class GUI(StateMachine):
         self.update_arrows_ctl()
         self.update_wasd_ctl()
         self.update_mouse_ctl()
-
+        
     def toggle_bzdebug(self):
         self.bzdebug = not self.bzdebug
         self.activate_bzdebug()
@@ -250,7 +250,7 @@ class GUI(StateMachine):
         subtitle.rect.centerx = title.rect.centerx
         subtitle.rect.top = title.rect.bottom
 
-
+    
     def welcome_main(self, time):
         self.handle_quit()
 
@@ -269,25 +269,25 @@ class GUI(StateMachine):
 
     def running_init(self):
         self.game_page = self._screen.add_page('game')
-
+        
         font = Font(None, 32)
-
+        
         self.hud = Rectangle(self._screen.rect, self.game_page)
-
+        
         self.score = Text((0,0,0,0), self.hud, font,
                           'Score: 00000', 'white')
-
+        
         self.score.rect.top = self._screen.rect.top + 5
         self.score.rect.right = self._screen.rect.right - 5
-
+        
         self.time = Text((0,0,0,0), self.hud, font,
                           'Time Elapsed: 0.0', 'white')
-
+        
         self.time.rect.top = self._screen.rect.top + 5
         self.time.rect.left = self._screen.rect.left + 5
 
         self.bzdebug = False
-
+        
         self.arena = None
 
 
@@ -314,7 +314,7 @@ class GUI(StateMachine):
     def running_enter(self):
         # Quick rate for the quick brown fox!
         self.frame_rate = 60
-
+        
         self.setup_arena()
         self._screen.show_page('game')
 
@@ -335,7 +335,7 @@ class GUI(StateMachine):
 
     def dead_enter(self):
         self.frame_rate = 5
-
+    
     def dead_exit(self, newstate):
         self.clean_game()
 
@@ -344,7 +344,7 @@ class GUI(StateMachine):
     def paused_init(self):
         # add page as overlay of self.game_page
         self.paused_page = self.game_page.add_page('paused')
-
+        
         title_font = Font(None, 50)
         self.paused_text = Text((0,0,0,0), self.paused_page, title_font,
                                 'Game paused!', 'lightslateblue')
@@ -352,13 +352,13 @@ class GUI(StateMachine):
         subtitle_font = Font(None, 30)
         self.paused_subtext = Text((0,0,0,0), self.paused_page, subtitle_font,
                                    'Press spacebar to continue', 'red')
-
+        
         self.paused_page.rect.width = max(self.paused_text.rect.width,
                                            self.paused_subtext.rect.width)
-
+        
         self.paused_page.rect.height = (self.paused_text.rect.height +
                                          self.paused_subtext.rect.height)
-
+        
         self.paused_text.rect.top = self.paused_page.rect.top
         self.paused_text.rect.centerx = self.paused_page.rect.centerx
         self.paused_subtext.rect.top = self.paused_text.rect.bottom
@@ -378,9 +378,9 @@ class GUI(StateMachine):
 
         self.paused_page.rect.center = self.game_page.rect.center
         self.paused_page.resize()
-
+        
         self.game_page.show_page('paused')
-
+        
     def paused_exit(self, newstate):
         self.game_page.show_page('')
 
@@ -396,7 +396,7 @@ def main(gfact):
     """
     from foxgame import __path__
     path = __path__[0].split('foxgame')[0]
-    logo = osjoin('images','foxgame.png')
+    logo = join('images','foxgame.png')
 
     pygame.init()
     pygame.display.set_icon(pygame.image.load(join(path, logo)))
