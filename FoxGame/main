@@ -112,7 +112,7 @@ for argv in args:
     # ... if the component is a postfilter
     if (scomponent.startswith(f_pfilter.dest) or
         scomponent.startswith(h_pfilter.dest) and
-        x[-1].isdigit() and x[:-1].isalpha()):
+        scomponent[-1].isdigit()):
         component = scomponent
 
     # ... otherwise
