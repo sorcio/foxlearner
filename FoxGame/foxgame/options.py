@@ -64,9 +64,9 @@ class FoxgameOption(object):
 
     @staticmethod
     def _factory_bool(x):
-        if x.lower() in ('yes', 'on', 'true'):
+        if x.lower() in ('yes', 'on', 'true', '1'):
             return True
-        elif x.lower() in ('no', 'off', 'false'):
+        elif x.lower() in ('no', 'off', 'false', '0'):
             return False
         else:
             raise FoxgameError('FoxgameOption', 'invalid bool string %s' % x)
