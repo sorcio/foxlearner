@@ -70,6 +70,12 @@ class CSV(PostFilter):
     def write_head(self):
         if not self.file:
             return
+        
+        print >>self.file, '# starting logging'
+        print >>self.file, '# nfoxes =', len(self.game.foxes)
+        print >>self.file, '# game.size =', self.game.size.x, self.game.size.y
+        print >>self.file, '# pawnclass =', self.pawn.__class__.__name__
+        
         head = ['time']
         for i in range(len(self.game.foxes)):
             head.append('fox%d_x' % i)
@@ -101,3 +107,37 @@ class CSV(PostFilter):
         
         return direction
 
+import csv
+
+def read_cvs(filename, delimiter=',', comment='#'):
+    """
+    A generator which parses CVS data.
+    """
+    csvfile = CommentedFile(open(filename), commentstring=comment)
+    #dialect = csv.Sniffer().sniff(csvfile.read(1024))
+    #csvfile.seek(0)
+    reader = csv.DictReader(csvfile, delimiter=delimiter)
+    
+    for row in reader:
+        for k in row:
+            row[k] = float(row[k])
+        yield row
+
+
+class CommentedFile(object):
+    """
+    File object wrapper which skips lines
+    starting with commentstring.
+    """
+    def __init__(self, f, commentstring="#"):
+        self.f = f
+        self.commentstring = commentstring
+
+    def next(self):
+        line = self.f.next()
+        while line.startswith(self.commentstring):
+            line = self.f.next()
+        return line
+
+    def __iter__(self):
+        return self
