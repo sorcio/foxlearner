@@ -15,8 +15,13 @@ def core_print(dst, data):
     """
     Print data with a simple formatting.
     """
+    # print pawn's name
+    print >> dst, data['name']
+    del data['name']
+
+    # print statistics
     for key, val in data.iteritems():
-        print >> dst, '\t%s : %s;' % (key, val)
+        print >> dst, '%s : %.4f;' % (key.rjust(12), val)
     print >> dst
 
 
@@ -31,15 +36,16 @@ class Benchmark(PostFilter):
     def _parse_data(self):
         ret = dict()
 
-        ret['time'] = str(self.game.time_elapsed)
-        ret['carrots'] = str(self.game.hare.carrots)
+        ret['name'] = self.datas['name']
+        ret['time'] = self.game.time_elapsed
+        ret['carrots'] = self.game.hare.carrots
 
         return ret
 
     def set_up(self):
         self.file = open(self.dest, 'w') if self.dest else stdout
         self.datas = {
-                'name': self.pawn.__class__
+                'name': self.pawn.__class__.__name__
                 # other data
         }
 
