@@ -45,7 +45,7 @@ def extra_option(option, opt_str, value, parser):
 
     # extend with non-standard options
     args = tuple(takewhile(lambda x: (not x.startswith('-')
-                                      and ':' in x and '/' not in x),
+                           and ':' in x and '/' not in x.split(':')[0]),
                            parser.rargs))
 
     dest = (option.dest if 'POSTFILTER' not in option.metavar
@@ -111,7 +111,7 @@ for argv in args:
     if '/' not in argv:
         parser.error('argument without a parent')
 
-    scomponent, opts = argv.split('/')
+    scomponent, opts = argv.split('/', 1)
     # extract the real component...
 
     # ... if the component is a postfilter
