@@ -1,91 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
-from functools import wraps, partial
 from operator import sub
 from math import sqrt
 
-
-__authors__ = 'Michele Orrù'
-__date__ = '08/4/2010'
+# from fuzzyop import
 
 PRECISION = 0.5
-
-
-##########################
-## MEMBERSHIP FUNCTIONS ##
-##########################
-
-def triangle(cls, x):
-    xl, xa, xr = cls.range
-
-    if xl < x <= xa:
-        return  (x - xl) / (xa - xl)
-    if xa < x < xr:
-        return (x - xr) / (xa - xr)
-    else:
-        return 0
-
-def trapize(cls, x):
-    xl, xa, xb, xr = cls.range
-
-    if xl < x < xa:
-        return (x - xl) / (xa - xl)
-    if xa <= x <= xb:
-        return 1
-    if xb < x < xr:
-        return (x - xr) / (xb - xr)
-    else:
-        return 0
-
-def gaussian(cls, x):
-    xl, xa, xr = cls.range
-    raise NotImplementedError
-
-
-############
-## HEDGES ##
-############
-
-def hedge(modifier):
-    """
-    Hedges are devices commonly used to weaken or strengthen
-    the impact of an statement.
-    """
-
-    @wraps(hedge)
-    def modify(set):
-        return FuzzySet(set.parent, '%s_%s' %(modifier.func_name, set.name),
-                        set.range, mfunct=lambda x:modifier(set.mfunct(x)))
-    return modify
-
-@hedge
-def indeed(x):
-    if 0 <= x <= 0.5:
-        return 2 * x**2
-    if 0.5 < x <= 1:
-        return 1 - 2 * (1 - x)**2
-
-@hedge
-def little(x):
-    return x ** 1.3
-
-@hedge
-def slighty(x):
-    return x ** 1.7
-
-@hedge
-def very(x):
-    return x ** 2
-
-@hedge
-def extremely(x):
-    return x ** 3
-
-@hedge
-def somewhat(x):
-    return sqrt(x)
-
 
 
 class FuzzySet(object):
@@ -144,30 +65,13 @@ class FuzzySet(object):
                 any(x != y for (a, x), (b, y) in zip(self, other)))
 
     def __and__(self, other):
-        and_func = staticmethod(lambda cls, x: min(self.u(x), other.u(x)))
-        # FIXME
-        and_range = map(and_func, zip(self.range, other.range))
-
-        return FuzzySet(self.parent,
-                        '%s&%s' % (self.name, other.name),
-                        and_range, and_func)
+        raise NotimplementedError
 
     def __or__(self, other):
-        or_func = staticmethod(lambda x: max(self.u(x), other.u(x)))
-        #FIXME
-        or_range = map(or_func, zip(self.range, other.range))
-
-        return FuzzySet(self.parent,
-                        '%s|%s' % (self.name, other.name),
-                        or_range, or_func)
+        raise NotImplementedError
 
     def __inverse__(self):
-        # TODO: use partial and sub?
-        inv_func = staticmethod(lambda x: 1 - self.u(x))
-        inv_range = map(inv_func, zip(self.range, other.range))
-
-        return FuzzySet(self.parent, '!' + self.name,
-                        inv_range, inv_func)
+        raise NotImplementedError
 
     def __add__(self, other):
         raise NotImplementedError
@@ -196,7 +100,15 @@ class FuzzySet(object):
         return other <= self
 
 
-class FuzzyVariable:     # (object) (type)
+class FuzzyVariable:
+    """
+    A Fuzzy Variable is a Linguistic Variable composed of
+    a collection of fuzzy sets.
+    """
+    raise NotImplementedError
+
+
+class FuzzyEngine:     # (object) (type)
     """
     A Fuzzy Variable is composed of :
      - a name                          self.name;
