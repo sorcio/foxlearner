@@ -45,6 +45,11 @@ class Set(object):
         self.middlerange = limits[1:-1]
 
     def u(self, x):
+        #  00:37:22        C8E | >>> x=0.1 + 0.1 + 0.1 - 0.3
+        # 00:37:22        C8E | >>> x==0
+        # 00:37:22        C8E | False
+        # 00:37:22        C8E | >>> abs(x)<1e-7
+        # 00:37:22        C8E | True
         return round(self._mfunct(self, x), 7)
 
     def __repr__(self):
@@ -81,9 +86,8 @@ class Set(object):
         """
         Return True if not self == other, True otherwise.
         """
-        return not self == other
-        #return (self.range != other.range or
-        #        any(x != y for (a, x), (b, y) in zip(self, other)))
+        return (self.range != other.range or
+                any(x != y for (a, x), (b, y) in zip(self, other)))
 
     def __and__(self, other):
         if self.parent != other.parent:
