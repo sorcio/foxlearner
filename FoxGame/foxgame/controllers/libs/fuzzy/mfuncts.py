@@ -1,9 +1,12 @@
 """
  fuzzy/mfuncts.py: some of the most common membership funtions for fuzzy sets.
 """
+from __future__ import division
 
-def triangle(cls, x):
-    xl, xa, xr = cls.range
+
+def triangular(cls, x):
+    xl, xr = cls.range
+    xa, = cls.middlerange
 
     if xl < x <= xa:
         return  (x - xl) / (xa - xl)
@@ -12,8 +15,9 @@ def triangle(cls, x):
     else:
         return 0
 
-def trapize(cls, x):
-    xl, xa, xb, xr = cls.range
+def trapezoidal(cls, x):
+    xl, xr = cls.range
+    xa, xb = cls.middlerange
 
     if xl < x < xa:
         return (x - xl) / (xa - xl)
@@ -25,7 +29,13 @@ def trapize(cls, x):
         return 0
 
 def gaussian(cls, x):
-    xl, xa, xr = cls.range
+    xl, xr = cls.range
+    xa, = cls.middlerange
     raise NotImplementedError
 
 
+functions = {
+             'triangle': triangular,
+             'trapize' : trapezoidal,
+             # 'gauss'   : gaussian
+}

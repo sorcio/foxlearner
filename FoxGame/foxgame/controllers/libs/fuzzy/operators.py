@@ -1,15 +1,28 @@
+from __future__ import division
+from functools import partial
 
-
-def hedge(modifier):
+def operator(op):
     """
-    Hedges are devices commonly used to weaken or strengthen
-    the impact of a statement.
+    Operators relate two sets according to the standard
+    fuzzy logic conventions.
     """
+    def operate(*parents):
+        return partial(op, *parents)
 
-    @wraps(hedge)
-    def modify(set):
-        return FuzzySet(set.parent, '%s_%s' %(modifier.func_name, set.name),
-                        set.range, mfunct=lambda x : modifier(set.mfunct(x)))
-    return modify
+    return operate
+
+@operator
+def fuzzy_and(fst, snd, x):
+    return min(fst.u(x), snd.u(x))
+
+@operator
+def fuzzy_or(fst, snd, x):
+    return max(fst.u(x), snd.u(x))
+
+@operator
+def fuzzy_not(fst, x):
+    return 1 - fst.u(x)
+
+
 
 

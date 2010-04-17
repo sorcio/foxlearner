@@ -4,12 +4,13 @@ from __future__ import division
 from operator import sub
 from math import sqrt
 
-# from fuzzyop import
+import operators
+from mfuncts import functions
 
 PRECISION = 0.5
 
 
-class FuzzySet(object):
+class Set(object):
     """
     A Fuzzy set is a set whose vaues have a degree of membership.
 
@@ -20,19 +21,34 @@ class FuzzySet(object):
      - self.mfunct => membership function
     """
 
-    def __new__(cls, parent, name, range, mfunct):
+    def __new__(cls, parent, name, mfunct, *limits):
         """
         Set up a new fuzzy set, with:
+          - parent               => LinguisticVariable instance
           - name                 => 'name'
           - range                => 'range'
           - memebership function => 'mfunct'
         """
+        # parent LinguisticVariable
         cls.parent = parent
+        # set's name
         cls.name = name
-        cls.range = range
-        cls.u = mfunct
+
+        # membership function
+        if isinstance(mfunct, str):
+            cls.u = functions[mfunct]
+        else:
+            cls.u = mfunct
+
+        # range
+        cls.range = limits[0], limits[-1]
+        cls.middlerange = limits[1:-1]
 
         return object.__new__(cls)
+
+    def __repr__(self):
+        return '<FuzzySet %s/%s in %s>' % (self.parent, self.name, self.range)
+
 
     def __nonzero__(self):
         """
@@ -65,10 +81,23 @@ class FuzzySet(object):
                 any(x != y for (a, x), (b, y) in zip(self, other)))
 
     def __and__(self, other):
-        raise NotimplementedError
+        raise NotImplementedError
 
     def __or__(self, other):
-        raise NotImplementedError
+        if self.parent != other.parent:
+            raise ValueError('%s | %s : %s != %s ' % (
+                             self.name, other.name, self.parent, other.parent))
+
+        if self.range[1] < other.range[0]:
+            return VoidSet
+
+        if self == other:
+            return self
+
+        return Set(self.parent,
+                   '%s|%s' % (self.name, other.name),
+                   operators.fuzzy_or(self, other),
+                   self.range[0], other.range[1])
 
     def __inverse__(self):
         raise NotImplementedError
@@ -100,15 +129,15 @@ class FuzzySet(object):
         return other <= self
 
 
-class FuzzyVariable:
+class Variable:
     """
     A Fuzzy Variable is a Linguistic Variable composed of
     a collection of fuzzy sets.
     """
-    raise NotImplementedError
+    pass
 
 
-class FuzzyEngine:     # (object) (type)
+class Engine:     # (object) (type)
     """
     A Fuzzy Variable is composed of :
      - a name                          self.name;
@@ -133,3 +162,7 @@ class FuzzyEngine:     # (object) (type)
         Remove a rule from the Fuzzy Variable.
         """
         raise NotImplementedError
+
+
+
+VoidSet = Set(None, 'Void', lambda cls, x : 0, 0, 0)
