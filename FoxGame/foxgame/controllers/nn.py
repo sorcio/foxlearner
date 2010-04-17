@@ -7,6 +7,7 @@ nn.py: Brains which provide a neural network
 from os.path import join as osjoin
 from os.path import exists
 from os import remove
+from glob import glob
 
 from foxgame.options import FoxgameOption
 from foxgame.controller import Brain
@@ -21,17 +22,13 @@ class FoxBrain(Brain):
     """
     A controller which uses a neural network to follow the hare.
     """
-    # TODO: Not working, rewrite the class looking at the other.
-    _net_struct = 8, 10
-    _net_data = osjoin('foxgame', 'controllers', 'libs', 'synapsis_fox.db')
-    _net_training = False
+    # TODO
 
     def set_up(self):
         """
         Used to load neural network data from a file
         """
-        self.network = NeuralNetwork(*self._net_struct)
-        self.network.load(self._net_data)
+        pass
 
     def update(self, time):
         """
@@ -39,22 +36,13 @@ class FoxBrain(Brain):
         Hare position, Fox position, Carrot position and hare speed.
         """
 
-        data = (self.game.hare.pos.x, self.game.hare.pos.y,
-                self.pawn.pos.x, self.pawn.pos.y,
-                self.game.carrot.pos.x, self.game.carrot.pos.y,
-                self.game.hare.speed.x, self.game.hare.speed.y)
-
-        output = []
-        for value in self.network.put(data):
-            output.append(int(round(value)))
-
-        return Direction(output)
+        raise NotImplementedError
 
     def tear_down(self):
         """
         It saves the neural network weights into a file
         """
-        self.network.save(self._net_data)
+        pass
 
 
 class HareBrain(Brain):
@@ -63,11 +51,12 @@ class HareBrain(Brain):
     """
     examples = None
     training = False
-    hiddens = 20
-    epochs = 10
+    hiddens = 50
+    epochs = 30
+    epsilon = 0.35
     _net_data = osjoin('foxgame', 'controllers', 'libs', 'synapsis_hare.db')
     
-    size = (800, 400)
+    size = (600, 400)
     inputs = 10
 
     def set_up(self):
@@ -111,34 +100,40 @@ class HareBrain(Brain):
         self.network.save(self._net_data)
     
     def examples_generator(self, filename):
-        if not filename:
-            raise IOError('Examples filename not setted')
-
-        for data in read_cvs(filename):
-            yield [ [data['fox0_x']/self.size[0],
-            data['fox0_y']/self.size[1],
-            data['hare_x']/self.size[0],
-            data['hare_y']/self.size[1],
-            data['carrot_x']/self.size[0],
-            data['carrot_y']/self.size[1],
-            data['hare_speed_x']/self.size[0],
-            data['hare_speed_y']/self.size[1],
-            data['fox0_speed_x']/self.size[0],
-            data['fox0_speed_y']/self.size[1] ],
-            
-            [ data['dir_h'], data['dir_v'] ]
-            ]
+        """
+        """
+        file_list = glob(filename)
+        if file_list == []:
+            raise IOError('Invalid filename')
+        log.debug('Opening %d files' % len(file_list))
+        for piece in file_list:
+            for data in read_cvs(piece):
+                yield [ [data['fox0_x']/self.size[0],
+                data['fox0_y']/self.size[1],
+                data['hare_x']/self.size[0],
+                data['hare_y']/self.size[1],
+                data['carrot_x']/self.size[0],
+                data['carrot_y']/self.size[1],
+                data['hare_speed_x']/self.size[0],
+                data['hare_speed_y']/self.size[1],
+                data['fox0_speed_x']/self.size[0],
+                data['fox0_speed_y']/self.size[1] ],
+                
+                [ data['dir_h'], data['dir_v'] ]
+                ]
 
     def train_network(self, _net_struct, filename):
-
+        """
+        """
         n = NeuralNetwork(*_net_struct)
-        n.train(self.examples_generator(filename), self.epochs)
+        n.train(self.examples_generator(filename), self.epochs, self.epsilon)
         n.save(HareBrain._net_data)
 
 
 __extraopts__ = (FoxgameOption('training', type='bool'),
                  FoxgameOption('hiddens', type='int'),
                  FoxgameOption('epochs', type='int'),
-                 FoxgameOption('examples', type='string'))
+                 FoxgameOption('examples', type='string'),
+                 FoxgameOption('epsilon', type='float'))
 
 
