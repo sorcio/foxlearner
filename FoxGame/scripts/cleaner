@@ -47,11 +47,11 @@ parser.add_option('-q', '--quiet',
 (options, args) = parser.parse_args()
 
 if len(args) == 0:
-    ext = '*.pyc'
+    ext = '*.py[co]'
 elif len(args) == 1:
     ext, = args
 else:
-    raise ValueError('%s must be called  with 1 argument at maximum,'
+    raise ValueError('%s must be called  with 1 argument at maximum, '
                      'got %d instead' % (__appname__, len(args)))
 
 for root, dirs, files in os.walk(options.root):
