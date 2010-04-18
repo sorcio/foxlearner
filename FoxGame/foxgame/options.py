@@ -50,6 +50,8 @@ class FoxgameOption(object):
             self.factory = str
         elif sfactory == 'int':
             self.factory = int
+        elif sfactory == 'float':
+            self.factory = float
         elif sfactory == 'bool':
             self.factory = self._factory_bool
         elif sfactory == 'vector':
