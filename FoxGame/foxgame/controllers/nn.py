@@ -14,7 +14,7 @@ from foxgame.options import FoxgameOption, task
 from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
 from libs.neuralnetwork import NeuralNetwork
-from foxgame.controllers.output import read_cvs
+from foxgame.controllers.output import read_cvs_skip as read_cvs
 
 from logging import getLogger
 log = getLogger('[nn]')
@@ -127,7 +127,6 @@ class HareBrain(Brain):
                     self.game.hare.speed.y/HareBrain.speed_normalizer,
                     self.nearest_fox.speed.x/HareBrain.speed_normalizer,
                     self.nearest_fox.speed.y/HareBrain.speed_normalizer)
-        print "Input datas: "+str(data)
         output = [int(round((value*2.0)-1.0)) for value in self.network.put(data)]
         return Direction(output)
 

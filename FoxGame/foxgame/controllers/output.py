@@ -123,6 +123,21 @@ def read_cvs(filename, delimiter=',', comment='#'):
             row[k] = float(row[k])
         yield row
 
+def read_cvs_skip(filename, delimiter=',', comment='#', skipstart=50, skipend=200):
+    """
+    A generator which parses CVS data skipping lines
+    from the head and the tail of each file.
+    """
+    from foxgame.utils import ShortDeque
+    gen = read_cvs(filename, delimiter, comment)
+    buf = ShortDeque([], skipend)
+    for i in range(skipstart):
+        gen.next()
+    for row in gen:
+        buf.append(row)
+        if len(buf) == skipend:
+            yield buf[0]
+
 
 class CommentedFile(object):
     """
