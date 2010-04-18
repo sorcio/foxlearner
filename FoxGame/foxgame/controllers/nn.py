@@ -8,6 +8,7 @@ from os.path import join as osjoin
 from os.path import exists
 from os import remove
 from glob import glob
+from math import sqrt
 
 from foxgame.options import FoxgameOption, task
 from foxgame.controller import Brain
@@ -54,10 +55,13 @@ class HareBrain(Brain):
     _net_data = osjoin('foxgame', 'controllers', 'libs', 'synapsis_hare.db')
 
     size = (600, 400)
+    relative = False
 
     inputs = 10
+    inputs_rel = inputs
     hiddens = 30
 
+    error = None
     epochs = 30
     epsilon = 0.35
     
@@ -68,16 +72,25 @@ class HareBrain(Brain):
         Load neural network data from a file
         """
 
-        _net_struct = self.inputs, HareBrain.hiddens
+        if HareBrain.relative:
+            _net_struct = HareBrain.inputs_rel, HareBrain.hiddens
+        else:
+            _net_struct = HareBrain.inputs, HareBrain.hiddens
+
         self.network = NeuralNetwork(*_net_struct)
         self.network.load(self._net_data)
 
 
     @task
     def task_train():
-        _net_struct = HareBrain.inputs, HareBrain.hiddens
+        if HareBrain.relative:
+            _net_struct = HareBrain.inputs_rel, HareBrain.hiddens
+        else:
+            _net_struct = HareBrain.inputs, HareBrain.hiddens
 
         log.info('Training with structure: '  + str(_net_struct))
+        if HareBrain.relative:
+            log.info('Relative mode ENABLED')
         if exists(HareBrain._net_data):
             log.debug('Removing old net data.')
             remove(HareBrain._net_data)
@@ -89,18 +102,32 @@ class HareBrain(Brain):
         The neural network recives in input the following data:
         Hare position, Fox position, Carrot position and hare speed.
         """
+        diagonal = sqrt( HareBrain.size[0]**2 + HareBrain.size[1]**2 )
+        
+        if HareBrain.relative:
+            data = ((self.game.hare.pos.x-self.nearest_fox.pos.x)/diagonal,
+                    (self.game.hare.pos.y-self.nearest_fox.pos.y)/diagonal,
+                    (self.game.hare.pos.x-self.game.carrot.pos.x)/diagonal,
+                    (self.game.hare.pos.y-self.game.carrot.pos.y)/diagonal,
+                    self.game.hare.pos.x/HareBrain.size[0],
+                    self.game.hare.pos.y/HareBrain.size[1],
+                    self.game.hare.speed.x/HareBrain.speed_normalizer,
+                    self.game.hare.speed.y/HareBrain.speed_normalizer,
+                    self.nearest_fox.speed.x/HareBrain.speed_normalizer,
+                    self.nearest_fox.speed.y/HareBrain.speed_normalizer)
 
-        data = (self.game.hare.pos.x/HareBrain.size[0],
-                self.game.hare.pos.y/HareBrain.size[1],
-                self.nearest_fox.pos.x/HareBrain.size[0],
-                self.nearest_fox.pos.y/HareBrain.size[1],
-                self.game.carrot.pos.x/HareBrain.size[0],
-                self.game.carrot.pos.y/HareBrain.size[1],
-                self.game.hare.speed.x/HareBrain.speed_normalizer,
-                self.game.hare.speed.y/HareBrain.speed_normalizer,
-                self.nearest_fox.speed.x/HareBrain.speed_normalizer,
-                self.nearest_fox.speed.y/HareBrain.speed_normalizer)
-
+        else:
+            data = (self.game.hare.pos.x/HareBrain.size[0],
+                    self.game.hare.pos.y/HareBrain.size[1],
+                    self.nearest_fox.pos.x/HareBrain.size[0],
+                    self.nearest_fox.pos.y/HareBrain.size[1],
+                    self.game.carrot.pos.x/HareBrain.size[0],
+                    self.game.carrot.pos.y/HareBrain.size[1],
+                    self.game.hare.speed.x/HareBrain.speed_normalizer,
+                    self.game.hare.speed.y/HareBrain.speed_normalizer,
+                    self.nearest_fox.speed.x/HareBrain.speed_normalizer,
+                    self.nearest_fox.speed.y/HareBrain.speed_normalizer)
+        print "Input datas: "+str(data)
         output = [int(round((value*2.0)-1.0)) for value in self.network.put(data)]
         return Direction(output)
 
@@ -118,35 +145,54 @@ class HareBrain(Brain):
 
         if file_list == []:
             raise IOError('Invalid filename')
+            
+        digonal = sqrt( HareBrain.size[0]**2 + HareBrain.size[1]**2 )
 
         log.debug('Opening %d files' % len(file_list))
+
         for piece in file_list:
             for data in read_cvs(piece):
-                yield [[data['hare_x']/HareBrain.size[0],
-                        data['hare_y']/HareBrain.size[1],
-                        data['fox0_x']/HareBrain.size[0],
-                        data['fox0_y']/HareBrain.size[1],
-                        data['carrot_x']/HareBrain.size[0],
-                        data['carrot_y']/HareBrain.size[1],
-                        data['hare_speed_x']/HareBrain.speed_normalizer,
-                        data['hare_speed_y']/HareBrain.speed_normalizer,
-                        data['fox0_speed_x']/HareBrain.speed_normalizer,
-                        data['fox0_speed_y']/HareBrain.speed_normalizer],
-                        [(data['dir_h']+1.0)/2.0, (data['dir_v']+1.0)/2.0]
-                     ]
+                if HareBrain.relative:
+                    yield [[(data['hare_x']-data['fox0_x'])/digonal,
+                            (data['hare_y']-data['fox0_y'])/digonal,
+                            (data['hare_x']-data['carrot_x'])/digonal,
+                            (data['hare_y']-data['carrot_y'])/digonal,
+                            data['hare_x']/HareBrain.size[0],
+                            data['hare_y']/HareBrain.size[1],
+                            data['hare_speed_x']/HareBrain.speed_normalizer,
+                            data['hare_speed_y']/HareBrain.speed_normalizer,
+                            data['fox0_speed_x']/HareBrain.speed_normalizer,
+                            data['fox0_speed_y']/HareBrain.speed_normalizer],
+                            [(data['dir_h']+1.0)/2.0, (data['dir_v']+1.0)/2.0]
+                         ]
+                else:
+                    yield [[data['hare_x']/HareBrain.size[0],
+                            data['hare_y']/HareBrain.size[1],
+                            data['fox0_x']/HareBrain.size[0],
+                            data['fox0_y']/HareBrain.size[1],
+                            data['carrot_x']/HareBrain.size[0],
+                            data['carrot_y']/HareBrain.size[1],
+                            data['hare_speed_x']/HareBrain.speed_normalizer,
+                            data['hare_speed_y']/HareBrain.speed_normalizer,
+                            data['fox0_speed_x']/HareBrain.speed_normalizer,
+                            data['fox0_speed_y']/HareBrain.speed_normalizer],
+                            [(data['dir_h']+1.0)/2.0, (data['dir_v']+1.0)/2.0]
+                         ]
 
     @staticmethod
     def train_network(_net_struct, filename):
         """
         """
         n = NeuralNetwork(*_net_struct)
-        n.train(HareBrain.examples_generator(filename), HareBrain.epochs, HareBrain.epsilon)
+        n.train(HareBrain.examples_generator(filename), HareBrain.epochs, HareBrain.epsilon, HareBrain.error)
         n.save(HareBrain._net_data)
 
 
 __extraopts__ = (FoxgameOption('hiddens', type='int'),
                  FoxgameOption('epochs', type='int'),
                  FoxgameOption('examples', type='string'),
-                 FoxgameOption('epsilon', type='float'))
+                 FoxgameOption('epsilon', type='float'),
+                 FoxgameOption('error', type='float'),
+                 FoxgameOption('relative', type='bool'))
 
 
