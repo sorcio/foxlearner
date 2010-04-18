@@ -23,7 +23,7 @@ class TestNeuralNetwork(TestCase):
                 ((1, 1), (0, ))
                   )
 
-        n = NeuralNetwork(2, 2, 1)
+        n = NeuralNetwork(2, 2, 1, True, 'tanh')
         n.train(xor_pat)
 
         for i, o in xor_pat:

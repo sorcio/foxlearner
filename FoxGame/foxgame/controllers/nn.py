@@ -88,13 +88,18 @@ class HareBrain(Brain):
         Hare position, Fox position, Carrot position and hare speed.
         """
 
-        data = (self.game.hare.pos.x, self.game.hare.pos.y,
-                self.game.carrot.pos.x, self.game.carrot.pos.y,
-                self.pawn.pos.x, self.pawn.pos.y,
-                self.game.hare.speed.x, self.game.hare.speed.y,
-                self.pawn.speed.x, self.pawn.speed.y)
+        data = (self.game.hare.pos.x/HareBrain.size[0],
+                self.game.hare.pos.y/HareBrain.size[1],
+                self.nearest_fox.pos.x/HareBrain.size[0],
+                self.nearest_fox.pos.y/HareBrain.size[1],
+                self.game.carrot.pos.x/HareBrain.size[0],
+                self.game.carrot.pos.y/HareBrain.size[1],
+                self.game.hare.speed.x/HareBrain.size[0],
+                self.game.hare.speed.y/HareBrain.size[1],
+                self.nearest_fox.speed.x/HareBrain.size[0],
+                self.nearest_fox.speed.y/HareBrain.size[1])
 
-        output = [int(round(value)) for value in self.network.put(data)]
+        output = [int(round((value*2.0)-1.0)) for value in self.network.put(data)]
 
         return Direction(output)
 
@@ -116,17 +121,17 @@ class HareBrain(Brain):
         log.debug('Opening %d files' % len(file_list))
         for piece in file_list:
             for data in read_cvs(piece):
-                yield [[data['fox0_x']/HareBrain.size[0],
-                        data['fox0_y']/HareBrain.size[1],
-                        data['hare_x']/HareBrain.size[0],
+                yield [[data['hare_x']/HareBrain.size[0],
                         data['hare_y']/HareBrain.size[1],
+                        data['fox0_x']/HareBrain.size[0],
+                        data['fox0_y']/HareBrain.size[1],
                         data['carrot_x']/HareBrain.size[0],
                         data['carrot_y']/HareBrain.size[1],
                         data['hare_speed_x']/HareBrain.size[0],
                         data['hare_speed_y']/HareBrain.size[1],
                         data['fox0_speed_x']/HareBrain.size[0],
                         data['fox0_speed_y']/HareBrain.size[1]],
-                        [data['dir_h'], data['dir_v']]
+                        [(data['dir_h']+1.0)/2.0, (data['dir_v']+1.0)/2.0]
                      ]
 
     @staticmethod

@@ -85,7 +85,7 @@ class NeuralNetwork(object):
             'tanh'    : (tanh_function, tanh_derived)
     }
 
-    def __init__(self, ni, nh, no=2, bias=True, funct='tanh'):
+    def __init__(self, ni, nh, no=2, bias=True, funct='sigmoid'):
         self.bias = int(bias)
 
         randomseed(0)
@@ -192,7 +192,7 @@ class NeuralNetwork(object):
             if epoch % 100 == 0:
                 log.info('error: %f' % error)
 
-        log.info('Network finished training'
+        log.info('Network finished training '
                   'in %dth epochs with error %f' % (epoch, error))
 
         return error, epoch
