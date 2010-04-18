@@ -27,7 +27,7 @@ class FoxBrain(Brain):
 
     def set_up(self):
         """
-        Used to load neural network data from a file
+        Load neural network data from a file
         """
         pass
 
@@ -41,7 +41,7 @@ class FoxBrain(Brain):
 
     def tear_down(self):
         """
-        It saves the neural network weights into a file
+        Saves the neural network weights into a file
         """
         pass
 
@@ -50,15 +50,16 @@ class HareBrain(Brain):
     """
     A controller which uses a neural network to escape from the fox.
     """
-    examples = None
-    training = False
-    hiddens = 50
-    epochs = 30
-    epsilon = 0.35
+    examples = './foxgamelog/*'
     _net_data = osjoin('foxgame', 'controllers', 'libs', 'synapsis_hare.db')
 
     size = (600, 400)
+
     inputs = 10
+    hiddens = 50
+
+    epochs = 30
+    epsilon = 0.35
 
     def set_up(self):
         """
@@ -79,7 +80,6 @@ class HareBrain(Brain):
             log.debug('Removing old net data.')
             remove(HareBrain._net_data)
         HareBrain.train_network(_net_struct, HareBrain.examples)
-        HareBrain.training = False
 
 
     def update(self, time):
@@ -109,21 +109,23 @@ class HareBrain(Brain):
         """
         """
         file_list = glob(filename)
+
         if file_list == []:
             raise IOError('Invalid filename')
+
         log.debug('Opening %d files' % len(file_list))
         for piece in file_list:
             for data in read_cvs(piece):
-                yield [ [data['fox0_x']/HareBrain.size[0],
-                         data['fox0_y']/HareBrain.size[1],
-                         data['hare_x']/HareBrain.size[0],
-                         data['hare_y']/HareBrain.size[1],
-                         data['carrot_x']/HareBrain.size[0],
-                         data['carrot_y']/HareBrain.size[1],
-                         data['hare_speed_x']/HareBrain.size[0],
-                         data['hare_speed_y']/HareBrain.size[1],
-                         data['fox0_speed_x']/HareBrain.size[0],
-                         data['fox0_speed_y']/HareBrain.size[1] ],
+                yield [[data['fox0_x']/HareBrain.size[0],
+                        data['fox0_y']/HareBrain.size[1],
+                        data['hare_x']/HareBrain.size[0],
+                        data['hare_y']/HareBrain.size[1],
+                        data['carrot_x']/HareBrain.size[0],
+                        data['carrot_y']/HareBrain.size[1],
+                        data['hare_speed_x']/HareBrain.size[0],
+                        data['hare_speed_y']/HareBrain.size[1],
+                        data['fox0_speed_x']/HareBrain.size[0],
+                        data['fox0_speed_y']/HareBrain.size[1]],
                         [data['dir_h'], data['dir_v']]
                      ]
 
@@ -136,8 +138,7 @@ class HareBrain(Brain):
         n.save(HareBrain._net_data)
 
 
-__extraopts__ = (FoxgameOption('training', type='bool'),
-                 FoxgameOption('hiddens', type='int'),
+__extraopts__ = (FoxgameOption('hiddens', type='int'),
                  FoxgameOption('epochs', type='int'),
                  FoxgameOption('examples', type='string'),
                  FoxgameOption('epsilon', type='float'))
