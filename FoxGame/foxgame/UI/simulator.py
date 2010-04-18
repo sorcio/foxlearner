@@ -2,6 +2,9 @@
 """
 simulator.py: a masochistic GUI. Used mainly for tests/controller learning
 """
+
+from __future__ import division
+
 from foxgame.controller import Brain
 from foxgame.structures import Direction
 
@@ -50,10 +53,11 @@ def main(gfact):
     ui = GUI(gfact)
     try:
         while True:
-            if ui.tick(60) == False:
-                ui.game.end()
+            if ui.tick(1/32) == False:
                 print 'game ended.'
                 break
     except KeyboardInterrupt:
-        print
-        exit()
+        print 'game interrupted'
+    finally:
+        ui.game.end()
+
