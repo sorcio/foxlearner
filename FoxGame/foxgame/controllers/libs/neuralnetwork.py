@@ -171,7 +171,7 @@ class NeuralNetwork(object):
         # Medium quadratic error
         return sum((t - ao)**2 / 2 for t, ao in zip(targets, self.ao))
 
-    def train(self, patterns, iterations=1000, eps=0.5, des_err=None):
+    def train(self, patterns, iterations=1000, eps=0.3, des_err=0.01):
         # eps: learning rate
         epoch = 0
 
@@ -189,7 +189,7 @@ class NeuralNetwork(object):
                 self.put(inputs)
                 error += self.back_propagate(targets, eps)
 
-            if epoch % 100 == 0:
+            if epoch % 2 == 0:
                 log.info('error: %f' % error)
 
         log.info('Network finished training '

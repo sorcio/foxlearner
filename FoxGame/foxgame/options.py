@@ -31,6 +31,9 @@ class FoxgameOption(object):
         return '<FoxgameOption object name=\'%s\', type=\'%s\'>' % (
                self.name, self.factory.__name__)
 
+    def __str__(self):
+        return '(%s) %s' % (self.factory.__name__, self.name)
+
     def __eq__(self, other):
         """
         Compare self.name with another string.

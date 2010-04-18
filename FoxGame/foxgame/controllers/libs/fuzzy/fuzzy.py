@@ -45,7 +45,7 @@ class Set(object):
         self.middlerange = limits[1:-1]
 
     def u(self, x):
-        #  00:37:22        C8E | >>> x=0.1 + 0.1 + 0.1 - 0.3
+        # 00:37:22        C8E | >>> x=0.1 + 0.1 + 0.1 - 0.3
         # 00:37:22        C8E | >>> x==0
         # 00:37:22        C8E | False
         # 00:37:22        C8E | >>> abs(x)<1e-7
@@ -180,6 +180,9 @@ class Variable(object):
         set_index = [x.name for x in self.sets].index(set_name)
         del self.sets[set_index]
 
+    def defuzzify(self):
+        raise NotImplementedError
+
 
 class Engine(object):
     """
@@ -189,10 +192,29 @@ class Engine(object):
      - a collection of rules
     """
 
+    def _check_rule(self, srule):
+        """
+        Check if srule is a well formed rule, the return it in a preparsed form.
+        """
+        srule = srule.lower().strip()
+
+        if not srule.startswith('if') or len(srule.split(' then ')) != 2:
+            raise SyntaxError('Malformed rule')
+        antecedent, consequent = srule[2:].split(' then ')
+
+        if len(consequent.split(' is ')) != 2 or ' is ' not in antecedent:
+            raise SyntaxError('Malformed rule')
+
+        consequent = consequent.split(' is ')
+
     def _parse_rule(self, srule):
         """
         Parse a rule in string format.
         """
+        srule = srule.lower()
+        if not srule.startswith('if'):
+            raise SyntaxError('malformed rule')
+        return
         raise NotImplementedError
 
     def add_rule(self, rule):
@@ -204,6 +226,12 @@ class Engine(object):
     def remove_rule(self, rule):
         """
         Remove a rule from the Fuzzy Variable.
+        """
+        raise NotImplementedError
+
+    def register(self, lv):
+        """
+        Register a linguistic variable in the engine.
         """
         raise NotImplementedError
 

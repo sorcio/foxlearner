@@ -61,7 +61,7 @@ def load_extraopts(module, klass, options):
     # check if all options are in __extraopts__ list
     if not all(x in exported for x in options):
         raise FoxGameError('Controller', '%s module avaible options are: %s' %
-                           (module.__name__, exported))
+                           (module.__name__, ', '.join(map(str, exported))))
 
     # assign options to the class klass
     for option, value in ((opt, options[opt.name]) for opt in exported

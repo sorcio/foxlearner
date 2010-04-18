@@ -21,7 +21,7 @@ def core_print(dst, data):
 
     # print statistics
     for key, val in data.iteritems():
-        print >> dst, '%s : %.4f;' % (key.rjust(12), val)
+        print >> dst, '%s : %g;' % (key.rjust(12), val)
     print >> dst
 
 
@@ -39,6 +39,7 @@ class Benchmark(PostFilter):
         ret['name'] = self.datas['name']
         ret['time'] = self.game.time_elapsed
         ret['carrots'] = self.game.hare.carrots
+        ret['c/min'] = 60*ret['carrots'] / ret['time']
 
         return ret
 
