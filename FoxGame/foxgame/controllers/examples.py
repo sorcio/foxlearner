@@ -12,7 +12,7 @@ __date__ = '00/00/00'
 # import basics foxgame modules
 from foxgame.controller import Brain, PostFilter
 from foxgame.structures import Direction
-from foxgame.options import FoxgameOption
+from foxgame.options import FoxgameOption, task
 
 # import libraries useful for our Brains
 from random import choice as randomchoice
@@ -64,7 +64,7 @@ class FoxBrain(Brain):
         self.counter = 0
         log.debug('Brain controller destroyed!')
 
-    @staticmethod
+    @task
     def task_useless():
         """
         A trivial example of task.
@@ -95,6 +95,7 @@ class PFilterExample(PostFilter):
 
 
 # export options
-__extraopts__ = (FoxgameOption('times', type='int'), )
+__extraopts__ = [FoxgameOption('times', type='int')]
+
 
 

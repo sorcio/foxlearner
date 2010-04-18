@@ -3,6 +3,7 @@ options.py: provides extra options for the controllers
 """
 from foxgame.gamecore import FoxGameError
 from foxgame.structures import Direction, Vector
+from functools import wraps
 
 class FoxgameOption(object):
     """
@@ -84,4 +85,11 @@ class FoxgameOption(object):
         return self.description
 
 
+def task(task_func):
+    """
+    A task is.. XXX.
+    """
+    # TODO
+    # ensure task_func is a task? (func_name.startswith('task_'), ...)
+    return staticmethod(task_func)
 

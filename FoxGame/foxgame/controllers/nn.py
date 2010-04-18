@@ -9,11 +9,12 @@ from os.path import exists
 from os import remove
 from glob import glob
 
-from foxgame.options import FoxgameOption
+from foxgame.options import FoxgameOption, task
 from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
 from libs.neuralnetwork import NeuralNetwork
 from foxgame.controllers.output import read_cvs
+
 from logging import getLogger
 log = getLogger('[nn]')
 
@@ -55,7 +56,7 @@ class HareBrain(Brain):
     epochs = 30
     epsilon = 0.35
     _net_data = osjoin('foxgame', 'controllers', 'libs', 'synapsis_hare.db')
-    
+
     size = (600, 400)
     inputs = 10
 
@@ -63,19 +64,23 @@ class HareBrain(Brain):
         """
         Load neural network data from a file
         """
-        
-        _net_struct = self.inputs, HareBrain.hiddens
-        
-        if HareBrain.training:
-            log.info('Training with structure: '  + str(_net_struct))
-            if exists(self._net_data):
-                log.debug('Removing old net data.')
-                remove(self._net_data)
-            self.train_network(_net_struct, self.examples)
-            HareBrain.training = False
 
+        _net_struct = self.inputs, HareBrain.hiddens
         self.network = NeuralNetwork(*_net_struct)
         self.network.load(self._net_data)
+
+
+    @task
+    def task_train():
+        _net_struct = HareBrain.inputs, HareBrain.hiddens
+
+        log.info('Training with structure: '  + str(_net_struct))
+        if exists(HareBrain._net_data):
+            log.debug('Removing old net data.')
+            remove(HareBrain._net_data)
+        HareBrain.train_network(_net_struct, HareBrain.examples)
+        HareBrain.training = False
+
 
     def update(self, time):
         """
@@ -98,8 +103,9 @@ class HareBrain(Brain):
         It saves the neural network weights into a file
         """
         self.network.save(self._net_data)
-    
-    def examples_generator(self, filename):
+
+    @staticmethod
+    def examples_generator(filename):
         """
         """
         file_list = glob(filename)
@@ -108,25 +114,25 @@ class HareBrain(Brain):
         log.debug('Opening %d files' % len(file_list))
         for piece in file_list:
             for data in read_cvs(piece):
-                yield [ [data['fox0_x']/self.size[0],
-                data['fox0_y']/self.size[1],
-                data['hare_x']/self.size[0],
-                data['hare_y']/self.size[1],
-                data['carrot_x']/self.size[0],
-                data['carrot_y']/self.size[1],
-                data['hare_speed_x']/self.size[0],
-                data['hare_speed_y']/self.size[1],
-                data['fox0_speed_x']/self.size[0],
-                data['fox0_speed_y']/self.size[1] ],
-                
-                [ data['dir_h'], data['dir_v'] ]
-                ]
+                yield [ [data['fox0_x']/HareBrain.size[0],
+                         data['fox0_y']/HareBrain.size[1],
+                         data['hare_x']/HareBrain.size[0],
+                         data['hare_y']/HareBrain.size[1],
+                         data['carrot_x']/HareBrain.size[0],
+                         data['carrot_y']/HareBrain.size[1],
+                         data['hare_speed_x']/HareBrain.size[0],
+                         data['hare_speed_y']/HareBrain.size[1],
+                         data['fox0_speed_x']/HareBrain.size[0],
+                         data['fox0_speed_y']/HareBrain.size[1] ],
+                        [data['dir_h'], data['dir_v']]
+                     ]
 
-    def train_network(self, _net_struct, filename):
+    @staticmethod
+    def train_network(_net_struct, filename):
         """
         """
         n = NeuralNetwork(*_net_struct)
-        n.train(self.examples_generator(filename), self.epochs, self.epsilon)
+        n.train(HareBrain.examples_generator(filename), HareBrain.epochs, HareBrain.epsilon)
         n.save(HareBrain._net_data)
 
 

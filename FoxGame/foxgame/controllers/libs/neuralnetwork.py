@@ -3,10 +3,7 @@
 neuralnetwork.py: Back-Propagation module for Neural Networks.
 """
 
-__authors__ = 'Daniele Iamartino and Michele Orrù'
-__date__ = '03/4/2010'
-__contributors__ = []
-
+from __future__ import division
 from math import e, tanh, tan
 from os.path import exists
 import shelve
@@ -25,6 +22,12 @@ from random import Random
 random_gen = Random()
 random = random_gen.random
 randomseed = random_gen.seed
+
+
+__authors__ = 'Daniele Iamartino and Michele Orrù'
+__date__ = '03/4/2010'
+__contributors__ = []
+
 
 
 ############################
@@ -182,7 +185,7 @@ class NeuralNetwork(object):
                (not des_err and epoch < iterations)):
             epoch += 1
             error = 0
-            for inputs,targets in patterns:
+            for inputs, targets in patterns:
                 self.put(inputs)
                 error += self.back_propagate(targets, eps)
 
