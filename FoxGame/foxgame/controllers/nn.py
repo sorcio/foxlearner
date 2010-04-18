@@ -3,7 +3,7 @@ nn.py: Brains which provide a neural network
        to move foxes/hare.
 
 """
-
+from __future__ import division
 from os.path import join as osjoin
 from os.path import exists
 from os import remove
@@ -56,10 +56,12 @@ class HareBrain(Brain):
     size = (600, 400)
 
     inputs = 10
-    hiddens = 50
+    hiddens = 30
 
     epochs = 30
     epsilon = 0.35
+    
+    speed_normalizer = 500
 
     def set_up(self):
         """
@@ -94,13 +96,12 @@ class HareBrain(Brain):
                 self.nearest_fox.pos.y/HareBrain.size[1],
                 self.game.carrot.pos.x/HareBrain.size[0],
                 self.game.carrot.pos.y/HareBrain.size[1],
-                self.game.hare.speed.x/HareBrain.size[0],
-                self.game.hare.speed.y/HareBrain.size[1],
-                self.nearest_fox.speed.x/HareBrain.size[0],
-                self.nearest_fox.speed.y/HareBrain.size[1])
+                self.game.hare.speed.x/HareBrain.speed_normalizer,
+                self.game.hare.speed.y/HareBrain.speed_normalizer,
+                self.nearest_fox.speed.x/HareBrain.speed_normalizer,
+                self.nearest_fox.speed.y/HareBrain.speed_normalizer)
 
         output = [int(round((value*2.0)-1.0)) for value in self.network.put(data)]
-
         return Direction(output)
 
     def tear_down(self):
@@ -127,10 +128,10 @@ class HareBrain(Brain):
                         data['fox0_y']/HareBrain.size[1],
                         data['carrot_x']/HareBrain.size[0],
                         data['carrot_y']/HareBrain.size[1],
-                        data['hare_speed_x']/HareBrain.size[0],
-                        data['hare_speed_y']/HareBrain.size[1],
-                        data['fox0_speed_x']/HareBrain.size[0],
-                        data['fox0_speed_y']/HareBrain.size[1]],
+                        data['hare_speed_x']/HareBrain.speed_normalizer,
+                        data['hare_speed_y']/HareBrain.speed_normalizer,
+                        data['fox0_speed_x']/HareBrain.speed_normalizer,
+                        data['fox0_speed_y']/HareBrain.speed_normalizer],
                         [(data['dir_h']+1.0)/2.0, (data['dir_v']+1.0)/2.0]
                      ]
 

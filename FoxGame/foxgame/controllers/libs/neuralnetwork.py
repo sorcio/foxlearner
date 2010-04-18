@@ -193,7 +193,7 @@ class NeuralNetwork(object):
                 log.info('error: %f' % error)
 
         log.info('Network finished training '
-                  'in %dth epochs with error %f' % (epoch, error))
+                  'in %dth epochs with error %e' % (epoch, error))
 
         return error, epoch
 
