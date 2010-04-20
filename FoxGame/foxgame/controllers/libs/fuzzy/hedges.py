@@ -2,7 +2,9 @@
  fuzzy/hedges.py: collection of hedges.
 """
 
-from fuctools import wraps
+from functools import wraps
+from math import sqrt
+from fuzzy import Set
 
 def hedge(modifier):
     """
@@ -12,8 +14,8 @@ def hedge(modifier):
 
     @wraps(hedge)
     def modify(set):
-        return FuzzySet(set.parent, '%s_%s' % (modifier.func_name, set.name),
-                        set.range, mfunct=lambda x : modifier(set.mfunct(x)))
+        return Set(set.parent, '%s_%s' % (modifier.func_name, set.name),
+                   mfunct=lambda self, x: modifier(set.u(x)))
     return modify
 
 
@@ -23,7 +25,7 @@ def indeed(x):
     if 0 <= x <= 0.5:
         return 2 * x**2
     if 0.5 < x <= 1:
-        return 1 - 2 * (1 - x)**2
+        return 1 - 2 * (1-x)**2
 
 @hedge
 def little(x):
@@ -44,7 +46,3 @@ def extremely(x):
 @hedge
 def somewhat(x):
     return sqrt(x)
-
-
-
-

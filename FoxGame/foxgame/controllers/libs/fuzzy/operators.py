@@ -24,6 +24,13 @@ def fuzzy_or(fst, snd, self, x):
 def fuzzy_not(fst, self, x):
     return 1 - fst.u(x)
 
+@operator
+def fuzzy_core(fst, self, x):
+    return 1 if fst.u(x) == 1 else 0
 
+@operator
+def fuzzy_alpha(fst, a_val, self, x):
+    x_u = fst.u(x)
+    return x_u if x_u <= a_val else a_val
 
 

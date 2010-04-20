@@ -5,8 +5,7 @@ from __future__ import division
 
 
 def triangular(self, x):
-    xl, xr = self.range
-    xa, = self.middlerange
+    xl, xa, xr = self._lims
 
     if xl < x <= xa:
         return  (x - xl) / (xa - xl)
@@ -16,8 +15,7 @@ def triangular(self, x):
         return 0
 
 def trapezoidal(self, x):
-    xl, xr = self.range
-    xa, xb = self.middlerange
+    xl, xa, xb, xr = self._lims
 
     if xl < x < xa:
         return (x - xl) / (xa - xl)
@@ -29,13 +27,12 @@ def trapezoidal(self, x):
         return 0
 
 def gaussian(self, x):
-    xl, xr = self.range
-    xa, = self.middlerange
+    xl, xa, xr = self._lims
     raise NotImplementedError
 
 
 functions = {
              'triangle': triangular,
-             'trapize' : trapezoidal,
+             'trapeze' : trapezoidal,
              # 'gauss'   : gaussian
 }

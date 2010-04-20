@@ -3,6 +3,7 @@
 from __future__ import division
 from operator import sub
 from math import sqrt
+from operator import or_
 
 import operators
 from mfuncts import functions
@@ -26,11 +27,13 @@ class Set(object):
         Set up a new fuzzy set, with:
           - parent               => LinguisticVariable instance
           - name                 => 'name'
-          - range                => 'range'
           - memebership function => 'mfunct'
         """
         # parent LinguisticVariable
         self.parent = parent
+        if self.parent:
+            self.parent.add(self)
+
         # set's name
         self.name = name
 
@@ -41,8 +44,7 @@ class Set(object):
             self._mfunct = mfunct
 
         # range
-        self.range = limits[0], limits[-1]
-        self.middlerange = limits[1:-1]
+        self._lims = limits
 
     def u(self, x):
         # 00:37:22        C8E | >>> x=0.1 + 0.1 + 0.1 - 0.3
@@ -52,77 +54,85 @@ class Set(object):
         # 00:37:22        C8E | True
         return round(self._mfunct(self, x), 7)
 
+    def __call__(self, x):
+        return self.u(x)
+
     def __repr__(self):
-        return '<FuzzySet %s/%s in %s>' % (self.parent, self.name, self.range)
+        return '<FuzzySet \'%s\' in \'%s\'>' % (self.name, self.parent)
 
     def __str__(self):
-        return self.name + 'Set'
-
+        return '{' + ', '.join('%g/%g' % (x, u_x) for x, u_x in self) + '}'
 
     def __nonzero__(self):
         """
         Return False if u(value) == 0 for each value in the FuzzySet,
                True otherwise.
         """
-        return any(y != 0 for x, y in self)
+        return any(u_x != 0 for x, u_x in self)
 
     def __lt__(self, other):
-        return (self.range <= other.range and
-                all(x < y for (a, x), (b, y) in zip(self, other)))
+        if self.parent != other.parent:
+            raise ValueError('Comparing fuzzy set of '
+                             'different fuzzy variables.')
+
+        return all(u_x <= u_y for (x, u_x), (y, u_y) in zip(self, other))
 
     def __gt__(self, other):
-        return (self.range >= other.range and
-                all(x > y for (a, x), (b, y) in zip(self, other)))
+        if self.parent != other.parent:
+            raise ValueError('Comparinfg fuzzy sets of '
+                             'different fuzzy variables.')
+
+        return all(u_x >= u_y for (x, u_x), (y, u_y) in zip(self, other))
 
     def __eq__(self, other):
         """
         Return True if range and values/degree_of_membeship are equal,
                False otherwise.
         """
-        return (self.range == other.range and
-                all(x == y for (a, x), (b, y) in zip(self, other)))
+        return (self.parent == other.parent and
+                all(u_x == u_y for (x, u_x), (y, u_y) in zip(self, other)))
 
     def __ne__(self, other):
         """
         Return True if not self == other, True otherwise.
         """
-        return (self.range != other.range or
-                any(x != y for (a, x), (b, y) in zip(self, other)))
+        return (self.parent != other.parent or
+                any(u_x != u_y for (x, u_x), (y, u_y) in zip(self, other)))
 
     def __and__(self, other):
         if self.parent != other.parent:
             raise ValueError('%s & %s : %s != %s' % (
                              self.name, other,name, self.parent, other.parent))
+        if self == other:
+            return self
 
-        if self.range[1] < other.range[0]:
-            return VoidSet
+        # sort sets
+        first, second = ((self, other) if self < other
+                                       else (other, self))
 
-        return Set(self.parent,
-                   '%s&%s' % (self.name, other.name),
-                   operators.fuzzy_and(self, other),
-                   other.range[0], self.range[1])
+        return Set(first.parent,
+                   '%s&%s' % (first.name, second.name),
+                   operators.fuzzy_and(first, second))
 
     def __or__(self, other):
         if self.parent != other.parent:
             raise ValueError('%s | %s : %s != %s ' % (
                              self.name, other.name, self.parent, other.parent))
-
-        if self.range[1] < other.range[0]:
-            return VoidSet
-
         if self == other:
             return self
 
-        return Set(self.parent,
-                   '%s|%s' % (self.name, other.name),
-                   operators.fuzzy_or(self, other),
-                   self.range[0], other.range[1])
+        # sort sets
+        first, second = ((self, other) if self < other
+                                       else (other, self))
+
+        return Set(first.parent,
+                   '%s|%s' % (first.name, second.name),
+                   operators.fuzzy_or(first, second))
 
     def __invert__(self):
         return Set(self.parent,
                    '!'+self.name,
-                   operators.fuzzy_not(self),
-                   *self.range)
+                   operators.fuzzy_not(self))
 
     def __add__(self, other):
         raise NotImplementedError
@@ -138,8 +148,8 @@ class Set(object):
         Yields, according to PRECISION, a tuple of (value, u(value))
         for each value in FuzzySet.
         """
-        counter = self.range[0]
-        while counter != self.range[1]:
+        counter = self.parent.range[0]
+        while counter != self.parent.range[1] + PRECISION:
             yield counter, self.u(counter)
             counter += PRECISION
 
@@ -148,7 +158,30 @@ class Set(object):
         Return True if other is a Fuzzy Set contained in self,
                False otherwise.
         """
-        return other <= self
+        return other < self
+
+    def core(self):
+        """
+        Return a new fuzzy Set, the core of self.
+        """
+        return Set(self.parent, '·'+self.name,
+                   operators.fuzzy_core(self))
+
+    def a_cut(self, val):
+        """
+        Return a new fuzzy set 'α-cut' where 'val' represent the highest point.
+        """
+        return Set(self.parent, 'α-'+self.name,
+                   operators.fuzzy_alpha(self, self.u(val)))
+
+    def defuzzify(self):
+        """
+        Return a value representing the set expressed in 'bits'.
+        """
+        raise NotImplementedError
+
+
+make_set = Set
 
 
 class Variable(object):
@@ -157,21 +190,36 @@ class Variable(object):
     a collection of fuzzy sets.
     """
 
-    def __init__(self, name, sets_list):
+    def __init__(self, name, universe, sets_list=None):
         """
         Set up name, and sets (if any).
         """
         self.name = name
+        self.range = universe
 
         self.sets = []
-        for set in sets_list:
-            self.sets.append(set)
+        if sets_list:
+            for set in sets_list:
+                self.add(set)
+
+    def __repr__(self):
+        return '<Fuzzy variable \'%s\' with sets: %s>' % (self.name,
+               ', '.join(map(lambda x: x.name, sets_list)))
+
+    def __str__(self):
+        return self.name
 
     def add(self, *set_args):
         """
         Append a new set to thefuzzy variable.
         """
-        self.sets.append(make_set(*set_args))
+        if len(set_args) == 1:    # assume a fuzzy set instance is passed
+            newset, = set_args
+            newset.parent = self
+        else:                     # create a new fuzzyset
+            newset = make_set(self, *set_args)
+
+        self.sets.append(newset)
 
     def remove(self, set_name):
         """
@@ -180,8 +228,19 @@ class Variable(object):
         set_index = [x.name for x in self.sets].index(set_name)
         del self.sets[set_index]
 
-    def defuzzify(self):
-        raise NotImplementedError
+    def fuzzify(self, val):
+        """
+        Fuzzify a value returning the corresponfig fuzzy set.
+        If 'val' belongs to multiple sets, return the union (bit_or) of those.
+        """
+        # raise exceptions.RuntimeError: maximum recursion depth exceeded wtf?
+        # return reduce(or_, (set.a_cut(val) for set in self.sets
+        #                      if set.u(val) != 0))
+        belong = [set.a_cut(val) for set in self.sets]
+        ret = belong[0]
+        for set in belong[1:]:
+            ret |= set
+        return ret
 
 
 class Engine(object):
@@ -213,7 +272,7 @@ class Engine(object):
         """
         srule = srule.lower()
         if not srule.startswith('if'):
-            raise SyntaxError('malformed rule')
+            raise SyntaxError('Malformed rule')
         return
         raise NotImplementedError
 
@@ -237,5 +296,5 @@ class Engine(object):
 
 
 
-VoidSet = Set(None, 'Void', lambda self, x : 0, 0, 0)
-make_set = Set
+VoidSet = Set(Variable(None, (0, 0)),
+              'Void', lambda self, x : 0)
