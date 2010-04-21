@@ -204,10 +204,14 @@ class Variable(object):
 
     def __repr__(self):
         return '<Fuzzy variable \'%s\' with sets: %s>' % (self.name,
-               ', '.join(map(lambda x: x.name, sets_list)))
+               ', '.join(map(lambda x: x.name, self.sets)))
 
     def __str__(self):
         return self.name
+
+    def __iter__(self):
+        for set in self.sets:
+            yield set
 
     def add(self, *set_args):
         """
@@ -233,14 +237,8 @@ class Variable(object):
         Fuzzify a value returning the corresponfig fuzzy set.
         If 'val' belongs to multiple sets, return the union (bit_or) of those.
         """
-        # raise exceptions.RuntimeError: maximum recursion depth exceeded wtf?
-        # return reduce(or_, (set.a_cut(val) for set in self.sets
-        #                      if set.u(val) != 0))
-        belong = [set.a_cut(val) for set in self.sets]
-        ret = belong[0]
-        for set in belong[1:]:
-            ret |= set
-        return ret
+        return reduce(or_, (set.a_cut(val) for set in self.sets[:]
+                                           if set.u(val) != 0))
 
 
 class Engine(object):
@@ -296,5 +294,5 @@ class Engine(object):
 
 
 
-VoidSet = Set(Variable(None, (0, 0)),
+VoidSet = Set(Variable('None', (0, 0)),
               'Void', lambda self, x : 0)
