@@ -75,7 +75,7 @@ class FoxgameOption(object):
         elif x.lower() in ('no', 'off', 'false', '0'):
             return False
         else:
-            raise FoxgameError('FoxgameOption', 'invalid bool string %s' % x)
+            raise ValueError('invalid bool string %s' % x)
 
     @staticmethod
     def _factory_vector(x):
