@@ -96,6 +96,9 @@ class Set(object):
                     (x, u_x), (y, u_y) in zip(self, other)))
 
     def __and__(self, other):
+        """
+        Fuzzy intersection.
+        """
         if self.parent != other.parent:
             raise ValueError('%s & %s : %s != %s' % (
                              self.name, other,name, self.parent, other.parent))
@@ -111,6 +114,9 @@ class Set(object):
                    operators.fuzzy_and(first, second))
 
     def __or__(self, other):
+        """
+        Fuzzy union.
+        """
         if self.parent != other.parent:
             raise ValueError('%s | %s : %s != %s ' % (
                              self.name, other.name, self.parent, other.parent))
@@ -126,6 +132,9 @@ class Set(object):
                    operators.fuzzy_or(first, second))
 
     def __invert__(self):
+        """
+        Fuzzy complement.
+        """
         return Set(self.parent,
                    '!'+self.name,
                    operators.fuzzy_not(self))
@@ -213,6 +222,10 @@ class Variable(object):
                ', '.join(map(lambda x: x.name, self.sets)))
 
     def __add__(self, other):
+        """
+        Return a new mutidimensional variable with
+        universe equal to the sum of the previouses.
+        """
         return Variable(self.name+other.name,
                         (x+y for x, y in zip(self.range, other.range)))
 
@@ -220,6 +233,9 @@ class Variable(object):
         return self.name
 
     def __iter__(self):
+        """
+        Yield the sets contained in self.
+        """
         for set in self.sets:
             yield set
 
