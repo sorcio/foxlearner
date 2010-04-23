@@ -158,3 +158,21 @@ class TestVariables(TestCase):
         self.assertTrue(fuzzified in self.warm | self.hot)
         # self.assertTrue(any(u_x == 1 for x, u_x in fuzzified))
         self.assertNotEqual(fuzzified, self.warm | self.hot)
+
+
+class TestFuzzyRules(TestCase):
+    """
+    Test fuzzy rules, in particular fuzzy inference.
+    """
+
+    def setUp(self):
+        """
+        Set up a fuzzy air-conditioning.
+        """
+        pass
+        #raise NotImplementedError
+        # self.speed = fuzzy.Variable
+
+    def test_inference(self):
+        # raise NotImplementedError
+        pass

@@ -99,37 +99,35 @@ class Set(object):
         """
         Fuzzy intersection.
         """
-        if self.parent != other.parent:
-            raise ValueError('%s & %s : %s != %s' % (
-                             self.name, other,name, self.parent, other.parent))
         if self == other:
             return self
 
-        # sort sets
-        first, second = ((self, other) if self < other
-                                       else (other, self))
-
-        return Set(first.parent,
-                   '%s&%s' % (first.name, second.name),
-                   operators.fuzzy_and(first, second))
+        if self.parent != other.parent:
+            return Set(self.parent+other.parent,
+                       '(%s)%s&(%s)%s' % (self.parent.name, self.name,
+                                         other.parent.name, other.name),
+                       operators.fuzzy_mand(self, other))
+        else:
+            return Set(self.parent,
+                       '%s&%s' % (self.name, other.name),
+                       operators.fuzzy_and(self, other))
 
     def __or__(self, other):
         """
         Fuzzy union.
         """
-        if self.parent != other.parent:
-            raise ValueError('%s | %s : %s != %s ' % (
-                             self.name, other.name, self.parent, other.parent))
         if self == other:
             return self
 
-        # sort sets
-        first, second = ((self, other) if self < other
-                                       else (other, self))
-
-        return Set(first.parent,
-                   '%s|%s' % (first.name, second.name),
-                   operators.fuzzy_or(first, second))
+        if self.parent != other.parent:
+            return Set(self.parent+other.parent,
+                       '(%s)%s|(%s)%s' % (self.parent.name, self.name,
+                                         other.parent.name, other.name),
+                       operators.fuzzy_mor(self, other))
+        else:
+            return Set(self.parent,
+                       '%s|%s' % (self.name, other.name),
+                       operators.fuzzy_or(self, other))
 
     def __invert__(self):
         """
@@ -166,6 +164,14 @@ class Set(object):
                False otherwise.
         """
         return other < self
+
+    def __rshift__(self, other):
+        """
+        Calculate the fuzzy inference.
+        """
+        return Set(other.parent, '%s>>%s' % (self.name, other.name),
+                   operators.fuzzy_inference(
+                    self.proj(other.parent), self & other, self.parent.range))
 
     def core(self):
         """
