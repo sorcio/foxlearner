@@ -146,7 +146,7 @@ class Set(object):
         """
         counter, end = self.parent.range
         while counter < end:
-            yield counter[0] , self.u(*counter)
+            yield counter , self.u(*counter)
             counter = [x+PRECISION for x in counter]
 
     def __contains__(self, other):
@@ -169,6 +169,14 @@ class Set(object):
         """
         return Set(self.parent, 'α-'+self.name,
                    operators.fuzzy_alpha(self, self.u(val)))
+
+    def proj(self, otherparent):
+        """
+        Return the cylindrical extension of self in othparent.
+        """
+        return Set(self.parent+otherparent,
+                   'proj-'+self.name,
+                   operators.fuzzy_projection(self))
 
     def defuzzify(self):
         """
@@ -201,6 +209,10 @@ class Variable(object):
     def __repr__(self):
         return '<Fuzzy variable \'%s\' with sets: %s>' % (self.name,
                ', '.join(map(lambda x: x.name, self.sets)))
+
+    def __add__(self, other):
+        return Variable(self.name+other.name,
+                        (x+y for x, y in zip(self.range, other.range)))
 
     def __str__(self):
         return self.name

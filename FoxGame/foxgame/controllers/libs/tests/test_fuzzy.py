@@ -76,7 +76,7 @@ class TestFuzzySet(TestCase):
         coreset = self.tall.core()
 
         self.assertTrue(all(u_x in (1, 0) for (x, u_x) in coreset))
-        self.assertEqual([x for (x, u_x) in coreset if u_x == 1], [190])
+        self.assertEqual([x for (x, u_x) in coreset if u_x == 1], [[190]])
 
     def test_acutset(self):
         alphaset = self.short.a_cut(130)
@@ -87,6 +87,12 @@ class TestFuzzySet(TestCase):
                           if u_x > self.short.u(130)])
         self.assertTrue(alphaset)
 
+    def test_proj(self):
+        othval = fuzzy.Variable('new_dimension', [(0, ), (10, )])
+
+        projset = self.short.proj(othval)
+        self.assertTrue(all(u_proj == self.short(x) for (x, y), u_proj
+                                                    in projset))
 
 
 class TestHedges(TestCase):

@@ -33,4 +33,8 @@ def fuzzy_alpha(fst, a_val, self, x):
     x_u = fst.u(x)
     return x_u if x_u <= a_val else a_val
 
+@operator
+def fuzzy_projection(fst, self, x, y):
+    return fst.u(x)
+
 
