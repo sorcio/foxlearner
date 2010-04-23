@@ -64,12 +64,20 @@ class Set(object):
         """
         return any(u_x != 0 for x, u_x in self)
 
-    def __lt__(self, other):
+    def __le__(self, other):
         if self.parent != other.parent:
             raise ValueError('Comparing fuzzy set of '
                              'different fuzzy variables.')
 
         return all(u_x <= u_y for (x, u_x), (y, u_y) in zip(self, other))
+
+
+    def __lt__(self, other):
+        if self.parent != other.parent:
+            raise ValueError('Comparing fuzzy set of '
+                             'different fuzzy variables.')
+
+        return all(u_x < u_y for (x, u_x), (y, u_y) in zip(self, other))
 
     def __gt__(self, other):
         if self.parent != other.parent:
@@ -163,7 +171,7 @@ class Set(object):
         Return True if other is a Fuzzy Set contained in self,
                False otherwise.
         """
-        return other < self
+        return other <= self
 
     def __rshift__(self, other):
         """
@@ -171,7 +179,7 @@ class Set(object):
         """
         return Set(other.parent, '%s>>%s' % (self.name, other.name),
                    operators.fuzzy_inference(
-                    self.proj(other.parent), self & other, self.parent.range))
+                    self.proj(other.parent) & (self & other), self.parent.range))
 
     def core(self):
         """
