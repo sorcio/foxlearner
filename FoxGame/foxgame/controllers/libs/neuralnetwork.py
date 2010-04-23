@@ -171,7 +171,7 @@ class NeuralNetwork(object):
         # Medium quadratic error
         return sum((t - ao)**2 / 2 for t, ao in zip(targets, self.ao))
 
-    def train(self, patterns, iterations=1000, eps=0.3, des_err=0.01):
+    def train(self, patterns, iterations=1000, eps=0.3, des_err=None):
         # eps: learning rate
         epoch = 0
 

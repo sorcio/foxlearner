@@ -24,10 +24,9 @@ class TestNeuralNetwork(TestCase):
                   )
 
         n = NeuralNetwork(2, 2, 1, True, 'tanh')
-        n.train(xor_pat)
+        n.train(xor_pat, 1000, 0.3, None)
 
         for i, o in xor_pat:
-            self.assertAlmostEqual(n.put(i)[0], o[0], 1)
             self.assertTrue(n.put(i)[0] - o[0] < self.threshold)
 
     def test_OR(self):
@@ -41,11 +40,10 @@ class TestNeuralNetwork(TestCase):
                ((1, 1), (1, ))
                  )
 
-        n = NeuralNetwork(2, 15, 1)
-        n.train(or_pat)
+        n = NeuralNetwork(2, 2, 1)
+        n.train(or_pat, 1000, 0.3, None)
 
         for i, o in or_pat:
-            self.assertAlmostEqual(n.put(i)[0], o[0], 0)
             self.assertTrue(n.put(i)[0] - o[0] < self.threshold)
 
     def test_NAND(self):
@@ -56,11 +54,10 @@ class TestNeuralNetwork(TestCase):
                  ((1, 1), (1, ))
                    )
 
-        n = NeuralNetwork(2, 8, 1)
-        n.train(nand_pat)
+        n = NeuralNetwork(2, 4, 1)
+        n.train(nand_pat, 1000, 0.5, None)
 
         for i, o in nand_pat:
-            self.assertAlmostEqual(n.put(i)[0], o[0], 0)
             self.assertTrue(n.put(i)[0] - o[0] < self.threshold)
 
 
