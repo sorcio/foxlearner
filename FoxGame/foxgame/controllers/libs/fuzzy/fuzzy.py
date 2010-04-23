@@ -18,7 +18,6 @@ class Set(object):
     It is composed of these foundamental attributes:
      - self.parent => parent fuzzy variable
      - self.name   => name of the fuzzy set
-     - self.range  => range og values
      - self.mfunct => membership function
     """
 
@@ -43,15 +42,10 @@ class Set(object):
         else:
             self._mfunct = mfunct
 
-        # range
+        # this attributes are usefulfor classical membership functions
         self._lims = limits
 
     def u(self, x):
-        # 00:37:22        C8E | >>> x=0.1 + 0.1 + 0.1 - 0.3
-        # 00:37:22        C8E | >>> x==0
-        # 00:37:22        C8E | False
-        # 00:37:22        C8E | >>> abs(x)<1e-7
-        # 00:37:22        C8E | True
         return round(self._mfunct(self, x), 7)
 
     def __call__(self, x):
@@ -243,9 +237,9 @@ class Variable(object):
 
 class Engine(object):
     """
-    A Fuzzy Variable is composed of :
+    A Fuzzy Engine is composed of :
      - a name                          self.name;
-     - a collection of fuzzy sets     self.sets;
+     - a collection of fuzzy variables self.sets;
      - a collection of rules
     """
 

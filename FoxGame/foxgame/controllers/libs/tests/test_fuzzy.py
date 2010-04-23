@@ -143,5 +143,5 @@ class TestVariables(TestCase):
         fuzzified = self.temperature.fuzzify(23)
 
         self.assertTrue(fuzzified in self.warm | self.hot)
-        #self.assertTrue(any(u_x == 1 for x, u_x in fuzzified))
+        # self.assertTrue(any(u_x == 1 for x, u_x in fuzzified))
         self.assertNotEqual(fuzzified, self.warm | self.hot)
