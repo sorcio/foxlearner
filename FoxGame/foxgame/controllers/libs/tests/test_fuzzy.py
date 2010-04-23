@@ -15,7 +15,7 @@ class TestFuzzySet(TestCase):
         """
         Set up some basics sets.
         """
-        self.var = fuzzy.Variable('height', (100, 250))
+        self.var = fuzzy.Variable('height', [(100, ), (250, )])
 
         self.short = fuzzy.Set(self.var, 'short', 'triangle',
                                100, 140, 150)
@@ -95,7 +95,7 @@ class TestHedges(TestCase):
     """
 
     def setUp(self):
-        self.life = fuzzy.Variable('life', (0, 100))
+        self.life = fuzzy.Variable('life', [(0, ), (100, )])
         self.teen = fuzzy.Set(self.life, 'teen', 'triangle',
                               13, 16, 18)
         self.youth = fuzzy.Set(self.life, 'youth', 'trapeze',
@@ -130,7 +130,7 @@ class TestVariables(TestCase):
         self.warm = fuzzy.Set(None, 'warm', 'trapeze', 15, 20, 22, 25)
         self.hot  = fuzzy.Set(None, 'hot',  'trapeze', 20, 30, 40, 45)
 
-        self.temperature = fuzzy.Variable('Temperature', (-10, 50),
+        self.temperature = fuzzy.Variable('Temperature', [(-10, ), (50, )],
                                           sets_list=[self.cold, self.cool,
                                                      self.warm, self.hot])
 

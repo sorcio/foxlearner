@@ -8,7 +8,7 @@ from operator import or_
 import operators
 from mfuncts import functions
 
-PRECISION = 0.5
+PRECISION = 1 # 0.5 TODO: support for epsilon
 
 
 class Set(object):
@@ -45,11 +45,10 @@ class Set(object):
         # this attributes are usefulfor classical membership functions
         self._lims = limits
 
-    def u(self, x):
-        return round(self._mfunct(self, x), 7)
+    def u(self, *x):
+        return round(self._mfunct(self, *x), 7)
 
-    def __call__(self, x):
-        return self.u(x)
+    __call__ = u
 
     def __repr__(self):
         return '<FuzzySet \'%s\' in \'%s\'>' % (self.name, self.parent)
@@ -142,10 +141,10 @@ class Set(object):
         Yields, according to PRECISION, a tuple of (value, u(value))
         for each value in FuzzySet.
         """
-        counter = self.parent.range[0]
-        while counter != self.parent.range[1] + PRECISION:
-            yield counter, self.u(counter)
-            counter += PRECISION
+        counter, end = self.parent.range
+        while counter < end:
+            yield counter[0] , self.u(*counter)
+            counter = [x+PRECISION for x in counter]
 
     def __contains__(self, other):
         """
@@ -189,7 +188,7 @@ class Variable(object):
         Set up name, and sets (if any).
         """
         self.name = name
-        self.range = universe
+        self.range = map(list, universe)
 
         self.sets = []
         if sets_list:
@@ -288,5 +287,5 @@ class Engine(object):
 
 
 
-VoidSet = Set(Variable('None', (0, 0)),
+VoidSet = Set(Variable('None', [(0, ), (0, )]),
               'Void', lambda self, x : 0)
