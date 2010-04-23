@@ -1,0 +1,6 @@
+
+/foxgame/.*\.py[co]
+/.*_trial_temp
+/.*\.db
+/*.log
+/.*\.csv
