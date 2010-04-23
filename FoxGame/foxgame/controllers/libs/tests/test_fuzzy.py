@@ -87,6 +87,13 @@ class TestFuzzySet(TestCase):
                           if u_x > self.short.u(130)])
         self.assertTrue(alphaset)
 
+    def test_multidimensional(self):
+        othval = fuzzy.Variable('new_dimension', [(0, 1, 5), (10, 20, 6)])
+        othset = fuzzy.Set(othval, 'new_var',
+                           lambda self, x, y, z: 0)
+
+        self.assertFalse(othset)
+
     def test_proj(self):
         othval = fuzzy.Variable('new_dimension', [(0, ), (10, )])
 

@@ -147,7 +147,9 @@ class Set(object):
         counter, end = self.parent.range
         while counter < end:
             yield counter , self.u(*counter)
-            counter = [x+PRECISION for x in counter]
+            counter = [x+PRECISION if x < end[i] else x
+                       for i, x in enumerate(counter)]
+
 
     def __contains__(self, other):
         """
