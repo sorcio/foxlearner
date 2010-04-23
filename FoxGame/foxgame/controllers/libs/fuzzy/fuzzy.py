@@ -8,7 +8,8 @@ from operator import or_
 import operators
 from mfuncts import functions
 
-PRECISION = 1 # 0.5 TODO: support for epsilon
+PRECISION = 0.5
+EPSILON = 1e-5
 
 
 class Set(object):
@@ -83,14 +84,16 @@ class Set(object):
                False otherwise.
         """
         return (self.parent == other.parent and
-                all(u_x == u_y for (x, u_x), (y, u_y) in zip(self, other)))
+                all(abs(u_x - u_y) < EPSILON for
+                    (x, u_x), (y, u_y) in zip(self, other)))
 
     def __ne__(self, other):
         """
         Return True if not self == other, True otherwise.
         """
         return (self.parent != other.parent or
-                any(u_x != u_y for (x, u_x), (y, u_y) in zip(self, other)))
+                any(abs(u_x - u_y) > EPSILON for
+                    (x, u_x), (y, u_y) in zip(self, other)))
 
     def __and__(self, other):
         if self.parent != other.parent:
