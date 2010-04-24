@@ -198,6 +198,7 @@ class TestFuzzyRules(TestCase):
 
 
     def test_inference(self):
+        # test a simple inference
         fuzzified = self.temperature.fuzzify(22.5)
 
         self.assertEqual(fuzzified, self.warm)
@@ -208,3 +209,10 @@ class TestFuzzyRules(TestCase):
         self.assertTrue(inference in self.middle)
         self.assertTrue(inference)
         self.assertEqual(inference, self.middle)
+
+        # test a normal inference
+        inferred = self.temperature.fuzzify(20) >> self.middle
+
+        self.assertTrue(inferred)
+        self.assertNotEqual(inferred, self.middle)
+        self.assertTrue(inferred in self.middle)
