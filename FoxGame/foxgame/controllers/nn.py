@@ -64,7 +64,7 @@ class HareBrain(Brain):
     error = None
     epochs = 30
     epsilon = 0.35
-    
+
     speed_normalizer = 500
 
     def set_up(self):
@@ -102,7 +102,7 @@ class HareBrain(Brain):
         Hare position, Fox position, Carrot position and hare speed.
         """
         diagonal = sqrt( HareBrain.size[0]**2 + HareBrain.size[1]**2 )
-        
+
         if HareBrain.relative:
             data = ((self.game.hare.pos.x-self.nearest_fox.pos.x)/diagonal,
                     (self.game.hare.pos.y-self.nearest_fox.pos.y)/diagonal,
@@ -143,7 +143,7 @@ class HareBrain(Brain):
 
         if file_list == []:
             raise IOError('Invalid filename')
-            
+
         digonal = sqrt( HareBrain.size[0]**2 + HareBrain.size[1]**2 )
 
         log.debug('Opening %d files' % len(file_list))
@@ -182,7 +182,7 @@ class HareBrain(Brain):
         """
         """
         n = NeuralNetwork(*_net_struct)
-        n.train(HareBrain.examples_generator(filename),
+        n.train(tuple(HareBrain.examples_generator(filename)),
                 HareBrain.epochs, HareBrain.epsilon, HareBrain.error)
         n.save(HareBrain._net_data)
 
