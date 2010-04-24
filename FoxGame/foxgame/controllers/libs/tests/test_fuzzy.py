@@ -211,8 +211,18 @@ class TestFuzzyRules(TestCase):
         self.assertEqual(inference, self.middle)
 
         # test a normal inference
-        inferred = self.temperature.fuzzify(20) >> self.middle
+        inference = self.temperature.fuzzify(20) >> self.middle
 
-        self.assertTrue(inferred)
-        self.assertNotEqual(inferred, self.middle)
-        self.assertTrue(inferred in self.middle)
+        self.assertTrue(inference)
+        self.assertNotEqual(inference, self.middle)
+        self.assertTrue(inference in self.middle)
+
+    def test_defuzzify(self):
+        inference = self.temperature.fuzzify(22.5) >> self.middle
+        scalar = inference.defuzzify()
+
+        self.assertNotEqual(scalar, 0)
+        self.assertNotEqual(scalar, 1)
+        # this should work with *all* membership functions
+        self.assertAlmostEqual(scalar, 0.5, 1)
+
