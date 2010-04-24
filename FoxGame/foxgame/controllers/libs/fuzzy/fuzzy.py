@@ -11,6 +11,18 @@ from mfuncts import functions
 PRECISION = 0.5
 EPSILON = 1e-5
 
+def range(start, end, step=EPSILON):
+    foo = []
+    for i in range(len(start)):
+        s, e = start[i], end[i]
+
+    pools = map(tuple, [map(lambda x: x * 1e-2, range(x, y))
+                        for x, y in zip(start, end)])
+    result = [[]]
+    for pool in pools:
+        result = [x+[y] for x in result for y in pool]
+    for prod in result:
+        yield tuple(prod)
 
 class Set(object):
     """
@@ -55,7 +67,8 @@ class Set(object):
         return '<FuzzySet \'%s\' in \'%s\'>' % (self.name, self.parent)
 
     def __str__(self):
-        return '{' + ', '.join('%g/%g' % (x, u_x) for x, u_x in self) + '}'
+        # XXX
+        return '{' + ', '.join('%s/%g' % (str(['%g' % f for f in x]), u_x) for x, u_x in self) + '}'
 
     def __nonzero__(self):
         """
@@ -173,13 +186,24 @@ class Set(object):
         """
         return other <= self
 
-    def __rshift__(self, other):
+    def inference(self, other):
         """
         Calculate the fuzzy inference.
         """
+        # inference in calculated...
+        projection = self.proj(other.parent)
+        # print projection
+        relation = self & other
+        # print relation(22.5, 0)
+        # print relation
+
+        projection.parent = relation.parent
+
         return Set(other.parent, '%s>>%s' % (self.name, other.name),
                    operators.fuzzy_inference(
-                    self.proj(other.parent) & (self & other), self.parent.range))
+                    projection & relation, self.parent.range))
+
+    __rshift__ = inference
 
     def core(self):
         """

@@ -2,9 +2,24 @@ from __future__ import division
 from unittest import TestCase
 from foxgame.controllers.libs.fuzzy import fuzzy, hedges
 
-# setting fuzzy precision to 1
-fuzzy.PRECISION = 1.0
+# setting fuzzy precision
+fuzzy.PRECISION = 0.25
 
+class TestBasicSet(TestCase):
+
+    def test_VoidSet(self):
+        voidset = fuzzy.VoidSet
+
+        self.assertEqual(voidset.name, 'Void')
+        self.assertEqual(voidset.parent.range, [[0], [0]])
+        self.assertEqual(voidset.u(6), 0)
+
+    def test_range(self):
+        self.assertEqual(list(fuzzy.range([0], [10], 1)),
+                         map(lambda x: [x], range(0, 10)))
+
+        self.assertEqual(list(fuzzy.range([0, 30], ([10, 50]))),
+                         [(x, y) for x in v1 for y in v2])
 
 class TestFuzzySet(TestCase):
     """
@@ -169,10 +184,41 @@ class TestFuzzyRules(TestCase):
         """
         Set up a fuzzy air-conditioning.
         """
-        pass
-        #raise NotImplementedError
-        # self.speed = fuzzy.Variable
+        # fuzzy temperatures
+        self.cold = fuzzy.Set(None, 'cold', 'triangle', 0, 0, 17.5)
+        self.cool = fuzzy.Set(None, 'cool', 'triangle', 12.5, 17.5, 22.5)
+        self.warm = fuzzy.Set(None, 'warm', 'triangle', 20, 22.5, 25)
+        self.hot  = fuzzy.Set(None, 'hot',  'triangle', 22.5, 27.5, 32.5)
+
+        self.temperature = fuzzy.Variable('Temperature', [(0, ), (32.5, )],
+                                          sets_list=[self.cold, self.cool,
+                                                     self.warm, self.hot])
+
+        # fuzzy air-conditioning motor
+        self.low    = fuzzy.Set(None, 'low', 'triangle', 0.0, 0.25, 0.5)
+        self.middle = fuzzy.Set(None, 'half', 'triangle', 0.25, 0.5, 0.75)
+        self.high   = fuzzy.Set(None, 'high', 'triangle', 0.5, 0.75, 1.0)
+
+        self.speed = fuzzy.Variable('Speed', [(0, ), (1, )],
+                                    sets_list=[self.low, self.middle, self.high])
+
+    def test_relation(self):
+        relation = self.cold & self.low
+
+        self.assertTrue(relation)
+
+        self.assertNotEqual(relation.parent, self.cold.parent)
+        self.assertNotEqual(relation.parent, self.low.parent)
+
+        self.assertNotEqual(relation(15, 0.10), 0)
+
 
     def test_inference(self):
-        # raise NotImplementedError
-        pass
+        fuzzified = self.temperature.fuzzify(22.5)
+
+        self.assertEqual(fuzzified, self.warm)
+        inference = fuzzified >> self.middle
+
+        self.assertTrue(isinstance(inference, fuzzy.Set))
+        self.assertEqual(self.middle.parent, inference.parent)
+        self.assertTrue(inference in self.middle)
