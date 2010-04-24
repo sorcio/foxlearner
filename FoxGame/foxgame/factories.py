@@ -113,7 +113,7 @@ def load_ui(ui_name, main_name='main', extraopts=None):
     ui_module = getattr(uis, ui_name)
     ui_main = getattr(ui_module, main_name)
     if extraopts:
-        load_extraopts(ui_module, ui_main, extraopts)
+        load_extraopts(ui_module, ui_module.GUI, extraopts)
     return ui_main
 
 def load_task(task_name, taskcls):

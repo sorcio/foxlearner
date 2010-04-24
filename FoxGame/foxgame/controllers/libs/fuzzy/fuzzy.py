@@ -220,7 +220,7 @@ class Set(object):
         """
         Return a value representing the set expressed in 'bits'.
         """
-        raise NotImplementedError
+        return sum(x*u_x for (x, ), u_x in self) / sum(u_x for x, u_x in self)
 
 
 make_set = Set
@@ -301,31 +301,41 @@ class Engine(object):
      - a collection of fuzzy variables self.sets;
      - a collection of rules
     """
-
-    def _check_rule(self, srule):
+    def __init__(self, variables, *srules):
         """
-        Check if srule is a well formed rule, the return it in a preparsed form.
+        Set up the main attributes. If srules are provides,
+        initializes also them.
         """
-        srule = srule.lower().strip()
+        self.variables = dict((x.name, x) for x in variables)
 
-        if not srule.startswith('if') or len(srule.split(' then ')) != 2:
-            raise SyntaxError('Malformed rule')
-        antecedent, consequent = srule[2:].split(' then ')
-
-        if len(consequent.split(' is ')) != 2 or ' is ' not in antecedent:
-            raise SyntaxError('Malformed rule')
-
-        consequent = consequent.split(' is ')
+        # set up rules
+        self.rules = []
+        for srule in srules:
+            self.add_rule(srule)
 
     def _parse_rule(self, srule):
         """
-        Parse a rule in string format.
+        Parse a rule in string format, then return the rule.
         """
-        srule = srule.lower()
-        if not srule.startswith('if'):
+        antecedent, consequent = srule.split(' THEN ')
+
+        # parse antecedent
+        if not antecendent.startswith('IF '):
             raise SyntaxError('Malformed rule')
-        return
-        raise NotImplementedError
+        antecendent = antecedent[2:]
+
+        svar, sset = antecedent.split(' IS ')
+
+        #  check for svar in known variables
+        if not svar in self.variables:
+            raise ValueError('Unknown Variable %s' % svar)
+
+
+        # parse consequent
+        svar, sset = consequent.split(' IS ')
+
+
+        return antecedent, consequent
 
     def add_rule(self, rule):
         """
