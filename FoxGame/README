@@ -13,7 +13,8 @@ DEPENDECIES
     In order to run this software, you should previously install:
         - python: 2.5 or higher
         - pygame: 1.8.1 or higher
-        - psyco: [optional] to speed up our neuralnetwork library
+        - psyco: [nnlib][optional] to speed up our neuralnetwork library
+        - numpy: [fuzzylib] tested with '1.4.0'
 
     As soon as possible we should implement other kinds of GUI, so pygame
     won't be required.
