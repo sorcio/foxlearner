@@ -66,6 +66,7 @@ class GUI(object):
         self.size = self.game.size
 
     def tick(self, time):
+        self.job()
         return self.game.tick(time)
 
 
@@ -75,11 +76,12 @@ def main(gfact):
     try:
         while ui.games >  0:
             if ui.tick(1/32) == False:
-                print 'game ended.'
+                log.info('game #%d ended' % (GUI.games-ui.games+1))
                 # decrease the game counter
                 ui.games -= 1
     except KeyboardInterrupt:
-        print 'game interrupted'
+        log.info('game stopped by the user')
+        print 'game interrupted.'
     finally:
         ui.game.end()
 
