@@ -15,12 +15,12 @@ def operator(op):
 
 
 @operator
-def fuzzy_and(fst, snd, self, x):
-    return min(fst.u(x), snd.u(x))
+def fuzzy_and(fst, snd, self, *xs):
+    return min(fst.u(*xs), snd.u(*xs))
 
 @operator
-def fuzzy_or(fst, snd, self, x):
-    return max(fst.u(x), snd.u(x))
+def fuzzy_or(fst, snd, self, *xs):
+    return max(fst.u(*xs), snd.u(*xs))
 
 @operator
 def fuzzy_not(fst, self, x):
@@ -49,11 +49,11 @@ def fuzzy_mor(fst, snd, self, x, y):
 
 @operator
 def fuzzy_inference(fst, xs, self, y):
-    start, end = xs
+    counter, end = xs
     maxy = 0
-    while start != end:
-        newy = fst(x, y)
+    while counter != end:
+        newy = fst(counter, y)
         if newy > maxy:
             maxy = newy
-        start += 0.5 #PRECISION
+        counter = [x+0.5 if x < end[i] else x for i,x in enumerate(counter)]
     return maxy
