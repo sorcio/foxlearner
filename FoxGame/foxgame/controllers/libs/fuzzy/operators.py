@@ -1,6 +1,9 @@
 from __future__ import division
 from functools import partial
 
+import numpy
+from itertools import product
+
 # from fuzzy import PRECISION
 
 def operator(op):
@@ -50,10 +53,6 @@ def fuzzy_mor(fst, snd, self, x, y):
 @operator
 def fuzzy_inference(fst, xs, self, y):
     counter, end = xs
-    maxy = 0
-    while counter != end:
-        newy = fst(counter, y)
-        if newy > maxy:
-            maxy = newy
-        counter = [x+0.5 if x < end[i] else x for i,x in enumerate(counter)]
-    return maxy
+    dims = [numpy.arange(a, b, 0.25) for a, b in zip(counter, end)]
+    return max(fst(x, y) for (x, ) in product(*dims))
+

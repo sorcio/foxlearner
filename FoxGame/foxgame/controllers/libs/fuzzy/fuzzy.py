@@ -5,24 +5,15 @@ from operator import sub
 from math import sqrt
 from operator import or_
 
+import numpy
+from itertools import product
+
 import operators
 from mfuncts import functions
 
 PRECISION = 0.5
 EPSILON = 1e-5
 
-def range(start, end, step=EPSILON):
-    foo = []
-    for i in range(len(start)):
-        s, e = start[i], end[i]
-
-    pools = map(tuple, [map(lambda x: x * 1e-2, range(x, y))
-                        for x, y in zip(start, end)])
-    result = [[]]
-    for pool in pools:
-        result = [x+[y] for x in result for y in pool]
-    for prod in result:
-        yield tuple(prod)
 
 class Set(object):
     """
@@ -173,11 +164,9 @@ class Set(object):
         for each value in FuzzySet.
         """
         counter, end = self.parent.range
-        while counter < end:
-            yield counter , self.u(*counter)
-            counter = [x+PRECISION if x < end[i] else x
-                       for i, x in enumerate(counter)]
-
+        dims = [numpy.arange(x, y, PRECISION) for x, y in zip(counter, end)]
+        for x in product(*dims):
+            yield x, self.u(*x)
 
     def __contains__(self, other):
         """

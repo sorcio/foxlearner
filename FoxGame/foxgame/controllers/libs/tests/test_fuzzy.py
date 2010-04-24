@@ -5,22 +5,6 @@ from foxgame.controllers.libs.fuzzy import fuzzy, hedges
 # setting fuzzy precision
 fuzzy.PRECISION = 0.25
 
-class TestBasicSet(TestCase):
-
-    def test_VoidSet(self):
-        voidset = fuzzy.VoidSet
-
-        self.assertEqual(voidset.name, 'Void')
-        self.assertEqual(voidset.parent.range, [[0], [0]])
-        self.assertEqual(voidset.u(6), 0)
-
-    def test_range(self):
-        self.assertEqual(list(fuzzy.range([0], [10], 1)),
-                         map(lambda x: [x], range(0, 10)))
-
-        self.assertEqual(list(fuzzy.range([0, 30], ([10, 50]))),
-                         [(x, y) for x in v1 for y in v2])
-
 class TestFuzzySet(TestCase):
     """
     Test basics fuzzy set operations.
@@ -91,7 +75,7 @@ class TestFuzzySet(TestCase):
         coreset = self.tall.core()
 
         self.assertTrue(all(u_x in (1, 0) for (x, u_x) in coreset))
-        self.assertEqual([x for (x, u_x) in coreset if u_x == 1], [[190]])
+        self.assertEqual([x for (x, u_x) in coreset if u_x == 1], [(190, )])
 
     def test_acutset(self):
         alphaset = self.short.a_cut(130)
@@ -222,3 +206,5 @@ class TestFuzzyRules(TestCase):
         self.assertTrue(isinstance(inference, fuzzy.Set))
         self.assertEqual(self.middle.parent, inference.parent)
         self.assertTrue(inference in self.middle)
+        self.assertTrue(inference)
+        self.assertEqual(inference, self.middle)
