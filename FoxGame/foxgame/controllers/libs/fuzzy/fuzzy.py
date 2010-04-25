@@ -4,6 +4,7 @@ from __future__ import division
 from operator import sub
 from math import sqrt
 from operator import or_
+from collections import defaultdict
 
 import numpy
 from itertools import product
@@ -32,13 +33,13 @@ class Set(object):
           - name                 => 'name'
           - memebership function => 'mfunct'
         """
-        # parent LinguisticVariable
+        # set's name
+        self.name = name
+
+       # parent LinguisticVariable
         self.parent = parent
         if self.parent:
             self.parent.add(self)
-
-        # set's name
-        self.name = name
 
         # membership function
         if isinstance(mfunct, str):
@@ -218,10 +219,10 @@ class Set(object):
 
     def defuzzify(self):
         """
-        Return a value representing the set expressed in 'bits'.
+        Return a scalar value, using the most common method:
+         center of gravity
         """
         return sum(x*u_x for (x, ), u_x in self) / sum(u_x for x, u_x in self)
-
 
 make_set = Set
 
@@ -239,7 +240,7 @@ class Variable(object):
         self.name = name
         self.range = map(list, universe)
 
-        self.sets = []
+        self.sets = dict()
         if sets_list:
             for set in sets_list:
                 self.add(set)
@@ -266,6 +267,12 @@ class Variable(object):
         for set in self.sets:
             yield set
 
+    def __getitem__(self, k):
+        """
+        Return the fuzzy set corresponding to name 'k'.
+        """
+        return self.sets[k]
+
     def add(self, *set_args):
         """
         Append a new set to thefuzzy variable.
@@ -276,85 +283,110 @@ class Variable(object):
         else:                     # create a new fuzzyset
             newset = make_set(self, *set_args)
 
-        self.sets.append(newset)
+        self.sets[newset.name] = newset
 
     def remove(self, set_name):
         """
         Remove a set from the linguistic variable.
         """
-        set_index = [x.name for x in self.sets].index(set_name)
-        del self.sets[set_index]
+        del self.sets[set_name]
 
     def fuzzify(self, val):
         """
         Fuzzify a value returning the corresponfig fuzzy set.
         If 'val' belongs to multiple sets, return the union (bit_or) of those.
         """
-        return reduce(or_, (set.a_cut(val) for set in self.sets[:]
+        return reduce(or_, (set.a_cut(val) for set in self.sets.values()
                                            if set.u(val) != 0))
 
 
 class Engine(object):
     """
-    A Fuzzy Engine is composed of :
-     - a name                          self.name;
-     - a collection of fuzzy variables self.sets;
-     - a collection of rules
+    A Fuzzy Engine is composed of:
+     - a collection of fuzzy variables 'self.sets';
+     - a collection of rules           'self.rules';
+
     """
-    def __init__(self, variables, *srules):
+    def __init__(self, variables=None, *srules):
         """
         Set up the main attributes. If srules are provides,
         initializes also them.
         """
-        self.variables = dict((x.name, x) for x in variables)
+        self.variables = ([] if not variables
+                             else dict((x.name, x) for x in variables))
 
         # set up rules
         self.rules = []
         for srule in srules:
             self.add_rule(srule)
 
+    def _parse_condition(self, sconds):
+        """
+        Parse a condition. A well-formed condition follow this model:
+         foo IS a, [AND|OR bar IS b, [[AND|OR] baz IS c, [...]]
+        """
+        condition = dict()
+
+        for scond in sconds.split(', '):
+            ant, cons = scond.strip().split(' IS ')
+            condition[ant] = self.variables[ant][cons]
+
+        return condition
+
     def _parse_rule(self, srule):
         """
-        Parse a rule in string format, then return the rule.
+        Parse a rule in string format, then return the rule
+        pre-parsed in this form:
+         antecedent,     consequent
+           ^                 ^
+        dict(var, set)   dict(var, set)
         """
+        # express AND;OR;NOT in bits operator &;|;~
+        # srule.replace('AND', '&')
+        # srule.replace('OR', '|')
+        # srule.replace('NOT', '~')
+
+        if not ' THEN ' in srule:
+            raise SyntaxError('Malformed rule.')
         antecedent, consequent = srule.split(' THEN ')
 
         # parse antecedent
-        if not antecendent.startswith('IF '):
-            raise SyntaxError('Malformed rule')
-        antecendent = antecedent[2:]
+        if not antecedent.startswith('IF '):
+            raise SyntaxError('Malformed rule.')
+        antecedent = antecedent[2:]
 
-        svar, sset = antecedent.split(' IS ')
+        return (self._parse_condition(x) for x in (antecedent, consequent))
 
-        #  check for svar in known variables
-        if not svar in self.variables:
-            raise ValueError('Unknown Variable %s' % svar)
-
-
-        # parse consequent
-        svar, sset = consequent.split(' IS ')
-
-
-        return antecedent, consequent
-
-    def add_rule(self, rule):
+    def add_rule(self, srule):
         """
         Add a new rule to the Fuzzy Variable.
+        The rule will bestored in self.rules following this pattern:
+         [(antecedent, consequent), .... ]
+              ^            ^
+           [dict]       [dict]
+           'aname'      'cname'    => names of fuzzy variables
+           'aset'       'cinf'     => sets used for fuzzifycation/inference
         """
-        raise NotImplementedError
-
-    def remove_rule(self, rule):
-        """
-        Remove a rule from the Fuzzy Variable.
-        """
-        raise NotImplementedError
+        self.sets.append(self._parse_rule(srule))
 
     def register(self, lv):
         """
         Register a linguistic variable in the engine.
         """
-        raise NotImplementedError
+        self.variables[lv.name] = lv
 
+    def evaluate(self, **varargs):
+        evaluations = defaultdict(list)
+
+        for antecedent, consequent in self.rules:
+            aname, aset = antecedent
+            cname, cinf = consequent
+
+            # append to evaluations     the fuzzifyed input   inferred
+            evaluations[cname].append(aset.a_cut(varargs[aname]) >> cinf)
+
+        # return the union of inferred solutions
+        return dict((x, reduce(or_, xs)) for x, xs in evaluations.iteritems())
 
 
 VoidSet = Set(Variable('None', [(0, ), (0, )]),

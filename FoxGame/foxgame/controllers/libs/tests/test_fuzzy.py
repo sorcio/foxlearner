@@ -223,6 +223,36 @@ class TestFuzzyRules(TestCase):
 
         self.assertNotEqual(scalar, 0)
         self.assertNotEqual(scalar, 1)
-        # this should work with *all* membership functions
+        # this should work with *all* defuzzify functions
         self.assertAlmostEqual(scalar, 0.5, 1)
+
+
+class TestFuzzyEngine(TestCase):
+    """
+    Test a fuzzy Engine, especially parsing functions.
+    """
+    def setUp(self):
+        self.var1 = fuzzy.Variable('foo', [(1, ), (10, )])
+        fuzzy.Set(self.var1, 'lol', 'triangle', 1, 2, 3)
+
+        self.var2 = fuzzy.Variable('bar', [(1, ), (10, )])
+        fuzzy.Set(self.var2, 'asd', 'triangle', 1, 2, 3)
+
+        self.engine = fuzzy.Engine([self.var1, self.var2])
+
+    def test_parserule(self):
+        """
+        Test rule parsing.
+        """
+        self.assertRaises(SyntaxError, self.engine._parse_rule, 'bulabula!')
+        self.assertRaises(SyntaxError, self.engine._parse_rule,
+                          'FOO is B THEN bar IS a')
+
+        self.assertEqual(list(self.engine._parse_rule('IF foo IS lol THEN bar IS asd')),
+                         [{'foo':self.var1['lol']}, {'bar':self.var2['asd']}])
+
+
+
+
+
 
