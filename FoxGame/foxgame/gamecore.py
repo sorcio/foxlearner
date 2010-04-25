@@ -243,7 +243,7 @@ class Game(object):
 
         # starting up time elapsed
         self.time_elapsed = 0
-        
+
         self.ended = False
 
     def _collision(self, pawn1, pawn2):
@@ -303,8 +303,8 @@ class Game(object):
                                  for other in self.foxes[:i])
                             )
 
-        log.info('Random location of foxes, %d retries',
-                  max_retries - retries_left)
+        log.debug('Random location of foxes, %d retries',
+                   max_retries - retries_left)
 
     @property
     def objects(self):

@@ -49,12 +49,21 @@ def postjob_benchmark(self):
     # time
     taverage = average(self.store['time'])
     print '\ttime: %d"' % taverage
+    # store statistics on the logger
+    log.debug('benchmarking-statistics: average - %d carrots in %d secs' % (
+             caverage, taverage))
 
     print 'Deviation:'
     # carrots
-    print '\tcarrots: %d' % deviat(self.store['carrots'], caverage)
+    cdeviat = deviat(self.store['carrots'], caverage)
+    print '\tcarrots: %d' % cdeviat
     # time
-    print '\ttime: %d"' % deviat(self.store['time'], taverage)
+    tdeviat = deviat(self.store['time'], taverage)
+    print '\ttime: %d"' % tdeviat
+    # store statistics on the logger
+    log.debug('benchmarking-statistics: deviation - %d carrots in %d secs' % (
+              cdeviat, tdeviat))
+
 
 
 class RawBrain(Brain):

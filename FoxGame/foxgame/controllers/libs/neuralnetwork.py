@@ -99,14 +99,14 @@ def load_network(filename):
         nh = len(wo)
         no = len(wo[0])
         log.debug('Loading network with '
-                   'ni=%d, no=%d, nh=%d, bias=%d, funct=%s',
-                   ni, no, nh, bias, funct)
+                  'ni=%d, no=%d, nh=%d, bias=%d, funct=%s',
+                  ni, no, nh, bias, funct)
     except KeyError:
         log.critical('key missing in network file')
         raise
     finally:
         db.close()
-    
+
     net = NeuralNetwork(ni, nh, no, bias, funct, wi, wo)
     return net
 
@@ -139,7 +139,7 @@ class NeuralNetwork(object):
             self.wo = [[self._rand(-2.0, 2.0) for x in xrange(self.no)]
                                               for x in xrange(self.nh)]
 
-        self.funct_name = funct    
+        self.funct_name = funct
         self.tfunct, self.dfunct = self.tfunctions[funct]
 
         # activations for nodes
