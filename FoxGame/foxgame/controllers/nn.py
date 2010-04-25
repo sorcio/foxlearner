@@ -127,7 +127,7 @@ class HareBrain(Brain):
                     self.nearest_fox.speed.x/HareBrain.speed_normalizer,
                     self.nearest_fox.speed.y/HareBrain.speed_normalizer)
         nnout = self.network.put(data)
-        output = Direction(int(round((value*2.0)-1.0)) for value in nnout)
+        output = Direction.from_vector((value*2.0)-1.0 for value in nnout)
         return Direction(output)
 
     def tear_down(self):
