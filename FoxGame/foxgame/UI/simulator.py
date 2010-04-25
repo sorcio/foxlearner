@@ -15,6 +15,24 @@ from logging import getLogger
 log = getLogger(__name__)
 
 
+def average(samples):
+    """
+    Computes the arithmetic mean of a list of numbers.
+    """
+    return sum(samples) / len(samples)
+
+def deviation(samples):
+    """
+    Computes the deviation of a list of numbers.
+    """
+    samplemid = average(samples)
+    return sqrt(sum((x - samplemid)**2
+                for x in samples)/len(samples))
+
+##########
+## JOBS ##
+##########
+
 def job_null(self):
     """
     Do nothing.
@@ -38,31 +56,42 @@ def postjob_benchmark(self):
     Print the average / deviation of previously
     stored values.
     """
-    average = lambda samples: sum(samples) / len(samples)
-    deviat  = lambda samples, average: sqrt(sum((x - average)**2
-                                            for x in samples)/len(samples))
-
+    # AVERAGE
     print 'Average:'
-    # carrots
+
+    #  carrots
     caverage =  average(self.store['carrots'])
     print '\tcarrots: %d' % caverage
-    # time
+
+    #  time
     taverage = average(self.store['time'])
     print '\ttime: %d"' % taverage
-    # store statistics on the logger
-    log.debug('benchmarking-statistics: average - %d carrots in %d secs' % (
-             caverage, taverage))
 
+    #  cpm
+    cpmaverage = 60*sum(self.store['carrots']) / sum(self.store['time'])
+    print '\tcpm: %d' % cpmaverage
+
+    #  store statistics on the logger
+    log.debug('benchmarking-statistics: average -'
+              '%d carrots; '
+              '%d secs; '
+              '%d cpm' % (caverage, taverage, cpmaverage))
+
+    # DEVIATION
     print 'Deviation:'
-    # carrots
-    cdeviat = deviat(self.store['carrots'], caverage)
+
+    #  carrots
+    cdeviat = deviation(self.store['carrots'])
     print '\tcarrots: %d' % cdeviat
+
     # time
-    tdeviat = deviat(self.store['time'], taverage)
+    tdeviat = deviation(self.store['time'])
     print '\ttime: %d"' % tdeviat
+
     # store statistics on the logger
-    log.debug('benchmarking-statistics: deviation - %d carrots in %d secs' % (
-              cdeviat, tdeviat))
+    log.debug('benchmarking-statistics: deviation - '
+              '%d carrots; '
+              '%d secs' % (cdeviat, tdeviat))
 
 
 
