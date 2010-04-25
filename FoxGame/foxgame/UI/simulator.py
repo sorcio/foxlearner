@@ -33,66 +33,84 @@ def deviation(samples):
 ## JOBS ##
 ##########
 
-def job_null(self):
+class NullJob:
     """
     Do nothing.
     """
-    pass
+    @staticmethod
+    def onjob(uinst): pass
 
-postjob_null = job_null
+    @staticmethod
+    def postjob(uinst): pass
 
-def job_benchmark(self):
+
+class BenchmarkJob:
     """
-    Store some useful informations about benchmarking:
-     - carrots eaten
-     - time elapsed
+    Display some useful informations about benchmarking.
     """
+    @staticmethod
+    def onjob(uinst):
+        """
+        Store the following informations:
+        - carrots eaten
+        - time elapsed
+        """
+        # shortcuts
+        carrots = uinst.game.hare.carrots
+        time = uinst.game.time_elapsed
 
-    self.store['carrots'].append(self.game.hare.carrots)
-    self.store['time'].append(self.game.time_elapsed)
+        # store the informations
+        uinst.store['carrots'].append(carrots)
+        uinst.store['time'].append(time)
 
-def postjob_benchmark(self):
-    """
-    Print the average / deviation of previously
-    stored values.
-    """
-    # AVERAGE
-    print 'Average:'
+        # log informations about hte current game
+        log.info('gameplay-statistics: '
+                 'carrots: %d; '
+                 'time elapsed: %d; '
+                 'cpm: %d' % (carrots, time, 60*carrots/time))
 
-    #  carrots
-    caverage =  average(self.store['carrots'])
-    print '\tcarrots: %d' % caverage
+    @staticmethod
+    def postjob(uinst):
+        """
+        Print the average / deviation of previously
+        stored values.
+        """
+        # AVERAGE
+        print 'Average:'
 
-    #  time
-    taverage = average(self.store['time'])
-    print '\ttime: %d"' % taverage
+        #  carrots
+        caverage =  average(uinst.store['carrots'])
+        print '\tcarrots: %d' % caverage
 
-    #  cpm
-    cpmaverage = 60*sum(self.store['carrots']) / sum(self.store['time'])
-    print '\tcpm: %d' % cpmaverage
+        #  time
+        taverage = average(uinst.store['time'])
+        print '\ttime: %d"' % taverage
 
-    #  store statistics on the logger
-    log.debug('benchmarking-statistics: average -'
-              '%d carrots; '
-              '%d secs; '
-              '%d cpm' % (caverage, taverage, cpmaverage))
+        #  cpm
+        cpmaverage = 60*sum(uinst.store['carrots']) / sum(uinst.store['time'])
+        print '\tcpm: %d' % cpmaverage
 
-    # DEVIATION
-    print 'Deviation:'
+        #  store statistics on the logger
+        log.debug('benchmarking-statistics: average -'
+                  '%d carrots; '
+                  '%d secs; '
+                  '%d cpm' % (caverage, taverage, cpmaverage))
 
-    #  carrots
-    cdeviat = deviation(self.store['carrots'])
-    print '\tcarrots: %d' % cdeviat
+        # DEVIATION
+        print 'Deviation:'
 
-    # time
-    tdeviat = deviation(self.store['time'])
-    print '\ttime: %d"' % tdeviat
+        #  carrots
+        cdeviat = deviation(uinst.store['carrots'])
+        print '\tcarrots: %d' % cdeviat
 
-    # store statistics on the logger
-    log.debug('benchmarking-statistics: deviation - '
-              '%d carrots; '
-              '%d secs' % (cdeviat, tdeviat))
+        # time
+        tdeviat = deviation(uinst.store['time'])
+        print '\ttime: %d"' % tdeviat
 
+        # store statistics on the logger
+        log.debug('benchmarking-statistics: deviation - '
+                  '%d carrots; '
+                  '%d secs' % (cdeviat, tdeviat))
 
 
 class RawBrain(Brain):
@@ -124,9 +142,15 @@ class GUI(object):
     A simple interface which doesn't show any output on the screen.
     """
 
-    jobs = job_benchmark, postjob_benchmark
+    job = BenchmarkJob
 
     games = 1
+
+    def __new__(cls, *args):
+        # set up jobs properly
+        cls._job, cls._postjob = cls.job.onjob, cls.job.postjob
+
+        return object.__new__(cls, *args)
 
     def __init__(self, game_factory):
         """
@@ -145,20 +169,12 @@ class GUI(object):
         # store
         self.store = defaultdict(list)
 
-    # XXX: so bad
-    def job(self):
-        return self.jobs[0](self)
-
-    # XXX: so bad
-    def postjob(self):
-        return self.jobs[1](self)
-
     def tick(self, time):
         return self.game.tick(time)
 
     def recycle(self):
         # end the current game
-        self.job()
+        self._job()
         self.game.end()
 
         # start a new game
@@ -167,7 +183,7 @@ class GUI(object):
 
     def quitall(self):
         self.game.end()
-        self.postjob()
+        self._postjob()
 
 
 def main(gfact):
@@ -189,9 +205,6 @@ def main(gfact):
 
 __extraopts__ = [
                  FoxgameOption('games', type='int'),
-                 FoxgameOption('jobs', choices={'benchmark': (job_benchmark,
-                                                              postjob_benchmark),
-                                               'none'      : (job_null,
-                                                              postjob_null)
-                                               })
+                 FoxgameOption('job', choices={'benchmark': BenchmarkJob,
+                                               'none'      : NullJob})
                 ]
