@@ -146,7 +146,7 @@ class GUI(object):
 
     games = 1
 
-    def __new__(cls, *args):
+    def __new__(cls):
         # set up jobs properly
         cls._job, cls._postjob = cls.job.onjob, cls.job.postjob
 
