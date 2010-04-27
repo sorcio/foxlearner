@@ -146,11 +146,11 @@ class GUI(object):
 
     games = 1
 
-    def __new__(cls):
+    def __new__(cls, game_factory):
         # set up jobs properly
         cls._job, cls._postjob = cls.job.onjob, cls.job.postjob
 
-        return object.__new__(cls, *args)
+        return object.__new__(cls)
 
     def __init__(self, game_factory):
         """
