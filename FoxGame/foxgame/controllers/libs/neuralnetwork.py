@@ -8,6 +8,7 @@ from __future__ import division
 from math import e, tanh, tan
 from os.path import exists
 import shelve
+import anydbm
 
 from logging import getLogger
 log = getLogger('[libs-neuralnetwork]')
@@ -81,34 +82,6 @@ def identity_derived(y):
     Identity - Transfer function derived
     """
     return 1
-
-
-def load_network(filename):
-    """
-    Load a shelve database with synapses.
-    TODO: improve doc about formatting
-    """
-    db = shelve.open(filename, 'r')
-    try:
-        wi = db['wi']
-        wo = db['wo']
-        funct = db['funct']
-        bias = db['bias']
-
-        ni = len(wi) - bias
-        nh = len(wo)
-        no = len(wo[0])
-        log.debug('Loading network with '
-                  'ni=%d, no=%d, nh=%d, bias=%d, funct=%s',
-                  ni, no, nh, bias, funct)
-    except KeyError:
-        log.critical('key missing in network file')
-        raise
-    finally:
-        db.close()
-
-    net = NeuralNetwork(ni, nh, no, bias, funct, wi, wo)
-    return net
 
 
 class NeuralNetwork(object):
@@ -251,4 +224,33 @@ class NeuralNetwork(object):
         db.close()
 
 
+def load_network(filename, klass=NeuralNetwork):
+    """
+    Load a shelve database with synapses.
+    TODO: improve doc about formatting
+    """
+    try:
+        db = shelve.open(filename, 'r')
+    except anydbm.error:
+        raise IOError('couldn\'t open file')
+    
+    try:
+        wi = db['wi']
+        wo = db['wo']
+        funct = db['funct']
+        bias = db['bias']
 
+        ni = len(wi) - bias
+        nh = len(wo)
+        no = len(wo[0])
+        log.debug('Loading network with '
+                  'ni=%d, no=%d, nh=%d, bias=%d, funct=%s',
+                  ni, no, nh, bias, funct)
+    except KeyError:
+        log.critical('key missing in network file')
+        raise
+    finally:
+        db.close()
+
+    net = klass(ni, nh, no, bias, funct, wi, wo)
+    return net
