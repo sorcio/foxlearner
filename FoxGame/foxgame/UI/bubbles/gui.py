@@ -18,6 +18,7 @@ from bzdraw import BZManager, BZPainter
 from graphics import Font, Screen, GameField, Text, Rectangle
 
 from os.path import join
+from traceback import format_exc
 
 
 class UserBrain(Brain):
@@ -151,6 +152,10 @@ class GUI(StateMachine):
                 self.clock.tick(self.frame_rate)
         except KeyboardInterrupt:
             pass
+        except Exception, e:
+            log.critical(format_exc(e))
+            log.critical('Critical exception caught, will shut down!')
+            raise
         finally:
             self.quit()
 

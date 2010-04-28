@@ -87,7 +87,7 @@ class HareBrain(Brain):
                        self.network.put(state + norm_action((h, v)))[0])
                       for h in (0, -1, 1)
                       for v in (0, -1, 1))
-        #print ' '.join('%s %.3f' % x for x in self.Q.items())
+        print ' '.join('%s %.3f' % x for x in self.Q.items())
 
     def best_action(self):
         # return action which gives maximum value
@@ -124,10 +124,10 @@ class HareBrain(Brain):
             
         if self.game.collision:
             # large negative reward if hare got taken
-            r = -1000
+            r = 0
         elif self.pawn.carrots > self.carrots:
             # large positive reward if got carrot
-            r = 10
+            r = 0
         else:
             # positive reward if it is still alive
             r = 0
@@ -149,7 +149,7 @@ class HareBrain(Brain):
     
     @staticmethod
     def init_network():
-        network = TDLambda(12, HareBrain.hiddens, funct='sigmoid')
+        network = TDLambda(12, HareBrain.hiddens, funct='tanh')
         network.save(HareBrain.net_file)
         return network
 
@@ -176,7 +176,7 @@ class TDLambda(NeuralNetwork):
         self.trace_wo = [0]*self.nh
     
     def update(self, inputs0, inputs1, reward,
-                 gamma=0.5, trace_decay=0.1, alpha=0.01):
+                 gamma=0.1, trace_decay=0.1, alpha=0.01):
         Q_old = self.put(inputs0)[0]
         Q_new = self.put(inputs1)[0]
         grad_wi, grad_wo = self.grad_evaluate(inputs0)

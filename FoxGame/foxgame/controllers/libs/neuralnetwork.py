@@ -141,7 +141,7 @@ class NeuralNetwork(object):
             raise ValueError('wrong number of inputs')
 
         # input activations
-        self.ai[:-(self.ni-self.bias)] = inputs
+        self.ai[:-self.bias] = inputs
 
         # hidden activations
         for j in xrange(self.nh):
