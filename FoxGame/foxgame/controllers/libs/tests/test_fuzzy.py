@@ -232,11 +232,11 @@ class TestFuzzyEngine(TestCase):
     Test a fuzzy Engine, especially parsing functions.
     """
     def setUp(self):
-        self.var1 = fuzzy.Variable('foo', [(1, ), (10, )])
-        fuzzy.Set(self.var1, 'lol', 'triangle', 1, 2, 3)
+        lolset = fuzzy.Set(None, 'lol', 'triangle', 1, 2, 3)
+        self.var1 = fuzzy.Variable('foo', [(1, ), (10, )], [lolset])
 
-        self.var2 = fuzzy.Variable('bar', [(1, ), (10, )])
-        fuzzy.Set(self.var2, 'asd', 'triangle', 1, 2, 3)
+        asdset = fuzzy.Set(None, 'asd', 'triangle', 1, 2, 3)
+        self.var2 = fuzzy.Variable('bar', [(1, ), (10, )], [asdset])
 
         self.engine = fuzzy.Engine([self.var1, self.var2])
 

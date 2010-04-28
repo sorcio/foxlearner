@@ -38,8 +38,8 @@ class Set(object):
 
        # parent LinguisticVariable
         self.parent = parent
-        if self.parent:
-            self.parent.add(self)
+        #if self.parent:
+        #    self.parent.add(self)
 
         # membership function
         if isinstance(mfunct, str):

@@ -36,6 +36,7 @@ class UserBrain(Brain):
                 }
 
     def update(self, time):
+        print self.pawn.speed
         keydir = Direction(Direction.NULL)
         for direction, pressed in self.inputs.iteritems():
             if pressed:
@@ -129,7 +130,7 @@ class GUI(StateMachine):
         if self.arena:
             self.arena.remove()
             self.arena = None
-    
+
     def quit(self):
         log.info('Shutting down')
         self.clean_game()
