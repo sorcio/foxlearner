@@ -15,6 +15,11 @@ from mfuncts import functions
 PRECISION = 0.5
 EPSILON = 1e-5
 
+def arange(start, stop, step):
+    while start < stop:
+        yield start
+        start += step
+
 
 class Set(object):
     """
@@ -105,16 +110,13 @@ class Set(object):
         Return True if not self == other, True otherwise.
         """
         return (self.parent != other.parent or
-                any(abs(u_x - u_y) > EPSILON for
+                any(abs(u_x-u_y) > EPSILON for
                     (x, u_x), (y, u_y) in zip(self, other)))
 
     def __and__(self, other):
         """
         Fuzzy intersection.
         """
-        if self == other:
-            return self
-
         if self.parent != other.parent:
             return Set(self.parent+other.parent,
                        '(%s)%s&(%s)%s' % (self.parent.name, self.name,
@@ -129,13 +131,10 @@ class Set(object):
         """
         Fuzzy union.
         """
-        if self == other:
-            return self
-
         if self.parent != other.parent:
             return Set(self.parent+other.parent,
                        '(%s)%s|(%s)%s' % (self.parent.name, self.name,
-                                         other.parent.name, other.name),
+                                          other.parent.name, other.name),
                        operators.fuzzy_mor(self, other))
         else:
             return Set(self.parent,
@@ -150,22 +149,13 @@ class Set(object):
                    '!'+self.name,
                    operators.fuzzy_not(self))
 
-    def __add__(self, other):
-        raise NotImplementedError
-
-    def __sub__(self, other):
-        raise NotImplementedError
-
-    def __mul__(self, other):
-        raise NotImplementedError
-
     def __iter__(self):
         """
         Yields, according to PRECISION, a tuple of (value, u(value))
         for each value in FuzzySet.
         """
         counter, end = self.parent.range
-        dims = [numpy.arange(x, y, PRECISION) for x, y in zip(counter, end)]
+        dims = [arange(x, y, PRECISION) for x, y in zip(counter, end)]
         for x in product(*dims):
             yield x, self.u(*x)
 
@@ -180,12 +170,8 @@ class Set(object):
         """
         Calculate the fuzzy inference.
         """
-        # inference in calculated...
         projection = self.proj(other.parent)
-        # print projection
         relation = self & other
-        # print relation(22.5, 0)
-        # print relation
 
         projection.parent = relation.parent
 
@@ -222,6 +208,12 @@ class Set(object):
         Return a scalar value, using the most common method:
          center of gravity
         """
+        #ret = 0
+        #dsum = 0
+        #for x, u_x in self:
+        #    ret += x*u_x
+        #    dsum += u_x
+        #return ret / dsum
         return sum(x*u_x for (x, ), u_x in self) / sum(u_x for x, u_x in self)
 
 make_set = Set
@@ -255,7 +247,7 @@ class Variable(object):
         universe equal to the sum of the previouses.
         """
         return Variable(self.name+other.name,
-                        (x+y for x, y in zip(self.range, other.range)))
+                        [x+y for x, y in zip(self.range, other.range)])
 
     def __str__(self):
         return self.name
@@ -296,8 +288,8 @@ class Variable(object):
         Fuzzify a value returning the corresponfig fuzzy set.
         If 'val' belongs to multiple sets, return the union (bit_or) of those.
         """
-        return reduce(or_, (set.a_cut(val) for set in self.sets.values()
-                                           if set.u(val) != 0))
+        return reduce(or_, [set.a_cut(val) for set in self.sets.values()
+                                           if set.u(val) != 0])
 
 
 class Engine(object):

@@ -26,6 +26,26 @@ def trapezoidal(self, x):
     else:
         return 0
 
+def openleft(self, x):
+    xa, xr = self._lims
+
+    if xa < x < xr:
+        return (x - xr) / (xa - xr)
+    if x < xa:
+        return 1
+    else:
+        return 0
+
+def openright(self, x):
+    xl, xa = self._lims
+
+    if xl < xa:
+        return (x - xl) / (xa - xl)
+    if x > xr:
+        return 1
+    else:
+        return 0
+
 def gaussian(self, x):
     xl, xa, xr = self._lims
     raise NotImplementedError
@@ -34,5 +54,7 @@ def gaussian(self, x):
 functions = {
              'triangle': triangular,
              'trapeze' : trapezoidal,
+             'oleft'   : openleft,
+             'oright'  : openright
              # 'gauss'   : gaussian
 }

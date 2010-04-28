@@ -17,6 +17,12 @@ def operator(op):
     return operate
 
 
+def arange(start, stop, step):
+    while start < stop:
+        yield start
+        start += step
+
+
 @operator
 def fuzzy_and(fst, snd, self, *xs):
     return min(fst.u(*xs), snd.u(*xs))
@@ -53,6 +59,6 @@ def fuzzy_mor(fst, snd, self, x, y):
 @operator
 def fuzzy_inference(fst, xs, self, y):
     counter, end = xs
-    dims = [numpy.arange(a, b, 0.25) for a, b in zip(counter, end)]
+    dims = [arange(a, b, 0.5) for a, b in zip(counter, end)]
     return max(fst(x, y) for (x, ) in product(*dims))
 
