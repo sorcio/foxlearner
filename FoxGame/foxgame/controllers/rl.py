@@ -11,7 +11,7 @@ from foxgame.options import FoxgameOption, task
 from libs.neuralnetwork import NeuralNetwork, load_network
 
 from random import random, randint
-from math import sqrt
+from math import hypot, exp, log as logn
 from os.path import join as osjoin
 
 import logging
@@ -25,7 +25,8 @@ except ImportError:
 
 
 def norm_action(a):
-    return (a[0]+1)/2, (a[1]+1)/2
+    #return (a[0]+1)/2, (a[1]+1)/2
+    return a
 
 
 class HareBrain(Brain):
@@ -33,7 +34,7 @@ class HareBrain(Brain):
 
     size = (600, 400)
 
-    hiddens = 30
+    hiddens = 6
 
     error = None
     epochs = 6
@@ -45,22 +46,28 @@ class HareBrain(Brain):
     trace_decay = 0.8
     
     # greediness factor (one minus eps)
-    greediness = 0.80
+    greediness = 0.99
 
     speed_normalizer = 500
 
     def get_state(self):
-        diagonal = sqrt( HareBrain.size[0]**2 + HareBrain.size[1]**2 )
-        return ((self.game.hare.pos.x-self.nearest_fox.pos.x)/diagonal,
-                (self.game.hare.pos.y-self.nearest_fox.pos.y)/diagonal,
-                (self.game.hare.pos.x-self.game.carrot.pos.x)/diagonal,
+        diagonal = hypot(HareBrain.size[0], HareBrain.size[1])
+        #~ return ((self.game.hare.pos.x-self.nearest_fox.pos.x)/diagonal,
+                #~ (self.game.hare.pos.y-self.nearest_fox.pos.y)/diagonal,
+                #~ (self.game.hare.pos.x-self.game.carrot.pos.x)/diagonal,
+                #~ (self.game.hare.pos.y-self.game.carrot.pos.y)/diagonal,
+                #~ self.game.hare.pos.x/HareBrain.size[0],
+                #~ self.game.hare.pos.y/HareBrain.size[1],
+                #~ self.game.hare.speed.x/HareBrain.speed_normalizer,
+                #~ self.game.hare.speed.y/HareBrain.speed_normalizer,
+                #~ self.nearest_fox.speed.x/HareBrain.speed_normalizer,
+                #~ self.nearest_fox.speed.y/HareBrain.speed_normalizer)
+        return ((self.game.hare.pos.x-self.game.carrot.pos.x)/diagonal,
                 (self.game.hare.pos.y-self.game.carrot.pos.y)/diagonal,
                 self.game.hare.pos.x/HareBrain.size[0],
                 self.game.hare.pos.y/HareBrain.size[1],
                 self.game.hare.speed.x/HareBrain.speed_normalizer,
-                self.game.hare.speed.y/HareBrain.speed_normalizer,
-                self.nearest_fox.speed.x/HareBrain.speed_normalizer,
-                self.nearest_fox.speed.y/HareBrain.speed_normalizer)
+                self.game.hare.speed.y/HareBrain.speed_normalizer)
         
     def set_up(self):
         """
@@ -80,14 +87,17 @@ class HareBrain(Brain):
         self.update_actions(self.state)
         
         self.tick_count = 0
+        self.update_rate = 10
+        self.time = 0
         self.carrots = 0
+        self.reward = 0
     
     def update_actions(self, state):
         self.Q = dict(((h, v),
                        self.network.put(state + norm_action((h, v)))[0])
                       for h in (0, -1, 1)
                       for v in (0, -1, 1))
-        print ' '.join('%s %.3f' % x for x in self.Q.items())
+        #print ' '.join('%s %.3f' % x for x in self.Q.items())
 
     def best_action(self):
         # return action which gives maximum value
@@ -103,7 +113,33 @@ class HareBrain(Brain):
             return randint(-1, 1), randint(-1, 1)
         
     def update(self, time):
-        self.tick_count = (self.tick_count + 1) % 10
+        self.tick_count += 1
+        
+        if self.game.collision:
+            # large negative reward if hare got taken
+            r = -10
+            log.debug('fox caught me')
+        elif self.pawn.carrots > self.carrots:
+            # large positive reward if got carrot
+            num_carrots = (self.pawn.carrots - self.carrots)
+            r = num_carrots*1
+            self.carrots = self.pawn.carrots
+            log.debug('I got a carrot')
+        else:
+            # positive reward if it is still alive
+            r = time
+
+        self.reward += r
+                
+        if self.tick_count % self.update_rate == 0:
+        #if True:
+            dtime = self.game.time_elapsed - self.time
+            self.update_network(dtime)
+            
+        return Direction(self.action)
+    
+    def update_network(self, time):
+        # SARSA-lambda update
         
         # get previouse state-action
         s = self.state
@@ -113,33 +149,29 @@ class HareBrain(Brain):
         s1 = self.get_state()
         self.state = s1
         
-        # choose an action according to policy
+        # refresh policy values (Q)
         self.update_actions(s1)
         
-        if self.tick_count == 0:
-            a1 = self.choose_action()
-            self.action = a1
-        else:
-            a1 = self.action
-            
-        if self.game.collision:
-            # large negative reward if hare got taken
-            r = 0
-        elif self.pawn.carrots > self.carrots:
-            # large positive reward if got carrot
-            r = 0
-        else:
-            # positive reward if it is still alive
-            r = 0
+        # choose new action
+        a1 = self.choose_action()
+        self.action = a1
         
-        self.network.update(s+norm_action(a), s1+norm_action(a1), r)
-
-        return Direction(a1)
-    
+        alpha = exp(-2*self.game.time_elapsed)
+        print 'alpha:', alpha
+        
+        self.network.update(s + norm_action(a),     # Q(s, a)
+                            s1 + norm_action(a1),   # Q(s', a')
+                            0*self.reward,            # r
+                            time,
+                            alpha=alpha)
+        
+        self.reward = 0
+        
     def tear_down(self):
         # hackish: update with last frame
         # needed to get negative reward on game end
-        self.update(0)
+        self.tick_count += 1
+        self.update_network(1/60)
         
         self.network.save(self.net_file)
     
@@ -149,7 +181,8 @@ class HareBrain(Brain):
     
     @staticmethod
     def init_network():
-        network = TDLambda(12, HareBrain.hiddens, funct='tanh')
+        log.info('Initializing new neural network')
+        network = TDLambda(8, HareBrain.hiddens, funct='tanh')
         network.save(HareBrain.net_file)
         return network
 
@@ -158,36 +191,32 @@ class TDLambda(NeuralNetwork):
     """
     NN based  scalar function approximator for
     TD-lambda methods. Refer to Sutton-Barto 8.4.
-    
-    a = previous action
-    s = previous state
-    r = observed reward
-    s1 = observed state
-    a1 = chosen action
-    net.update(a, s, r, s1, a1)
-    
     """
-    def __init__(self, ni, nh, no=1, bias=False, funct='sigmoid',
+    def __init__(self, ni, nh, no=1, bias=True, funct='sigmoid',
                    wi=None, wo=None):
         super(TDLambda, self).__init__(ni, nh, 1, False, funct, wi, wo)
         
         # Eligibility trace (e vector)
         self.trace_wi = [[0]*self.nh]*self.ni
         self.trace_wo = [0]*self.nh
-    
-    def update(self, inputs0, inputs1, reward,
-                 gamma=0.1, trace_decay=0.1, alpha=0.01):
+        
+    def update(self, inputs0, inputs1, reward, time,
+                 gamma=0.1, trace_decay=0.5, alpha=0.01):
         Q_old = self.put(inputs0)[0]
         Q_new = self.put(inputs1)[0]
         grad_wi, grad_wo = self.grad_evaluate(inputs0)
         
-        delta = reward + gamma*Q_new - Q_old
+        delta = reward*time/(1-trace_decay) + -logn(gamma)*time*Q_new - Q_old
+        #print reward/(1-trace_decay)
         
-        self.trace_wi = [[gamma*trace_decay*self.trace_wi[i][j] + grad_wi[i][j]
+        step = -(logn(gamma)+logn(trace_decay))*time
+        print delta, step
+        
+        self.trace_wi = [[step*self.trace_wi[i][j] + grad_wi[i][j]
                           for j in range(self.nh)]
                          for i in range(self.ni)]    
         
-        self.trace_wo = [gamma*trace_decay*self.trace_wo[i] + grad_wo[i]
+        self.trace_wo = [step*self.trace_wo[i] + grad_wo[i]
                          for i in range(self.nh)]
         
         # update weights between input and hidden layer
@@ -196,11 +225,12 @@ class TDLambda(NeuralNetwork):
                 self.wi[i][j] += alpha*delta*self.trace_wi[i][j]
         
         # update weights between input and hidden layer
-        for i in range(self.nh):
-            for j in range(self.no):
-                self.wo[i][j] += alpha*delta*self.trace_wo[i]
+        for j in range(self.nh):
+            self.wo[j][0] += alpha*delta*self.trace_wo[j]
     
     def grad_evaluate(self, inputs):
+        if self.bias:
+            inputs = inputs + [1]
         # what gets in each hidden node
         arg_h = [sum(w[j]*xi for w, xi in zip(self.wi, inputs))
                  for j in range(self.nh)]
@@ -212,6 +242,7 @@ class TDLambda(NeuralNetwork):
         # gradient relative to each wo        
         grad_wo = [self.dfunct(arg_o) * self.tfunct(arg_h[i])
                    for i in range(self.nh)]
+        print grad_wo
         
         # gradient relative to each wi
         grad_wi = [[self.dfunct(arg_o) *

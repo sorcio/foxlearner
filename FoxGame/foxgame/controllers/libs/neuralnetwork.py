@@ -107,9 +107,9 @@ class NeuralNetwork(object):
             self.wo = wo
         else:
             # create weights and set them into random values
-            self.wi = [[self._rand(-2.0, 2.0) for x in xrange(self.nh)]
+            self.wi = [[self._rand(-.5, .5) for x in xrange(self.nh)]
                                               for x in xrange(self.ni)]
-            self.wo = [[self._rand(-2.0, 2.0) for x in xrange(self.no)]
+            self.wo = [[self._rand(-.5, .5) for x in xrange(self.no)]
                                               for x in xrange(self.nh)]
 
         self.funct_name = funct
@@ -215,7 +215,7 @@ class NeuralNetwork(object):
         Save a shelve db with synapses.
         TODO: improve doc about formatting
         """
-        db = shelve.open(filename)
+        db = shelve.open(filename, 'n')
         db['wi'] = self.wi
         db['wo'] = self.wo
         db['funct'] = self.funct_name
