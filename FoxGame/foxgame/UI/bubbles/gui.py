@@ -37,7 +37,6 @@ class UserBrain(Brain):
                 }
 
     def update(self, time):
-        print self.pawn.speed
         keydir = Direction(Direction.NULL)
         for direction, pressed in self.inputs.iteritems():
             if pressed:
@@ -72,7 +71,7 @@ class GUI(StateMachine):
                      pygame.K_w, pygame.K_a,
                      pygame.K_s, pygame.K_d,
                      pygame.K_g,
-                     )
+                    )
 
     background_color = 'gray'
 
