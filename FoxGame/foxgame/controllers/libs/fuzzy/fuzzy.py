@@ -5,21 +5,12 @@ from operator import sub
 from math import sqrt
 from operator import or_
 from collections import defaultdict
-
-import numpy
 from itertools import product
 
 import operators
 from mfuncts import functions
 
-PRECISION = 0.5
 EPSILON = 1e-5
-
-def arange(start, stop, step):
-    while start < stop:
-        yield start
-        start += step
-
 
 class Set(object):
     """
@@ -56,7 +47,8 @@ class Set(object):
         self._lims = limits
 
     def u(self, *x):
-        return round(self._mfunct(self, *x), 7)
+        # return round(self._mfunct(self, *x), 7)
+        return self._mfunct(self, *x)
 
     __call__ = u
 
@@ -155,7 +147,8 @@ class Set(object):
         for each value in FuzzySet.
         """
         counter, end = self.parent.range
-        dims = [arange(x, y, PRECISION) for x, y in zip(counter, end)]
+        dims = [operators.arange(x, y, operators.PRECISION)
+                for x, y in zip(counter, end)]
         for x in product(*dims):
             yield x, self.u(*x)
 
@@ -195,6 +188,8 @@ class Set(object):
         return Set(self.parent, 'α-'+self.name,
                    operators.fuzzy_alpha(self, self.u(val)))
 
+    fuzzify = a_cut
+
     def proj(self, otherparent):
         """
         Return the cylindrical extension of self in othparent.
@@ -208,12 +203,6 @@ class Set(object):
         Return a scalar value, using the most common method:
          center of gravity
         """
-        #ret = 0
-        #dsum = 0
-        #for x, u_x in self:
-        #    ret += x*u_x
-        #    dsum += u_x
-        #return ret / dsum
         return sum(x*u_x for (x, ), u_x in self) / sum(u_x for x, u_x in self)
 
 make_set = Set
