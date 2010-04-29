@@ -39,12 +39,12 @@ class HareBrain(Brain):
     error = None
     epochs = 6
     epsilon = 0.35
-    
+
     # discount rate
     gamma = 0.5
     # eligibilty trace decay (lambda)
     trace_decay = 0.8
-    
+
     # greediness factor (one minus eps)
     greediness = 0.99
 
@@ -68,7 +68,7 @@ class HareBrain(Brain):
                 self.game.hare.pos.y/HareBrain.size[1],
                 self.game.hare.speed.x/HareBrain.speed_normalizer,
                 self.game.hare.speed.y/HareBrain.speed_normalizer)
-        
+
     def set_up(self):
         """
         Load neural network data from a file
@@ -83,15 +83,15 @@ class HareBrain(Brain):
         except IOError:
             # Should create a new network
             self.network = self.init_network()
-        
+
         self.update_actions(self.state)
-        
+
         self.tick_count = 0
         self.update_rate = 10
         self.time = 0
         self.carrots = 0
         self.reward = 0
-    
+
     def update_actions(self, state):
         self.Q = dict(((h, v),
                        self.network.put(state + norm_action((h, v)))[0])
@@ -103,7 +103,7 @@ class HareBrain(Brain):
         # return action which gives maximum value
         # for current state
         return max(self.Q, key=lambda k:self.Q[k])
-    
+
     def choose_action(self):
         # eps-greedy policy
         if random() < self.greediness:
@@ -111,10 +111,10 @@ class HareBrain(Brain):
             return self.best_action()
         else:
             return randint(-1, 1), randint(-1, 1)
-        
+
     def update(self, time):
         self.tick_count += 1
-        
+
         if self.game.collision:
             # large negative reward if hare got taken
             r = -10
@@ -130,55 +130,55 @@ class HareBrain(Brain):
             r = time
 
         self.reward += r
-                
+
         #if self.tick_count % self.update_rate == 0:
         if True:
             dtime = self.game.time_elapsed - self.time
             self.update_network(dtime)
-            
+
         return Direction(self.action)
-    
+
     def update_network(self, time):
         # SARSA-lambda update
-        
+
         # get previouse state-action
         s = self.state
         a = self.action
-        
+
         # observe new state
         s1 = self.get_state()
         self.state = s1
-        
+
         # refresh policy values (Q)
         self.update_actions(s1)
-        
+
         # choose new action
         a1 = self.choose_action()
         self.action = a1
-        
+
         alpha = exp(-2*self.game.time_elapsed)
         #print 'alpha:', alpha
-        
+
         self.network.update(s + norm_action(a),     # Q(s, a)
                             s1 + norm_action(a1),   # Q(s', a')
                             0*self.reward,            # r
                             time,
                             alpha=alpha)
-        
+
         self.reward = 0
-        
+
     def tear_down(self):
         # hackish: update with last frame
         # needed to get negative reward on game end
         self.tick_count += 1
         self.update_network(1/60)
-        
+
         self.network.save(self.net_file)
-    
+
     @task
     def task_reset():
         HareBrain.init_network()
-    
+
     @staticmethod
     def init_network():
         log.info('Initializing new neural network')
@@ -195,23 +195,23 @@ class TDLambda(NeuralNetwork):
     def __init__(self, ni, nh, no=1, bias=False, funct='sigmoid',
                    wi=None, wo=None):
         super(TDLambda, self).__init__(ni, nh, 1, False, funct, wi, wo)
-        
+
         # Eligibility trace (e vector)
         self.trace_wi = [[0]*self.nh for i in range(self.ni)]
         self.trace_wo = [0]*self.nh
-        
-    def update(self, inputs0, inputs1, reward,
+
+    def update(self, inputs0, inputs1, reward, time,
                  gamma=0.1, trace_decay=0.5, alpha=0.01):
         Q_new = self.put(inputs1)[0]
         Q_old = self.put(inputs0)[0]
 
         self.trace_bp(reward + gamma*Q_new, trace_decay=trace_decay, gamma=gamma, eps=0.1)
-        
+
         # update weights between input and hidden layer
         for i in range(self.ni):
             for j in range(self.nh):
                 self.wi[i][j] += alpha*self.trace_wi[i][j]
-        print self.wi
+        # print self.wi
         # update weights between input and hidden layer
         for j in range(self.nh):
             self.wo[j][0] += alpha*self.trace_wo[j]

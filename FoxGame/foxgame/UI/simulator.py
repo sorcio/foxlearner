@@ -145,6 +145,7 @@ class GUI(object):
     job = BenchmarkJob
 
     games = 1
+    looptime = 300
 
     def __new__(cls, game_factory):
         # set up jobs properly
@@ -193,7 +194,7 @@ def main(gfact):
     try:
         while ui.games > 0:
             # if the game is ended or seems to fall into an infinite loop
-            if ui.tick(1/32) == False or ui.game.time_elapsed > 5*60:
+            if ui.tick(1/32) == False or ui.game.time_elapsed > ui.looptime:
                 log.info('game #%d ended' % (GUI.games-ui.games+1))
                 # decrease the game counter
                 ui.recycle()
@@ -207,5 +208,6 @@ def main(gfact):
 __extraopts__ = [
                  FoxgameOption('games', type='int'),
                  FoxgameOption('job', choices={'benchmark': BenchmarkJob,
-                                               'none'      : NullJob})
+                                               'none'      : NullJob}),
+                 FoxgameOption('looptime', type='float')
                 ]
