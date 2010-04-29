@@ -4,6 +4,8 @@ structures.py: core classes Vector and Direction.
 
 from __future__ import division
 from math import hypot
+
+
 class Vector(object):
     """
     A point identified on a cartesian plane.
@@ -117,8 +119,6 @@ class Vector(object):
         Returns a Vector with same direction and specified norm.
         """
         return self * (norm / abs(self))
-
-
 
 
 class Direction(object):
