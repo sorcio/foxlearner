@@ -5,7 +5,7 @@ from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
 from libs.fuzzy import fuzzy, operators
 
-operators.PRECISION = 0.75
+operators.PRECISION = 0.25
 
 import logging
 log = logging.getLogger(__name__)
@@ -22,21 +22,21 @@ class HareBrain(Brain):
         Set up the fuzzy sets and the fuzzy engine used to control the hare.
         """
         # fuzzy proximity variable
-        near = fuzzy.Set(None, 'near', 'oleft', 10, 30)
-        middle = fuzzy.Set(None, 'middle', 'triangle', 20, 25, 30)
-        far = fuzzy.Set(None, 'far', 'oright', 20, 40)
-        self.proximityvar = fuzzy.Variable('proximity', [(0, ), (50, )],
+        near = fuzzy.Set(None, 'near', 'oleft', 1, 3)
+        middle = fuzzy.Set(None, 'middle', 'triangle', 2, 2.5, 3)
+        far = fuzzy.Set(None, 'far', 'oright', 2, 4)
+        self.proximityvar = fuzzy.Variable('proximity', [(0, ), (5, )],
                                            sets_list=[near, middle, far])
         # fuzzy speed variable
-        low = fuzzy.Set(None, 'low', 'oleft', 30, 20)
-        middle = fuzzy.Set(None, 'middle', 'triangle', 20, 30, 40)
-        high = fuzzy.Set(None, 'high', 'oright', 30, 40)
-        self.speedvar = fuzzy.Variable('speed', [(0, ), (50, )],
+        low = fuzzy.Set(None, 'low', 'oleft', 3, 2)
+        middle = fuzzy.Set(None, 'middle', 'triangle', 2, 3, 4)
+        high = fuzzy.Set(None, 'high', 'oright', 3, 4)
+        self.speedvar = fuzzy.Variable('speed', [(0, ), (5, )],
                                        sets_list=[low, middle, high])
         # fuzzy risk variable
-        low = fuzzy.Set(None, 'low', 'singleton', 1)
-        high = fuzzy.Set(None, 'high', 'singleton', 2)
-        self.riskvar = fuzzy.Variable('risk', [(1, ), (2.5, )],
+        low = fuzzy.Set(None, 'low', 'singleton', 0)
+        high = fuzzy.Set(None, 'high', 'singleton', 1)
+        self.riskvar = fuzzy.Variable('risk', [(0, ), (1, )],
                                       sets_list=[low, high])
 
         # maybe we will introduce self.engine = fuzzy.Engine later
@@ -47,23 +47,19 @@ class HareBrain(Brain):
         position of the Fox.
         """
         # normalize speed and distance
-        dist = abs(self.pawn.distance(self.nearest_fox)) / 6
-        speed = abs(self.nearest_fox.speed.distance(self.pawn.speed)) / 10
+        dist = abs(self.pawn.distance(self.nearest_fox)) / 60
+        speed = abs(self.nearest_fox.speed.distance(self.pawn.speed)) / 100
 
-        risk = ((self.proximityvar['near'].fuzzify(dist) >> self.riskvar['high']) |
-                (self.proximityvar['far'].fuzzify(dist) >> self.riskvar['low'])   |
+        risk = ((self.proximityvar['near'].fuzzify(dist) >> self.riskvar['high'])   |
+                (self.proximityvar['middle'].fuzzify(dist) >> self.riskvar['high']) |
+                (self.proximityvar['far'].fuzzify(dist) >> self.riskvar['low'])     |
 
-                (self.speedvar['low'].fuzzify(speed) >> self.riskvar['low'])      |
-                (self.speedvar['middle'].fuzzify(speed) >> self.riskvar['low'])   |
-                (self.speedvar['high'].fuzzify(speed) >> self.riskvar['high']))
-        if risk:
-            risk = risk.defuzzify()
-        else:
-            risk = 1
-
+                (self.speedvar['low'].fuzzify(speed) >> self.riskvar['low'])        |
+                (self.speedvar['middle'].fuzzify(speed) >> self.riskvar['high'])    |
+                (self.speedvar['high'].fuzzify(speed) >> self.riskvar['high'])).defuzzify()
 
         # choose between life and food :)
-        if risk == 1:
+        if risk <= 0.3:
             dir = self.navigate(self.game.carrot.pos)
         else:
             target = self.nearest_fox.pos + self.nearest_fox.speed/2

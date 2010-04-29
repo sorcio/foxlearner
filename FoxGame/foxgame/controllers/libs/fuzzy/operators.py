@@ -18,6 +18,7 @@ def arange(start, stop, step):
     while start < stop:
         yield start
         start += step
+    yield stop
 
 
 @operator
