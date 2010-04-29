@@ -123,6 +123,11 @@ class Set(object):
         """
         Fuzzy union.
         """
+        if not self:
+            return other
+        if not other:
+            return self
+
         if self.parent != other.parent:
             return Set(self.parent+other.parent,
                        '(%s)%s|(%s)%s' % (self.parent.name, self.name,
