@@ -58,11 +58,11 @@ class HareBrain(Brain):
                 (self.speedvar['middle'].fuzzify(speed) >> self.riskvar['high'])    |
                 (self.speedvar['high'].fuzzify(speed) >> self.riskvar['high'])).defuzzify()
 
-        # choose between life and food :)
-        if risk <= 0.3:
-            dir = self.navigate(self.game.carrot.pos)
-        else:
-            target = self.nearest_fox.pos + self.nearest_fox.speed/2
-            dir = -self.navigate(target)
+        cdir = self.navigate(self.game.carrot.pos)
 
+        target = self.nearest_fox.pos + self.nearest_fox.speed/2
+        fdir = -self.navigate(target)
+
+        dir = Direction([(x*risk + y*risk)/2 for x, y in zip(cdir, fdir)])
+        print list(dir)
         return dir
