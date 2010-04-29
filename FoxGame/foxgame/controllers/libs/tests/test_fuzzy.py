@@ -1,9 +1,9 @@
 from __future__ import division
 from unittest import TestCase
-from foxgame.controllers.libs.fuzzy import fuzzy, hedges
+from foxgame.controllers.libs.fuzzy import fuzzy, operators, hedges
 
 # setting fuzzy precision
-fuzzy.PRECISION = 0.25
+operators.PRECISION = 0.25
 
 class TestFuzzySet(TestCase):
     """

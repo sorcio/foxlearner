@@ -4,6 +4,10 @@
 from __future__ import division
 
 
+def singleton(self, x):
+    xa, = self._lims
+    return 1 if x == xa else 0
+
 def triangular(self, x):
     xl, xa, xr = self._lims
 
@@ -47,14 +51,12 @@ def openright(self, x):
         return 0
 
 def gaussian(self, x):
-    xl, xa, xr = self._lims
     raise NotImplementedError
 
-
 functions = {
-             'triangle': triangular,
-             'trapeze' : trapezoidal,
-             'oleft'   : openleft,
-             'oright'  : openright
-             # 'gauss'   : gaussian
+             'singleton': singleton,
+             'triangle' : triangular,
+             'trapeze'  : trapezoidal,
+             'oleft'    : openleft,
+             'oright'   : openright
 }

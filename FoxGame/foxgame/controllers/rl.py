@@ -97,7 +97,7 @@ class HareBrain(Brain):
                        self.network.put(state + norm_action((h, v)))[0])
                       for h in (0, -1, 1)
                       for v in (0, -1, 1))
-        #print ' '.join('%s %.3f' % x for x in self.Q.items())
+        print ' '.join('%s %.3f' % x for x in self.Q.items())
 
     def best_action(self):
         # return action which gives maximum value
@@ -131,8 +131,8 @@ class HareBrain(Brain):
 
         self.reward += r
                 
-        if self.tick_count % self.update_rate == 0:
-        #if True:
+        #if self.tick_count % self.update_rate == 0:
+        if True:
             dtime = self.game.time_elapsed - self.time
             self.update_network(dtime)
             
@@ -157,7 +157,7 @@ class HareBrain(Brain):
         self.action = a1
         
         alpha = exp(-2*self.game.time_elapsed)
-        print 'alpha:', alpha
+        #print 'alpha:', alpha
         
         self.network.update(s + norm_action(a),     # Q(s, a)
                             s1 + norm_action(a1),   # Q(s', a')
@@ -182,7 +182,7 @@ class HareBrain(Brain):
     @staticmethod
     def init_network():
         log.info('Initializing new neural network')
-        network = TDLambda(8, HareBrain.hiddens, funct='tanh')
+        network = TDLambda(8, HareBrain.hiddens, funct='sigmoid')
         network.save(HareBrain.net_file)
         return network
 
@@ -192,7 +192,7 @@ class TDLambda(NeuralNetwork):
     NN based  scalar function approximator for
     TD-lambda methods. Refer to Sutton-Barto 8.4.
     """
-    def __init__(self, ni, nh, no=1, bias=True, funct='sigmoid',
+    def __init__(self, ni, nh, no=1, bias=False, funct='sigmoid',
                    wi=None, wo=None):
         super(TDLambda, self).__init__(ni, nh, 1, False, funct, wi, wo)
         
@@ -200,57 +200,46 @@ class TDLambda(NeuralNetwork):
         self.trace_wi = [[0]*self.nh]*self.ni
         self.trace_wo = [0]*self.nh
         
-    def update(self, inputs0, inputs1, reward, time,
+    def update(self, inputs0, inputs1, reward,
                  gamma=0.1, trace_decay=0.5, alpha=0.01):
-        Q_old = self.put(inputs0)[0]
         Q_new = self.put(inputs1)[0]
-        grad_wi, grad_wo = self.grad_evaluate(inputs0)
-        
-        delta = reward*time/(1-trace_decay) + -logn(gamma)*time*Q_new - Q_old
-        #print reward/(1-trace_decay)
-        
-        step = -(logn(gamma)+logn(trace_decay))*time
-        print delta, step
-        
-        self.trace_wi = [[step*self.trace_wi[i][j] + grad_wi[i][j]
-                          for j in range(self.nh)]
-                         for i in range(self.ni)]    
-        
-        self.trace_wo = [step*self.trace_wo[i] + grad_wo[i]
-                         for i in range(self.nh)]
+        Q_old = self.put(inputs0)[0]
+
+        self.trace_bp(reward + gamma*Q_new, trace_decay=trace_decay, gamma=gamma, eps=0.1)
         
         # update weights between input and hidden layer
         for i in range(self.ni):
             for j in range(self.nh):
-                self.wi[i][j] += alpha*delta*self.trace_wi[i][j]
-        
+                self.wi[i][j] += alpha*self.trace_wi[i][j]
+        print self.wi
         # update weights between input and hidden layer
         for j in range(self.nh):
-            self.wo[j][0] += alpha*delta*self.trace_wo[j]
-    
-    def grad_evaluate(self, inputs):
-        if self.bias:
-            inputs = inputs + [1]
-        # what gets in each hidden node
-        arg_h = [sum(w[j]*xi for w, xi in zip(self.wi, inputs))
-                 for j in range(self.nh)]
-        
-        # what enters in the output node
-        arg_o = sum(self.wo[i][0]*self.tfunct(arg_h[i])
-                    for i in range(self.nh))
-        
-        # gradient relative to each wo        
-        grad_wo = [self.dfunct(arg_o) * self.tfunct(arg_h[i])
-                   for i in range(self.nh)]
-        print grad_wo
-        
-        # gradient relative to each wi
-        grad_wi = [[self.dfunct(arg_o) *
-                     self.wo[j][0]*self.dfunct(arg_h[j])*inputs[i]
-                     for j in range(self.nh)]
-                    for i in range(self.ni)]
-        
-        return grad_wi, grad_wo
+            self.wo[j][0] += alpha*self.trace_wo[j]
+
+    def trace_bp(self, target, trace_decay=0.1, gamma=0.1, eps=0.5):
+
+        output_deltas = [(target-ao) * self.dfunct(ao)
+                         for k, ao in enumerate(self.ao)]
+
+        # Hidden delta
+        hidden_deltas = []
+        for j in xrange(self.nh):
+            hidden_deltas.append(
+                            self.dfunct(self.ah[j]) * sum(
+                            od*w for od, w in zip(output_deltas, self.wo[j])))
+
+        step = gamma*trace_decay
+        # Weights between hidden and output
+        for j in range(self.nh):
+            self.trace_wo[j] = step*self.trace_wo[j] + \
+                                    eps * output_deltas[0] * self.ah[j]
+
+        # Weights between input and hidden
+        for i in xrange(self.ni):
+            for j in xrange(self.nh):
+                self.trace_wi[i][j] = step*self.trace_wi[i][j]  + \
+                                         eps * hidden_deltas[j] * self.ai[i]
+
 
 
 __extraopts__ = (FoxgameOption('hiddens', type='int'),

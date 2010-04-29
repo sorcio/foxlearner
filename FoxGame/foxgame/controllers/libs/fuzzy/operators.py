@@ -1,10 +1,8 @@
 from __future__ import division
 from functools import partial
-
-import numpy
 from itertools import product
 
-# from fuzzy import PRECISION
+PRECISION = 0.5
 
 def operator(op):
     """
@@ -15,7 +13,6 @@ def operator(op):
         return partial(op, *parents)
 
     return operate
-
 
 def arange(start, stop, step):
     while start < stop:
@@ -59,6 +56,6 @@ def fuzzy_mor(fst, snd, self, x, y):
 @operator
 def fuzzy_inference(fst, xs, self, y):
     counter, end = xs
-    dims = [arange(a, b, 0.5) for a, b in zip(counter, end)]
+    dims = [arange(a, b, PRECISION) for a, b in zip(counter, end)]
     return max(fst(x, y) for (x, ) in product(*dims))
 
