@@ -197,7 +197,7 @@ class TDLambda(NeuralNetwork):
         super(TDLambda, self).__init__(ni, nh, 1, False, funct, wi, wo)
         
         # Eligibility trace (e vector)
-        self.trace_wi = [[0]*self.nh]*self.ni
+        self.trace_wi = [[0]*self.nh for i in range(self.ni)]
         self.trace_wo = [0]*self.nh
         
     def update(self, inputs0, inputs1, reward,
