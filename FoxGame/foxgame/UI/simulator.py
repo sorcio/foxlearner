@@ -19,7 +19,7 @@ def average(samples):
     """
     Computes the arithmetic mean of a list of numbers.
     """
-    return sum(samples) / len(samples)
+    return sum(samples) / len(samples) if samples else 0
 
 def deviation(samples):
     """
@@ -90,12 +90,6 @@ class BenchmarkJob:
         cpmaverage = 60*sum(uinst.store['carrots']) / sum(uinst.store['time'])
         print '\tcpm: %d' % cpmaverage
 
-        #  store statistics on the logger
-        log.debug('benchmarking-statistics: average -'
-                  '%d carrots; '
-                  '%d secs; '
-                  '%d cpm' % (caverage, taverage, cpmaverage))
-
         # DEVIATION
         print 'Deviation:'
 
@@ -107,7 +101,11 @@ class BenchmarkJob:
         tdeviat = deviation(uinst.store['time'])
         print '\ttime: %d"' % tdeviat
 
-        # store statistics on the logger
+        # LOG
+        log.debug('benchmarking-statistics: average - '
+                 '%d carrots; '
+                 '%d secs; '
+                 '%d cpm' % (caverage, taverage, cpmaverage))
         log.debug('benchmarking-statistics: deviation - '
                   '%d carrots; '
                   '%d secs' % (cdeviat, tdeviat))
