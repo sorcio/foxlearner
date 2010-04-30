@@ -102,7 +102,6 @@ class Widget(object):
 
 
 class Screen(Widget):
-
     def __init__(self, screen_size, caption):
         rect = (0, 0, screen_size[0], screen_size[1])
         super(Screen, self).__init__(rect)
@@ -169,6 +168,22 @@ class Text(Widget):
         self.parent._surf.blit(self._rendering, self.rect)
 
 
+class SpritePawn(pygame.sprite.Sprite):
+    def __init__(self, parent, pawn, imagefile):
+        super(SpritePawn, self).__init__()
+
+        self._parent = parent
+        self.image = pygame.image.load(osjoin('images', imagefile)).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.pawn = pawn
+
+    def update(self):
+        # self.rect.x = self.pawn.pos.x
+        # self.rect.y = self.pawn.pos.y
+
+        self._parent.blit(self.image, (self.pawn.pos.x, self.pawn.pos.y))
+
+
 class GameField(Widget):
     def __init__(self, rect, parent, game):
         # customize subsurface creation
@@ -179,9 +194,15 @@ class GameField(Widget):
 
         self.rescale_arena()
 
+        # load background image
         background = pygame.image.load(osjoin('images', 'field.png')).convert()
         self._background = pygame.transform.scale(background,
                                                   self._surf.get_size())
+
+        self.mpawns = pygame.sprite.Group()
+        self.mpawns.add([SpritePawn(self._surf, self.game.hare, 'hare.png')] +
+                        [SpritePawn(self._surf, fox, 'fox.png')
+                         for fox in self.game.foxes])
 
     def paint(self):
         """
@@ -200,10 +221,10 @@ class GameField(Widget):
         #self._draw_tracks()
         self._draw_object(self.game.carrot)
 
-        self._draw_object(self.game.hare)
-
-        for fox in self.game.foxes:
-            self._draw_object(fox)
+        #self._draw_object(self.game.hare)
+        self.mpawns.update()
+        #for fox in self.game.foxes:
+        #    self._draw_object(fox)
 
         self.bz.draw_all_over()
 
