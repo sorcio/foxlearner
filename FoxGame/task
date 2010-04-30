@@ -1,0 +1,113 @@
+#!/usr/bin/python -O
+# -*- coding: utf-8 -*-
+"""
+   task: execute tasks for controllers.
+"""
+#
+# Copyright 2010 <Michele Orrù>
+#
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; version 2 dated June, 1991.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program;  if not, write to the Free Software
+#   Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.
+
+
+
+__author__ = 'Michele Orrù'
+__mail__ = 'maker.py@gmail.com'
+__date__ = '01-04-2010'
+
+from optparse import OptionParser, make_option
+import logging
+
+from foxgame.factories import load_task
+
+argvs = [
+         # brains
+         make_option('--fox-brain', dest='fox_brain',
+                     default='', action='store',
+                     metavar='BRAIN', help='ai algorithm for the fox'),
+
+         make_option('--hare-brain', dest='hare_brain',
+                     default='', action='store',
+                     metavar='BRAIN', help='ai algorithm for the hare'),
+
+         # postfilters
+         make_option('--pfilter', dest='pfilter',
+                     default='', action='store',
+                     metavar='POSTFILTER', help='postfilter')
+      ]
+
+# creating parser
+parser = OptionParser(usage='%prog [brain|postfilter] [extraopts] task_name',
+                      option_list=argvs)
+
+
+# log file
+parser.add_option('--flog', dest='flog_level',
+                  type='int', default=5,
+                  metavar='NUM', help='verbosity level for the log file')
+# log stderr
+parser.add_option('-v', '--verbose', dest='slog_level',
+                  type='int', default=0,
+                  metavar='NUM', help='verbosity level [1, 5]')
+
+# parsing options
+
+(options, args) = parser.parse_args()
+
+# logger
+
+#  file logger
+logging.basicConfig(level=(5 - options.flog_level)*10,
+                    format='%(asctime)s %(name)-30s %(levelname)-8s %(message)s',
+                    datefmt='%m-%d %H:%M',
+                    filename='tasks.log',
+                    filemode='w')
+
+#  stderr logger
+console = logging.StreamHandler()
+console.setLevel((5 - options.slog_level)*10)
+# set a format which is simpler for console use
+formatter = logging.Formatter('%(name)-30s: %(levelname)-8s %(message)s')
+# tell the handler to use this format
+console.setFormatter(formatter)
+# add the handler to the root logger
+logging.getLogger().addHandler(console)
+
+
+# setting up factories
+
+try:
+    stask, = filter(lambda x : ':' not in x, args)
+    args.remove(stask)
+    extraopts = dict(map(lambda x : x.split(':'), args))
+    opt_task, = [x for x in argvs if getattr(options, x.dest)]
+    value = getattr(options, opt_task.dest)
+    if opt_task.metavar == 'POSTFITLER':
+        from foxgame.factories import load_postfilters
+        taskcls = load_pfilter([value, extraopts])
+    elif opt_task.metavar == 'BRAIN':
+        from foxgame.factories import load_brain
+        taskcls = load_brain(value,
+                             'FoxBrain' if 'fox' in opt_task.dest
+                                        else 'HareBrain',
+                             extraopts)
+    task = load_task(stask, taskcls)
+
+except ValueError:
+    parser.error('malformed options')
+except AttributeError, e:
+    parser.error('error loading modules: %s' % e)
+
+# executing task
+task()
