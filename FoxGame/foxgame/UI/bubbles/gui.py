@@ -244,7 +244,7 @@ class GUI(StateMachine):
                                   color='red')
                     brainz.vector(gameobj, lambda x=gameobj:x.acc/10,
                                   color='blue')
-                    brainz.circle(gameobj, gameobj, color='black', width=1)
+                    brainz.circle(gameobj, gameobj, color='black', width=1, under=True)
 
 
     #######################
@@ -412,7 +412,7 @@ def main(gfact):
     App's main function.
     """
     from foxgame import __path__
-    path = __path__[0].split('foxgame')[0]
+    path = __file__.split('foxgame')[0]
     logo = join('images','foxgame.png')
 
     pygame.init()

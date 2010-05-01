@@ -176,7 +176,7 @@ class SpritePawn(pygame.sprite.Sprite):
 
         # pygame attributes
         self.scale = scale
-        self.image = pygame.image.load(osjoin('images', imagefile)).convert_alpha()
+        self.image = pygame.image.load(imagefile).convert_alpha()
         rect = self.image.get_rect()
         self.shift = [y-x for x, y in zip(rect, rect.center)]
 
@@ -205,16 +205,17 @@ class GameField(Widget):
         self.bz = BZManager(self)
 
         self.rescale_arena()
+        path = __file__.split('foxgame')[0] + osjoin('images', '')
 
         # load background image
-        background = pygame.image.load(osjoin('images', 'field.png')).convert()
+        background = pygame.image.load(path+'field.png').convert()
         self._background = pygame.transform.scale(background,
                                                   self._surf.get_size())
 
         self.mpawns = pygame.sprite.Group()
-        self.mpawns.add([SpritePawn(self.scale, fox, 'fox.png')
+        self.mpawns.add([SpritePawn(self.scale, fox, path+'fox.png')
                          for fox in self.game.foxes] +
-                        [SpritePawn(self.scale, self.game.hare, 'hare.png')])
+                        [SpritePawn(self.scale, self.game.hare, path+'hare.png')])
 
     def paint(self):
         """
