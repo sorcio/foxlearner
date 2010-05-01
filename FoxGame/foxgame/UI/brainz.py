@@ -77,9 +77,9 @@ def arg_R(radius):
     if hasattr(radius, 'radius'):
         # Object with radius
         return lambda : arg_R(radius.radius)()
-    if hasattr(vec, '__iter__'):
+    if hasattr(radius, '__iter__'):
         # Iterable with two elements
-        p_x, p_y = vec
+        p_x, p_y = float, radius
         radius = hypot(p_x, p_y)
         return lambda : radius
     if callable(radius):

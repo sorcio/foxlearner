@@ -5,20 +5,20 @@ bubbles.py: simple funny interface with pygame using bubbles.
 
 from __future__ import division
 import pygame
+from os.path import join
+from traceback import format_exc
 
 import logging
 log = logging.getLogger(__name__)
 
 from foxgame.structures import Direction, Vector
+from foxgame.gamecore import MovingPawn
 from foxgame.controller import Brain
 from foxgame.machine import StateMachine
 
 from draw import draw_circle
 from bzdraw import BZManager, BZPainter
 from graphics import Font, Screen, GameField, Text, Rectangle
-
-from os.path import join
-from traceback import format_exc
 
 
 class UserBrain(Brain):
@@ -239,10 +239,12 @@ class GUI(StateMachine):
         else:
             brainz = self.arena.bz.get_context('bzdebug')
             for gameobj in self.game.objects:
-                if hasattr(gameobj, 'speed'):
-                    brainz.vector(gameobj, lambda x=gameobj:x.speed, color='red')
-                if hasattr(gameobj, 'acc'):
-                    brainz.vector(gameobj, lambda x=gameobj:x.acc/10, color='blue')
+                if isinstance(gameobj, MovingPawn):
+                    brainz.vector(gameobj, lambda x=gameobj:x.speed,
+                                  color='red')
+                    brainz.vector(gameobj, lambda x=gameobj:x.acc/10,
+                                  color='blue')
+                    brainz.circle(gameobj, gameobj, color='black', width=1)
 
 
     #######################
