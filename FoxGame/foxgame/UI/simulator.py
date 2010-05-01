@@ -6,6 +6,7 @@ simulator.py: a masochistic GUI. Used mainly for tests/controller learning
 from __future__ import division
 from collections import defaultdict
 from math import sqrt
+from traceback import format_exc
 
 from foxgame.structures import Direction
 from foxgame.options import FoxgameOption
@@ -75,6 +76,10 @@ class BenchmarkJob:
         Print the average / deviation of previously
         stored values.
         """
+        if not uinst.store.values():
+            # assume the game is ended before starting
+            return
+
         # AVERAGE
         print 'Average:'
 
@@ -199,6 +204,10 @@ def main(gfact):
     except KeyboardInterrupt:
         log.info('game stopped by the user')
         print 'game interrupted.'
+    except Exception, e:
+        log.critical(format_exc(e))
+        log.critical('Critical exception caught, will shut down!')
+        raise
     finally:
         ui.quitall()
 
