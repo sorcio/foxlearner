@@ -1,4 +1,5 @@
 from __future__ import division
+
 from os.path import join as osjoin
 import pygame
 # very thin wrapper around pygame Font
@@ -7,6 +8,7 @@ from pygame.font import Font, SysFont
 from colors import colors
 from draw import draw_circle
 from bzdraw import BZManager
+from foxgame.structures import Direction
 
 import logging
 log = logging.getLogger(__name__)
@@ -169,19 +171,31 @@ class Text(Widget):
 
 
 class SpritePawn(pygame.sprite.Sprite):
-    def __init__(self, parent, pawn, imagefile):
+    def __init__(self, scale, pawn, imagefile):
         super(SpritePawn, self).__init__()
 
-        self._parent = parent
+        # pygame attributes
+        self.scale = scale
         self.image = pygame.image.load(osjoin('images', imagefile)).convert_alpha()
-        self.rect = self.image.get_rect()
+        rect = self.image.get_rect()
+
+        # foxgame attributes
         self.pawn = pawn
 
-    def update(self):
-        # self.rect.x = self.pawn.pos.x
-        # self.rect.y = self.pawn.pos.y
+        self.rotated = -1
 
-        self._parent.blit(self.image, (self.pawn.pos.x, self.pawn.pos.y))
+    @property
+    def rect(self):
+        return [x*self.scale - 26
+                for x in self.pawn.pos]
+
+    def update(self):
+        if Direction.from_vector(self.pawn.speed).hor == -self.rotated:
+            self.image = pygame.transform.rotate(self.image, 180)
+            self.rotated = -self.rotated
+
+
+
 
 
 class GameField(Widget):
@@ -200,8 +214,8 @@ class GameField(Widget):
                                                   self._surf.get_size())
 
         self.mpawns = pygame.sprite.Group()
-        self.mpawns.add([SpritePawn(self._surf, self.game.hare, 'hare.png')] +
-                        [SpritePawn(self._surf, fox, 'fox.png')
+        self.mpawns.add([SpritePawn(self.scale, self.game.hare, 'hare.png')] +
+                        [SpritePawn(self.scale, fox, 'fox.png')
                          for fox in self.game.foxes])
 
     def paint(self):
@@ -221,10 +235,8 @@ class GameField(Widget):
         #self._draw_tracks()
         self._draw_object(self.game.carrot)
 
-        #self._draw_object(self.game.hare)
         self.mpawns.update()
-        #for fox in self.game.foxes:
-        #    self._draw_object(fox)
+        self.mpawns.draw(self._surf)
 
         self.bz.draw_all_over()
 
