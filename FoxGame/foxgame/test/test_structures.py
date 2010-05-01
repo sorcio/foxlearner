@@ -1,10 +1,11 @@
 from __future__ import division
 from unittest import TestCase
 from random import randrange
-
-from foxgame.structures import Vector, Direction
 from operator import sub
 from math import hypot
+
+from foxgame.structures import Vector, Direction
+
 
 class TestVector(TestCase):
     """
@@ -12,8 +13,6 @@ class TestVector(TestCase):
     """
 
     def setUp(self):
-        """
-        """
         self.fcoords = randrange(100), randrange(50, 100)
         self.scoords = randrange(100), randrange(50)
         self.p1, self.p2 = Vector(*self.fcoords), Vector(*self.scoords)
@@ -42,16 +41,16 @@ class TestVector(TestCase):
         n = randrange(1, 200)
 
         # testing __add__
-        self.assertEqual(self.p1 + self.p2,
+        self.assertEqual(self.p1+self.p2,
                          map(sum, zipped))
         # testing __sub__
-        self.assertEqual(self.p1 - self.p2,
+        self.assertEqual(self.p1-self.p2,
                          map(lambda x: sub(*x), zipped))
         # testing __mul__
-        self.assertEqual(n * self.p1,
+        self.assertEqual(n*self.p1,
                          map(lambda x: x*n, self.p1))
         # testing __div__
-        self.assertEqual(self.p2 / n,
+        self.assertEqual(self.p2/n,
                          map(lambda x: x/n, self.p2))
         #testing __neg__
         self.assertEqual(-self.p1,
@@ -132,7 +131,6 @@ class TestDirection(TestCase):
                          Direction.UPRIGHT)
 
         self.assertRaises(KeyError, Direction.from_string, (2, 1))
-
 
     def test_setattr(self):
         """

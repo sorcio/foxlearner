@@ -1,8 +1,7 @@
 """
-controller.py: basic clases for managing inputs (CTL).
+controller.py: basic classes for managing inputs (CTL).
 """
 from foxgame.structures import Direction
-# from foxgame.gamecore import FoxGameError
 
 
 class Controller(object):
@@ -15,8 +14,6 @@ class Controller(object):
         """
         Set up basic values.
         """
-        # TODO: add self.tracks to keep a history
-        # of controller's previous position
         self.pawn = pawn
 
         self.brain = brain
@@ -51,8 +48,6 @@ class Controller(object):
 
         # removing old values
         self.pawn = None
-
-
 
 
 class Brain(object):
@@ -91,7 +86,6 @@ class Brain(object):
         End the previously created game.
         """
         self.tear_down()
-
 
     def update(self):
         """

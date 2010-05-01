@@ -23,12 +23,12 @@ class HareBrain(Brain):
         """
         # fuzzy proximity variable
         near = fuzzy.Set(None, 'near', 'oleft', 1, 3)
-        middle = fuzzy.Set(None, 'middle', 'triangle', 2.5, 3, 3.5)
-        far = fuzzy.Set(None, 'far', 'oright', 3.4, 4)
+        middle = fuzzy.Set(None, 'middle', 'triangle', 2, 3, 3.7)
+        far = fuzzy.Set(None, 'far', 'oright', 3.6, 4)
         self.proximityvar = fuzzy.Variable('proximity', [(0, ), (5, )],
                                            sets_list=[near, middle, far])
         # fuzzy speed variable
-        low = fuzzy.Set(None, 'low', 'oleft', 2, 1)
+        low = fuzzy.Set(None, 'low', 'oleft', 1, 2)
         middle = fuzzy.Set(None, 'middle', 'triangle', 2, 3, 4)
         high = fuzzy.Set(None, 'high', 'oright', 3, 4)
         self.speedvar = fuzzy.Variable('speed', [(0, ), (5, )],

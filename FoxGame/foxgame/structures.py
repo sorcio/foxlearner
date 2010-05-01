@@ -162,7 +162,8 @@ class Direction(object):
             self.__dict__['hor'] = h
             self.__dict__['vert'] = v
         else:
-            raise ValueError('Direction\'s attributes must be either -1, 0, or 1.')
+            raise ValueError('Direction\'s attributes must be either'
+                             '-1, 0, or 1.')
 
     def __setattr__(self, name, value):
         """
@@ -207,7 +208,7 @@ class Direction(object):
 
     def __iter__(self):
         """
-        May useful for conversion in tuple.
+        Yield hor and vert: useful for conversion in tuple.
         """
         yield self.hor
         yield self.vert
@@ -230,7 +231,7 @@ class Direction(object):
 
 def sign(num):
     """
-    sign function
+    Sign function
     """
     if num > 0:
         return +1

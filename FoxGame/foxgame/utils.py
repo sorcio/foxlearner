@@ -1,4 +1,6 @@
 from collections import deque
+from functools import partial
+
 
 class ShortDequeImpl(deque):
     """
@@ -67,20 +69,6 @@ class ShortDequeImpl(deque):
             self.appendleft(x)
 
 
-try:
-    # Are we on a platform that supports deque with maxlen?
-    # (e.g. CPython >= 2.6)
-    deque(maxlen=1)
-    ShortDeque = deque
-except TypeError:
-    # If not then assume we have CPython 2.5 compatibility
-    # and use our compatibility class.
-    ShortDeque = ShortDequeImpl
-
-
-
-from functools import partial
-
 class ProxyTestSD(object):
     """
     Proxy to compare ShortDeque and deque functionality.
@@ -101,3 +89,13 @@ class ProxyTestSD(object):
             return r1
         return partial(proxy, name)
 
+
+try:
+    # Are we on a platform that supports deque with maxlen?
+    # (e.g. CPython >= 2.6)
+    deque(maxlen=1)
+    ShortDeque = deque
+except TypeError:
+    # If not then assume we have CPython 2.5 compatibility
+    # and use our compatibility class.
+    ShortDeque = ShortDequeImpl

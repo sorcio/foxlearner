@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from __future__ import division
 from unittest import TestCase
 
@@ -8,6 +7,9 @@ from foxgame.structures import Vector, Direction
 
 
 class TestFoxgameOption(TestCase):
+    """
+    Test FoxgameOption class.
+    """
 
     def test_bool(self):
         opt = FoxgameOption('option', 'bool', description='foobar')

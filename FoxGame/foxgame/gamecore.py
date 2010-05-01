@@ -84,7 +84,6 @@ class MovingPawn(GameObject):
         self.acc = Vector(0, 0)
         self.speed = Vector(0, 0)
 
-
     def _compute_acc(self, dpoint, speed):
         """
         Compute the acceleration on a single component accordingly
@@ -107,7 +106,6 @@ class MovingPawn(GameObject):
             if dpoint * speed < 0:        # ...in the opposite direction
                 return dpoint * self.brake
 
-
     def _update_acc(self, direction):
         """
         Update acceleration according to the Direction dir.
@@ -120,7 +118,6 @@ class MovingPawn(GameObject):
             self.acc = push * norm_factor
         else:
             self.acc = Vector(0, 0)
-
 
     def _update_speed(self, time_delta):
         """
@@ -148,7 +145,6 @@ class MovingPawn(GameObject):
 
         else:
             self.speed = Vector(0, 0)
-
 
     def _update_pos(self, time_delta):
         """
@@ -356,7 +352,7 @@ class Game(object):
         Cleans up objects owned by the game.
         """
         if self.ended:
-            log.debug("Game.end() called on already ended game!")
+            log.debug('Game.end() called on already ended game!')
         else:
             self.ended = True
             for pawn in self.pawns:

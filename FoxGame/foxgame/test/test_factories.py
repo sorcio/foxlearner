@@ -1,8 +1,10 @@
 from unittest import TestCase
+
 from foxgame.factories import ControllerFactory, GameFactory
 from foxgame.gamecore import Game, Fox
 from foxgame.controller import Controller
 from foxgame.controllers.traditional import FoxBrain
+
 
 class TestFactory(TestCase):
     """

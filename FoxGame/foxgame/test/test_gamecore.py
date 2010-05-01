@@ -1,9 +1,11 @@
 from __future__ import division
 from unittest import TestCase
+
 from foxgame.factories import ControllerFactory
 from foxgame.structures import Vector, Direction
 from foxgame.gamecore import (GameObject, MovingPawn, Game,
                               Carrot, Hare, Fox)
+from foxgame.controllers.traditional import FoxBrain, HareBrain
 
 
 class TestGameObject(TestCase):
@@ -28,10 +30,10 @@ class TestGameObject(TestCase):
                          gcarrot2.distance(gcarrot1))
         self.assertTrue(gcarrot1.distance(gcarrot2) > 0)
 
-        gcarrot2 = Carrot(self.game, Vector(*(x+Carrot.radius-1 for x in pos1)))
+        gcarrot2 = Carrot(self.game, Vector(*(x+Carrot.radius-1
+                                              for x in pos1)))
 
-        self.assertEqual(gcarrot1.distance(gcarrot2),
-                         0)
+        self.assertEqual(gcarrot1.distance(gcarrot2), 0)
 
 
 class TestMovingPawn(TestCase):
@@ -101,7 +103,6 @@ class TestMovingPawn(TestCase):
         self.assertEqual(self.mpawn.speed.x, 0)
         self.assertNotEqual(self.mpawn.speed.y, 0)
 
-
     def test_update_pos(self):
         """
         Test MovingPawn._update_pos module.
@@ -116,7 +117,7 @@ class TestMovingPawn(TestCase):
         self.assertEqual(self.mpawn.pos, startpos)
 
 
-from foxgame.controllers.traditional import FoxBrain, HareBrain
+
 class TestGame(TestCase):
     """
     Test the Basic Game Interface:

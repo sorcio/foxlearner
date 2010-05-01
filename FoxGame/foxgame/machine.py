@@ -30,7 +30,6 @@ class StateMachine(object):
 
         self.states[name] = methods
 
-
     def goto_state(self, name):
         new_state = self.states[name]
 

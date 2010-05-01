@@ -5,6 +5,7 @@ from foxgame.gamecore import FoxGameError
 from foxgame.structures import Direction, Vector
 from functools import wraps
 
+
 class FoxgameOption(object):
     """
     A FoxgameOption provides some attributes useful for

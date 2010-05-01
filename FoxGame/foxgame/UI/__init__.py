@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-./UI: GUIs for foxg: GUIs for foxgame.
+./UI: GUIs for foxgame.
 """
 
 __author__ = 'Michele Orrù'
