@@ -212,9 +212,9 @@ class GameField(Widget):
                                                   self._surf.get_size())
 
         self.mpawns = pygame.sprite.Group()
-        self.mpawns.add([SpritePawn(self.scale, self.game.hare, 'hare.png')] +
-                        [SpritePawn(self.scale, fox, 'fox.png')
-                         for fox in self.game.foxes])
+        self.mpawns.add([SpritePawn(self.scale, fox, 'fox.png')
+                         for fox in self.game.foxes] +
+                        [SpritePawn(self.scale, self.game.hare, 'hare.png')])
 
     def paint(self):
         """
