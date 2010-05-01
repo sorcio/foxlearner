@@ -178,6 +178,7 @@ class SpritePawn(pygame.sprite.Sprite):
         self.scale = scale
         self.image = pygame.image.load(osjoin('images', imagefile)).convert_alpha()
         rect = self.image.get_rect()
+        self.shift = [y-x for x, y in zip(rect, rect.center)]
 
         # foxgame attributes
         self.pawn = pawn
@@ -186,16 +187,13 @@ class SpritePawn(pygame.sprite.Sprite):
 
     @property
     def rect(self):
-        return [x*self.scale - 26
-                for x in self.pawn.pos]
+        return [x*self.scale - shift
+                for x, shift in zip(self.pawn.pos, self.shift)]
 
     def update(self):
         if Direction.from_vector(self.pawn.speed).hor == -self.rotated:
-            self.image = pygame.transform.rotate(self.image, 180)
+            self.image = pygame.transform.flip(self.image, 1, 0)
             self.rotated = -self.rotated
-
-
-
 
 
 class GameField(Widget):
