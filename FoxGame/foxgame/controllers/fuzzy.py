@@ -23,12 +23,12 @@ class HareBrain(Brain):
         """
         # fuzzy proximity variable
         near = fuzzy.Set(None, 'near', 'oleft', 1, 3)
-        middle = fuzzy.Set(None, 'middle', 'triangle', 2, 2.5, 3)
-        far = fuzzy.Set(None, 'far', 'oright', 2, 4)
+        middle = fuzzy.Set(None, 'middle', 'triangle', 2.5, 3, 3.5)
+        far = fuzzy.Set(None, 'far', 'oright', 3.4, 4)
         self.proximityvar = fuzzy.Variable('proximity', [(0, ), (5, )],
                                            sets_list=[near, middle, far])
         # fuzzy speed variable
-        low = fuzzy.Set(None, 'low', 'oleft', 3, 2)
+        low = fuzzy.Set(None, 'low', 'oleft', 2, 1)
         middle = fuzzy.Set(None, 'middle', 'triangle', 2, 3, 4)
         high = fuzzy.Set(None, 'high', 'oright', 3, 4)
         self.speedvar = fuzzy.Variable('speed', [(0, ), (5, )],
@@ -63,6 +63,5 @@ class HareBrain(Brain):
         target = self.nearest_fox.pos + self.nearest_fox.speed/2
         fdir = -self.navigate(target)
 
-        dir = Direction([(x*risk + y*risk)/2 for x, y in zip(cdir, fdir)])
-        print list(dir)
+        dir = Direction([(x + round(y*risk, 0)) if x != y else x for x, y in zip(cdir, fdir)])
         return dir
