@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+   nntune: find the best rapport hidden/epsilon in the neuralnetwork library
+"""
+#
+# Copyright 2010 <Michele Orrù>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
+
+from __future__ import division
+from sys import argv
+from itertools import dropwhile
+from os import chdir, mkdir
+from os.path import exists
+from os.path import join as osjoin
+from shutil import move, rmtree
+from subprocess import call
+
+
+__author__ = 'Michele Orrù'
+__mail__ = 'maker.py@gmail.com'
+__appname__ = 'nntune'
+__version__ = 0.1
+__date__ = '02-05-2010'
+__license__ = 'GPLv2'
+
+BDIR = 'benchmarking-nn'
+CMD = 'python -O task --hare-b=nn hiddens:%d epsilon:%f epochs:1 train'
+
+# change the current working directory
+# chdir(__file__.split('scripts')[0])
+
+if exists(BDIR):
+    print '[warning] removing old benchmarking directory!'
+    rmtree(BDIR)
+mkdir(BDIR)
+
+for hiddens in xrange(20, 50):
+    for eps in map(lambda x: x/100, xrange(10, 80, 5)):
+        print 'starting training with %d hiddens - %.2f epsilon' % (
+              hiddens, eps)
+
+        # create the directory where all useful informations will be placed
+        dir = osjoin(BDIR, 'e%d-h%d' % (hiddens, eps*100), '')
+        mkdir(dir)
+
+        # run commands
+        call((CMD%(hiddens, eps)).split())
+        print '\tTraining finished!'
+        call('python -O main --hare-b=nn --ui=simulator'.split())
+        print '\tBenchmarking done!'
+
+        # move log files
+        move('tasks.log', dir)
+        move('FoxGame.log', dir)
+        move('foxgame/controllers/libs/synapsis_hare.db', dir)
+        print '\tFiles copied!'
+
