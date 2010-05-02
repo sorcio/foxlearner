@@ -53,6 +53,7 @@ def openright(self, x):
 def gaussian(self, x):
     raise NotImplementedError
 
+
 functions = {
              'singleton': singleton,
              'triangle' : triangular,
