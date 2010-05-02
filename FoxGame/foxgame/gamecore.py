@@ -301,8 +301,8 @@ class Game(object):
                                  for other in self.foxes[:i])
                             )
 
-        log.debug('Random location of foxes, %d retries',
-                   max_retries - retries_left)
+        # log.debug('Random location of foxes, %d retries',
+        #           max_retries - retries_left)
 
     @property
     def objects(self):
