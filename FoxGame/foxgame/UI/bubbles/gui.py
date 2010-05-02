@@ -318,10 +318,11 @@ class GUI(StateMachine):
 
         self.arena.bz.new_context()
 
+        if pygame.K_F2 in self.hit_keys:
+            self.clean_game()
+            self.goto_state('welcome')
         if pygame.K_SPACE in self.hit_keys:
             self.goto_state('paused')
-            return
-
         if pygame.K_g in self.hit_keys:
             self.toggle_bzdebug()
 
@@ -394,9 +395,6 @@ class GUI(StateMachine):
 
         if pygame.K_SPACE in self.hit_keys:
             self.goto_state('running')
-        if pygame.K_F2 in self.hit_keys:
-            self.clean_game()
-            self.goto_state('welcome')
 
     def paused_enter(self):
         self.frame_rate = 5
