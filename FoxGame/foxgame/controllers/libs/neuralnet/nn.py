@@ -33,11 +33,12 @@ def examples_list(ex_list):
 
 class NeuralNetwork(object):
     """
-    A NeuralNetwork is a mathematical model,
-    who aims to reproduce human nervous system.
+    A NeuralNetwork is a mathematical model who aims to reproduce
+    human nervous system.
     """
 
-    def __init__(self, ni, nh, no=2, bias=True, funct='sigmoid', wi=None, wo=None):
+    def __init__(self, ni, nh, no=2, bias=True, funct='sigmoid',
+                 wi=None, wo=None):
         self.bias = int(bias)
 
         randomseed(0)
@@ -52,10 +53,10 @@ class NeuralNetwork(object):
             self.wo = wo
         else:
             # create weights and set them into random values
-            self.wi = [[self._rand(-.5, .5) for x in xrange(self.nh)]
-                                            for x in xrange(self.ni)]
-            self.wo = [[self._rand(-.5, .5) for x in xrange(self.no)]
-                                            for x in xrange(self.nh)]
+            self.wi = [[self._rand(-5, 5) for x in xrange(self.nh)]
+                                          for x in xrange(self.ni)]
+            self.wo = [[self._rand(-5, 5) for x in xrange(self.no)]
+                                          for x in xrange(self.nh)]
 
         self.funct_name = funct
         self.tfunct, self.dfunct = tfuncts.functions[funct]
@@ -78,7 +79,7 @@ class NeuralNetwork(object):
         Calculates a random number between a and b
         using the specified seed.
         """
-        return (b-a) * random() + a
+        return (b-a)*random() + a
 
     def put(self, inputs):
 
@@ -91,12 +92,12 @@ class NeuralNetwork(object):
         # hidden activations
         for j in xrange(self.nh):
             self.ah[j] = self.tfunct(sum(
-                            [ai * wi[j] for ai, wi in zip(self.ai, self.wi)]))
+                            [ai*wi[j] for ai, wi in zip(self.ai, self.wi)]))
 
         # output activations
         for k in xrange(self.no):
             self.ao[k] = self.tfunct(sum(
-                            [ah * wo[k] for ah, wo in zip(self.ah, self.wo)]))
+                            [ah*wo[k] for ah, wo in zip(self.ah, self.wo)]))
 
         return tuple(self.ao)
 
@@ -127,7 +128,7 @@ class NeuralNetwork(object):
                 self.wi[i][j] += eps * hidden_deltas[j] * self.ai[i]
 
         # Medium quadratic error
-        return sum((t - ao)**2 / 2 for t, ao in zip(targets, self.ao))
+        return sum((t-ao)**2 / 2 for t, ao in zip(targets, self.ao))
 
     def train(self, gen_funct, ex_element, iterations=1000, eps=0.3, des_err=None):
         # eps: learning rate
@@ -142,6 +143,7 @@ class NeuralNetwork(object):
         while ((des_err and error >= des_err) or
                (not des_err and epoch < iterations)):
             epoch += 1
+
             error = 0
             for inputs, targets in gen_funct(ex_element):
                 self.put(inputs)
@@ -159,10 +161,10 @@ class NeuralNetwork(object):
         """
         Save a shelve db with synapses.
          The dictionary saved follow this structure:
-           wi    -> [list   weights in inputs-hiddens]
-           wo    -> [list   weights in hiddens-output]
-           funct -> [string transfer function's name]
-           bias  -> [int    bias node]
+           wi    -> [list  : weights in inputs-hiddens]
+           wo    -> [list  : weights in hiddens-output]
+           funct -> [string: transfer function's name]
+           bias  -> [int   : bias node]
         """
         db = shelve.open(filename, 'n')
 
@@ -174,10 +176,9 @@ class NeuralNetwork(object):
         db.close()
 
 
-def load_network(filename, klass=NeuralNetwork):
+def load_network(filename):
     """
     Load a shelve database with synapses.
-    TODO: improve doc about formatting
     """
     try:
         db = shelve.open(filename, 'r')
@@ -197,10 +198,9 @@ def load_network(filename, klass=NeuralNetwork):
                   'ni=%d, no=%d, nh=%d, bias=%d, funct=%s' % (
                    ni, no, nh, bias, funct))
     except KeyError:
-        log.critical('key missing in network file')
+        log.critical('Network file malformed')
         raise
     finally:
         db.close()
 
-    net = klass(ni, nh, no, bias, funct, wi, wo)
-    return net
+    return NeuralNetwork(ni, nh, no, bias, funct, wi, wo)
