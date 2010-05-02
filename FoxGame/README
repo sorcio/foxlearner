@@ -1,16 +1,16 @@
 INTRODUCTION
 ------------
 
-    This software aims to privide a simple interface in a trivial game in order
-    to test multiple types of Artificial Intelligence implementations.
+    This software aims to provide a simple interface in a trivial game,
+    in order to test multiple types of Artificial Intelligence implementations.
     For more informations see <http://code.google.com/p/foxlearner/>
 
 
 
-DEPENDECIES
+DEPENDENCIES
 -----------
 
-    In order to run this software, you should previously install:
+    In order to run this software, you should have installed:
         - python: 2.5 or higher
         - pygame: 1.8.1 or higher
         - psyco: [optional] to speed up our neuralnetwork library
