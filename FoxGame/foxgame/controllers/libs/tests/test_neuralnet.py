@@ -1,5 +1,6 @@
 from unittest import TestCase
-from foxgame.controllers.libs.neuralnetwork import NeuralNetwork, examples_list
+from foxgame.controllers.libs.neuralnet.nn import NeuralNetwork, examples_list
+
 
 class TestNeuralNetwork(TestCase):
     """
@@ -60,7 +61,6 @@ class TestNeuralNetwork(TestCase):
         for i, o in nand_pat:
             self.assertTrue(n.put(i)[0] - o[0] < self.threshold)
 
-
     def test_des_error(self):
         """
         Test training with desidered error mode.
@@ -82,5 +82,3 @@ class TestNeuralNetwork(TestCase):
 
         # It checks the value using the relative error
         self.assertTrue((abs(r_value-err) / r_value) < self.error_threshold)
-
-

@@ -3,16 +3,15 @@ rl.py: Reinforcement learning implementation
        of Hare brain
 """
 from __future__ import division
+from random import random, randint
+from math import hypot, exp, log as logn
+from os.path import join as osjoin
 
 from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
 from foxgame.options import FoxgameOption, task
 
-from libs.neuralnetwork import NeuralNetwork, load_network
-
-from random import random, randint
-from math import hypot, exp, log as logn
-from os.path import join as osjoin
+from libs.neuralnet.nn import NeuralNetwork, load_network
 
 import logging
 log = logging.getLogger(__name__)
@@ -211,7 +210,7 @@ class TDLambda(NeuralNetwork):
         for i in range(self.ni):
             for j in range(self.nh):
                 self.wi[i][j] += alpha*self.trace_wi[i][j]
-        
+
         # update weights between input and hidden layer
         for j in range(self.nh):
             self.wo[j][0] += alpha*self.trace_wo[j]

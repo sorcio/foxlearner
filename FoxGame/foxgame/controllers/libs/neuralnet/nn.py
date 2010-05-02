@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-neuralnetwork.py: Back-Propagation module for Neural Networks.
+ neuralnet/nn.py: Back-Propagation module for Neural Networks.
 """
 
 from __future__ import division
 
-from math import e, tanh, tan
 from os.path import exists
 import shelve
 import anydbm
+
+import tfuncts
 
 from logging import getLogger
 log = getLogger('[libs-neuralnetwork]')
@@ -25,72 +26,16 @@ random_gen = Random()
 random = random_gen.random
 randomseed = random_gen.seed
 
-
-__authors__ = 'Daniele Iamartino and Michele Orrù'
-__date__ = '03/4/2010'
-__contributors__ = []
-
-
 def examples_list(ex_list):
     for line in ex_list:
         yield line
 
 
-############################
-##   TRANSFER FUNCTIONS   ##
-############################
-
-#HYPERBOLIC TANGENT
-
-def tanh_function(x):
-    """
-    Hyperbolic tangent - transfer function
-    """
-    return tanh(x)
-
-def tanh_derived(y):
-    """
-    Hyperbolic tangent - Transfer function derived
-    """
-    return 1.0 - y**2
-
-
-# SIGMOID
-def sigmoid_function(x):
-    """
-    Sigmoid - Transfer function
-    """
-    return 1.0 / (1.0 + e**(-x))
-
-def sigmoid_derived(y):
-    """
-    Sigmoid - Transfer function derived
-    """
-    return y - y**2
-
-
-# IDENTITY
-
-def identity_function(x):
-    """
-    Identity - Transfer function
-    """
-    return x
-
-def identity_derived(y):
-    """
-    Identity - Transfer function derived
-    """
-    return 1
-
-
 class NeuralNetwork(object):
-
-    tfunctions = {
-            'identity': (identity_function, identity_derived),
-            'sigmoid' : (sigmoid_function, sigmoid_derived),
-            'tanh'    : (tanh_function, tanh_derived)
-    }
+    """
+    A NeuralNetwork is a mathematical model,
+    who aims to reproduce human nervous system.
+    """
 
     def __init__(self, ni, nh, no=2, bias=True, funct='sigmoid', wi=None, wo=None):
         self.bias = int(bias)
@@ -108,12 +53,12 @@ class NeuralNetwork(object):
         else:
             # create weights and set them into random values
             self.wi = [[self._rand(-.5, .5) for x in xrange(self.nh)]
-                                              for x in xrange(self.ni)]
+                                            for x in xrange(self.ni)]
             self.wo = [[self._rand(-.5, .5) for x in xrange(self.no)]
-                                              for x in xrange(self.nh)]
+                                            for x in xrange(self.nh)]
 
         self.funct_name = funct
-        self.tfunct, self.dfunct = self.tfunctions[funct]
+        self.tfunct, self.dfunct = tfuncts.functions[funct]
 
         # activations for nodes
         self.ai = [1.0]*self.ni
@@ -130,10 +75,10 @@ class NeuralNetwork(object):
 
     def _rand(self, a, b):
         """
-        It calculates a random number between a and b
+        Calculates a random number between a and b
         using the specified seed.
         """
-        return (b - a) * random() + a
+        return (b-a) * random() + a
 
     def put(self, inputs):
 
@@ -213,9 +158,14 @@ class NeuralNetwork(object):
     def save(self, filename):
         """
         Save a shelve db with synapses.
-        TODO: improve doc about formatting
+         The dictionary saved follow this structure:
+           wi    -> [list   weights in inputs-hiddens]
+           wo    -> [list   weights in hiddens-output]
+           funct -> [string transfer function's name]
+           bias  -> [int    bias node]
         """
         db = shelve.open(filename, 'n')
+
         db['wi'] = self.wi
         db['wo'] = self.wo
         db['funct'] = self.funct_name
@@ -232,8 +182,8 @@ def load_network(filename, klass=NeuralNetwork):
     try:
         db = shelve.open(filename, 'r')
     except anydbm.error:
-        raise IOError('couldn\'t open file')
-    
+        raise IOError('unable to open file')
+
     try:
         wi = db['wi']
         wo = db['wo']
@@ -244,8 +194,8 @@ def load_network(filename, klass=NeuralNetwork):
         nh = len(wo)
         no = len(wo[0])
         log.debug('Loading network with '
-                  'ni=%d, no=%d, nh=%d, bias=%d, funct=%s',
-                  ni, no, nh, bias, funct)
+                  'ni=%d, no=%d, nh=%d, bias=%d, funct=%s' % (
+                   ni, no, nh, bias, funct))
     except KeyError:
         log.critical('key missing in network file')
         raise

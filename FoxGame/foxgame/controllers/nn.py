@@ -13,7 +13,7 @@ from math import sqrt
 from foxgame.options import FoxgameOption, task
 from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
-from libs.neuralnetwork import NeuralNetwork, load_network
+from libs.neuralnet.nn import NeuralNetwork, load_network
 from foxgame.controllers.output import read_cvs_skip as read_cvs
 
 from logging import getLogger
