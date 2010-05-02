@@ -39,7 +39,7 @@ __date__ = '02-05-2010'
 __license__ = 'GPLv2'
 
 BDIR = 'benchmarking-nn'
-CMD = 'python -O task --hare-b=nn hiddens:%d epsilon:%f epochs:1 train'
+CMD = 'python -O task --hare-b=nn hiddens:%d epsilon:%f epochs:1000 train'
 
 # change the current working directory
 # chdir(__file__.split('scripts')[0])
@@ -49,7 +49,7 @@ if exists(BDIR):
     rmtree(BDIR)
 mkdir(BDIR)
 
-for hiddens in xrange(20, 50):
+for hiddens in xrange(22, 50):
     for eps in map(lambda x: x/100, xrange(10, 80, 5)):
         print 'starting training with %d hiddens - %.2f epsilon' % (
               hiddens, eps)
@@ -61,7 +61,8 @@ for hiddens in xrange(20, 50):
         # run commands
         call((CMD%(hiddens, eps)).split())
         print '\tTraining finished!'
-        call('python -O main --hare-b=nn --ui=simulator'.split())
+        call('python -O main --hare-b=nn --ui=simulator'.split(),
+             stdout=open(dir+statistics))
         print '\tBenchmarking done!'
 
         # move log files
