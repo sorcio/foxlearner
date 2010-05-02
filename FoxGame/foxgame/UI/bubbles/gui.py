@@ -65,12 +65,17 @@ class GUI(StateMachine):
     """
     Provide a GUI to foxgame.Game using pygame.
     """
-    accepted_keys = (pygame.K_DOWN, pygame.K_UP,
+    accepted_keys = (
+                     # arrows input
+                     pygame.K_DOWN, pygame.K_UP,
                      pygame.K_LEFT, pygame.K_RIGHT,
-                     pygame.K_SPACE, pygame.K_ESCAPE,
+                     # wasd input
                      pygame.K_w, pygame.K_a,
                      pygame.K_s, pygame.K_d,
-                     pygame.K_g,
+                     # game commands
+                     pygame.K_SPACE, pygame.K_ESCAPE,
+                     pygame.K_F2,
+                     pygame.K_g
                     )
 
     background_color = 'gray'
@@ -389,6 +394,9 @@ class GUI(StateMachine):
 
         if pygame.K_SPACE in self.hit_keys:
             self.goto_state('running')
+        if pygame.K_F2 in self.hit_keys:
+            self.clean_game()
+            self.goto_state('welcome')
 
     def paused_enter(self):
         self.frame_rate = 5
