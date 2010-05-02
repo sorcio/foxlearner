@@ -29,11 +29,11 @@ class HareBrain(Brain):
 
     size = (600, 400)
 
-    inputs = 10
+    inputs = 8
     hiddens = 25
 
     error = None
-    epochs = 6
+    epochs = 100
     epsilon = 0.35
 
     speed_normalizer = 500
@@ -51,7 +51,7 @@ class HareBrain(Brain):
     def task_train():
         _net_struct = HareBrain.inputs, HareBrain.hiddens
 
-        log.info('Training with structure: '+str(_net_struct))
+        log.info('Training with structure: ' + str(_net_struct))
         if exists(HareBrain._net_data):
             log.debug('Removing old net data.')
             remove(HareBrain._net_data)
@@ -65,8 +65,8 @@ class HareBrain(Brain):
         """
         diagonal = sqrt( HareBrain.size[0]**2 + HareBrain.size[1]**2 )
 
-        data = ((self.game.hare.pos.x-self.nearest_fox.pos.x)/diagonal,
-                (self.game.hare.pos.y-self.nearest_fox.pos.y)/diagonal,
+        data = (#(self.game.hare.pos.x-self.nearest_fox.pos.x)/diagonal,
+                #(self.game.hare.pos.y-self.nearest_fox.pos.y)/diagonal,
                 (self.game.hare.pos.x-self.game.carrot.pos.x)/diagonal,
                 (self.game.hare.pos.y-self.game.carrot.pos.y)/diagonal,
                 self.game.hare.pos.x/HareBrain.size[0],
@@ -87,13 +87,13 @@ class HareBrain(Brain):
         self.network.save(self._net_data)
 
     @staticmethod
-    def examples_generator(filename):
+    def examples_generator(path):
         """
         """
-        file_list = glob(filename)
+        file_list = glob(path)
 
         if file_list == []:
-            raise IOError('Invalid filename')
+            raise IOError('Invalid path')
 
         digonal = sqrt(HareBrain.size[0]**2 + HareBrain.size[1]**2)
 
@@ -101,8 +101,8 @@ class HareBrain(Brain):
 
         for piece in file_list:
             for data in read_cvs(piece):
-                yield [[(data['hare_x']-data['fox0_x'])/digonal,
-                        (data['hare_y']-data['fox0_y'])/digonal,
+                yield [[#(data['hare_x']-data['fox0_x'])/digonal,
+                        #(data['hare_y']-data['fox0_y'])/digonal,
                         (data['hare_x']-data['carrot_x'])/digonal,
                         (data['hare_y']-data['carrot_y'])/digonal,
                         data['hare_x']/HareBrain.size[0],
