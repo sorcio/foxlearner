@@ -87,7 +87,7 @@ class Brain(object):
         """
         self.tear_down()
 
-    def update(self):
+    def update(self, time):
         """
         The method update is called each single time the pawn needs a new
         direction to move to.
