@@ -123,7 +123,7 @@ class HareBrain(Brain):
         n = NeuralNetwork(*net_struct)
         n.train(HareBrain.examples_generator, filename,
                 HareBrain.epochs, HareBrain.epsilon, HareBrain.error)
-        n.save(HareBrain.net_data)
+        n.save(HareBrain._net_data)
 
 
 __extraopts__ = (FoxgameOption('hiddens', type='int'),

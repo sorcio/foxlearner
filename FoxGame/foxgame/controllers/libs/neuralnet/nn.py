@@ -71,7 +71,7 @@ class NeuralNetwork(object):
         return '<NeuralNetwork with inputs=%d, hidden=%d>' % (self.ni, self.nh)
 
     def __str__(self):
-        return ('Input weights: %f\n Hidden weights: %f\n' %
+        return ('Input weights: %s\n Hidden weights: %s\n' %
                 (', '.join(self.wi), ', '.join(self.wh)))
 
     def _rand(self, a, b):
@@ -118,7 +118,7 @@ class NeuralNetwork(object):
                             od*w for od, w in zip(output_deltas, self.wo[j])))
 
         # Weights between hidden and output
-        for j in range(self.nh):
+        for j in xrange(self.nh):
             for k in xrange(self.no):
                 self.wo[j][k] += eps * output_deltas[k] * self.ah[j]
 
