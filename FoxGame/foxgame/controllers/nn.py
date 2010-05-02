@@ -20,33 +20,6 @@ from logging import getLogger
 log = getLogger('[nn]')
 
 
-class FoxBrain(Brain):
-    """
-    A controller which uses a neural network to follow the hare.
-    """
-    # TODO
-
-    def set_up(self):
-        """
-        Load neural network data from a file
-        """
-        pass
-
-    def update(self, time):
-        """
-        The neural network recives in input the following data:
-        Hare position, Fox position, Carrot position and hare speed.
-        """
-
-        raise NotImplementedError
-
-    def tear_down(self):
-        """
-        Saves the neural network weights into a file
-        """
-        pass
-
-
 class HareBrain(Brain):
     """
     A controller which uses a neural network to escape from the fox.
@@ -78,7 +51,7 @@ class HareBrain(Brain):
     def task_train():
         _net_struct = HareBrain.inputs, HareBrain.hiddens
 
-        log.info('Training with structure: '  + str(_net_struct))
+        log.info('Training with structure: '+str(_net_struct))
         if exists(HareBrain._net_data):
             log.debug('Removing old net data.')
             remove(HareBrain._net_data)
@@ -104,7 +77,7 @@ class HareBrain(Brain):
                 self.nearest_fox.speed.y/HareBrain.speed_normalizer)
 
         nnout = self.network.put(data)
-        output = Direction.from_vector((value*2.0)-1.0 for value in nnout)
+        output = Direction.from_vector((value*2)-1 for value in nnout)
         return Direction(output)
 
     def tear_down(self):
@@ -122,7 +95,7 @@ class HareBrain(Brain):
         if file_list == []:
             raise IOError('Invalid filename')
 
-        digonal = sqrt( HareBrain.size[0]**2 + HareBrain.size[1]**2 )
+        digonal = sqrt(HareBrain.size[0]**2 + HareBrain.size[1]**2)
 
         log.debug('Opening %d files' % len(file_list))
 
@@ -138,18 +111,19 @@ class HareBrain(Brain):
                         data['hare_speed_y']/HareBrain.speed_normalizer,
                         data['fox0_speed_x']/HareBrain.speed_normalizer,
                         data['fox0_speed_y']/HareBrain.speed_normalizer],
-                        [(data['dir_h']+1.0)/2.0, (data['dir_v']+1.0)/2.0]
+                        [(data['dir_h']+1)/2, (data['dir_v']+1)/2]
                       ]
 
 
     @staticmethod
-    def train_network(_net_struct, filename):
+    def train_network(net_struct, filename):
         """
+        Train the network using filename as examples.
         """
-        n = NeuralNetwork(*_net_struct)
+        n = NeuralNetwork(*net_struct)
         n.train(HareBrain.examples_generator, filename,
                 HareBrain.epochs, HareBrain.epsilon, HareBrain.error)
-        n.save(HareBrain._net_data)
+        n.save(HareBrain.net_data)
 
 
 __extraopts__ = (FoxgameOption('hiddens', type='int'),
