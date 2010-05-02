@@ -1,6 +1,8 @@
+import shelve
+from collections import deque
+
 from foxgame.structures import Direction
 from foxgame.controller import PostFilter
-from collections import deque
 
 
 class Inverted(PostFilter):
@@ -44,15 +46,13 @@ class Delay(PostFilter):
     def __init__(self, *args):
         super(Delay, self).__init__(*args)
 
-        self.buffer = deque([Direction(Direction.NULL)] * self.delay)
+        self.buffer = deque([Direction(Direction.NULL)]*self.delay)
 
     def update(self, direction, time):
         ret = self.buffer.popleft()
         self.buffer.append(direction)
         return ret
 
-
-import shelve
 
 class SaveData(PostFilter):
     """
@@ -62,8 +62,6 @@ class SaveData(PostFilter):
     logfile = 'data.db'
 
     def set_up(self):
-        """
-        """
         self.db = shelve.open(self.logfile, writeback=True)
 
         if any(key not in self.db for key in ('fox.pos', 'hare.pos',

@@ -1,7 +1,9 @@
+from sys import stdout
+
 from foxgame.structures import Direction
 from foxgame.options import FoxgameOption
 from foxgame.controller import PostFilter
-from sys import stdout
+
 
 @staticmethod
 def simple_print(dst, data):

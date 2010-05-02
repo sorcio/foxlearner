@@ -63,5 +63,5 @@ class HareBrain(Brain):
         target = self.nearest_fox.pos + self.nearest_fox.speed/2
         fdir = -self.navigate(target)
 
-        dir = Direction([(x + round(y*risk, 0)) if x != y else x for x, y in zip(cdir, fdir)])
+        dir = Direction([(x+round(y*risk, 0)) if x != y else x for x, y in zip(cdir, fdir)])
         return dir

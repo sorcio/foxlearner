@@ -1,18 +1,13 @@
-from foxgame.controller import PostFilter
-from foxgame.options import FoxgameOption
-
 import os
 import os.path
 from glob import glob
 
+from foxgame.controller import PostFilter
+from foxgame.options import FoxgameOption
+
 import logging
 log = logging.getLogger(__name__)
 
-__extraopts__ = (FoxgameOption('logfile'),
-                 FoxgameOption('append', type='bool'),
-                 FoxgameOption('skiphead', type='bool'),
-                 FoxgameOption('delimiter'),
-                )
 
 class CSV(PostFilter):
     """
@@ -26,12 +21,12 @@ class CSV(PostFilter):
 
     def set_up(self):
         self.file = None
-        
+
         if self.append:
             self.open_append(self.logfile)
         else:
             self.open_new(self.logfile)
-        
+
         if not self.skiphead:
             self.write_head()
 
@@ -45,10 +40,10 @@ class CSV(PostFilter):
             nextn = 0
         path = '%s-%04d%s' % (base, nextn, ext)
         return self.lock_open(path)
-        
+
     def open_append(self, basepath):
         return self.lock_open(basepath)
-    
+
     def lock_open(self, path):
         self.lockfile = path + '.lock'
         if os.path.exists(self.lockfile):
@@ -59,7 +54,7 @@ class CSV(PostFilter):
                      path, self.pawn.__class__.__name__)
             open(self.lockfile, 'w+').close()
             self.file = open(path, 'a+')
-    
+
     def tear_down(self):
         if self.file:
             log.debug('Closing log file')
@@ -70,12 +65,12 @@ class CSV(PostFilter):
     def write_head(self):
         if not self.file:
             return
-        
+
         print >>self.file, '# starting logging'
         print >>self.file, '# nfoxes =', len(self.game.foxes)
         print >>self.file, '# game.size =', self.game.size.x, self.game.size.y
         print >>self.file, '# pawnclass =', self.pawn.__class__.__name__
-        
+
         head = ['time']
         for i in range(len(self.game.foxes)):
             head.append('fox%d_x' % i)
@@ -87,11 +82,11 @@ class CSV(PostFilter):
                  'carrot_x', 'carrot_y',
                  'dir_h', 'dir_v']
         print >>self.file, self.delimiter.join(head)
-    
+
     def update(self, direction, time):
         if not self.file:
             return
-        
+
         line = [self.game.time_elapsed]
         for fox in self.game.foxes:
             line.append(fox.pos.x)
@@ -102,10 +97,11 @@ class CSV(PostFilter):
                  self.game.hare.speed.x, self.game.hare.speed.y,
                  self.game.carrot.pos.x, self.game.carrot.pos.y,
                  direction.hor, direction.vert]
-        
+
         print >>self.file, self.delimiter.join(map(str, line))
-        
+
         return direction
+
 
 import csv
 
@@ -117,7 +113,7 @@ def read_cvs(filename, delimiter=',', comment='#'):
     #dialect = csv.Sniffer().sniff(csvfile.read(1024))
     #csvfile.seek(0)
     reader = csv.DictReader(csvfile, delimiter=delimiter)
-    
+
     for row in reader:
         for k in row:
             row[k] = float(row[k])
@@ -156,3 +152,12 @@ class CommentedFile(object):
 
     def __iter__(self):
         return self
+
+
+__extraopts__ = (FoxgameOption('logfile'),
+                 FoxgameOption('append', type='bool'),
+                 FoxgameOption('skiphead', type='bool'),
+                 FoxgameOption('delimiter'),
+                )
+
+
