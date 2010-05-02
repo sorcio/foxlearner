@@ -226,7 +226,7 @@ class Direction(object):
         Convert a str into a Direction object.
         """
         strdirs = dict((y, x) for x, y in Direction.dirs.iteritems())
-        return strdirs[s]
+        return Direction(strdirs[s])
 
 
 def sign(num):

@@ -125,6 +125,8 @@ class TestDirection(TestCase):
         self.assertEqual(Direction.from_vector(vec * 0), Direction.NULL)
 
     def test_from_string(self):
+        self.assertTrue(isinstance(Direction.from_string('N'), Direction))
+
         self.assertEqual(Direction.from_string(Direction.dirs[Direction.UP]),
                          Direction.UP)
         self.assertEqual(Direction.from_string(Direction.dirs[Direction.UPRIGHT]),
