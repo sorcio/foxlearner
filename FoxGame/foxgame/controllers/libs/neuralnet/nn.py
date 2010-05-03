@@ -176,7 +176,7 @@ class NeuralNetwork(object):
         db.close()
 
 
-def load_network(filename):
+def load_network(filename, klass=NeuralNetwork):
     """
     Load a shelve database with synapses.
     """
@@ -203,4 +203,4 @@ def load_network(filename):
     finally:
         db.close()
 
-    return NeuralNetwork(ni, nh, no, bias, funct, wi, wo)
+    return klass(ni, nh, no, bias, funct, wi, wo)
