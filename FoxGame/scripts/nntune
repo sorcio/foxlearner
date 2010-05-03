@@ -55,13 +55,13 @@ for hiddens in xrange(22, 50):
               hiddens, eps)
 
         # create the directory where all useful informations will be placed
-        dir = osjoin(BDIR, 'e%d-h%d' % (hiddens, eps*100), '')
+        dir = osjoin(BDIR, 'h%d-e%d' % (hiddens, eps*100), '')
         mkdir(dir)
 
         # run commands
         call((CMD%(hiddens, eps)).split())
         print '\tTraining finished!'
-        call('python -O main --hare-b=nn --ui=simulator'.split())
+        call('python -O main --hare-b=nn --ui=simulator games:100'.split())
         print '\tBenchmarking done!'
 
         # move log files
