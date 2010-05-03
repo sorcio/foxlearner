@@ -171,19 +171,31 @@ class Text(Widget):
 
 
 class SpritePawn(pygame.sprite.Sprite):
-    def __init__(self, scale, pawn, imagefile):
+    """
+    A MovingPawn object on the GameField
+    """
+    delay = 0.1
+    ni = 6    # number of images
+
+    def __init__(self, scale, pawn, imagedir):
         super(SpritePawn, self).__init__()
 
         # pygame attributes
         self.scale = scale
-        self.image = pygame.image.load(imagefile).convert_alpha()
+        self.images = [pygame.image.load(imagedir+'0%d.png'%x).convert_alpha()
+                       for x in xrange(1, self.ni+1)]
+        self.image = self.images[0]
         rect = self.image.get_rect()
         self.shift = [y-x for x, y in zip(rect, rect.center)]
 
         # foxgame attributes
         self.pawn = pawn
+        self.game = pawn.game
 
+        # initial values
         self.rotated = -1
+        self._last_update = self.game.time_elapsed
+        self.frame = 0
 
     @property
     def rect(self):
@@ -191,9 +203,23 @@ class SpritePawn(pygame.sprite.Sprite):
                 for x, shift in zip(self.pawn.pos, self.shift)]
 
     def update(self):
+        # animated images: check if it's time to change frame
+        if self.game.time_elapsed - self._last_update > self.delay:
+            # update values
+            self._last_update = self.game.time_elapsed
+            self.frame = self.frame+1 if self.frame < self.ni-1 else 0
+            # change image
+            img = self.images[self.frame]
+        else:
+            img = self.image
+
+        # images direction: check if pawn changed his direction
         if Direction.from_vector(self.pawn.speed).hor == -self.rotated:
-            self.image = pygame.transform.flip(self.image, 1, 0)
+            img = pygame.transform.flip(img, 1, 0)
             self.rotated = -self.rotated
+
+        # use the image processed
+        self.image = img
 
 
 class GameField(Widget):
@@ -205,17 +231,20 @@ class GameField(Widget):
         self.bz = BZManager(self)
 
         self.rescale_arena()
-        path = __file__.split('foxgame')[0] + osjoin('images', '')
+        path = __file__.split('foxgame')[0] + osjoin('images', 'gfx', '')
 
         # load background image
         background = pygame.image.load(path+'field.png').convert()
         self._background = pygame.transform.scale(background,
                                                   self._surf.get_size())
 
-        self.mpawns = pygame.sprite.Group()
-        self.mpawns.add([SpritePawn(self.scale, fox, path+'fox.png')
-                         for fox in self.game.foxes] +
-                        [SpritePawn(self.scale, self.game.hare, path+'hare.png')])
+        # load movingpawns and carrot images
+        self.impawns = pygame.sprite.Group()
+        self.impawns.add([SpritePawn(self.scale, fox, osjoin(path, 'fox', ''))
+                          for fox in self.game.foxes] +
+                         [SpritePawn(self.scale, self.game.hare,
+                          osjoin(path, 'hare', ''))])
+        self.icarrot = pygame.image.load(path+'carrot.png').convert_alpha()
 
     def paint(self):
         """
@@ -233,9 +262,10 @@ class GameField(Widget):
         # Drawing pawns
         #self._draw_tracks()
         self._draw_object(self.game.carrot)
+        #self._surf.blit(self.icarrot, self.game.carrot.pos)
 
-        self.mpawns.update()
-        self.mpawns.draw(self._surf)
+        self.impawns.update()
+        self.impawns.draw(self._surf)
 
         self.bz.draw_all_over()
 

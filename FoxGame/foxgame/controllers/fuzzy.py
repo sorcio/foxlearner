@@ -5,7 +5,7 @@ from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
 from libs.fuzzy import fuzzy, operators
 
-operators.PRECISION = 0.25
+#operators.PRECISION = 0.25
 
 import logging
 log = logging.getLogger(__name__)
