@@ -29,7 +29,7 @@ class HareBrain(Brain):
 
     size = (600, 400)
 
-    inputs = 8
+    inputs = 10
     hiddens = 25
 
     error = None
@@ -65,8 +65,8 @@ class HareBrain(Brain):
         """
         diagonal = sqrt( HareBrain.size[0]**2 + HareBrain.size[1]**2 )
 
-        data = (#(self.game.hare.pos.x-self.nearest_fox.pos.x)/diagonal,
-                #(self.game.hare.pos.y-self.nearest_fox.pos.y)/diagonal,
+        data = ((self.game.hare.pos.x-self.nearest_fox.pos.x)/diagonal,
+                (self.game.hare.pos.y-self.nearest_fox.pos.y)/diagonal,
                 (self.game.hare.pos.x-self.game.carrot.pos.x)/diagonal,
                 (self.game.hare.pos.y-self.game.carrot.pos.y)/diagonal,
                 self.game.hare.pos.x/HareBrain.size[0],
@@ -101,8 +101,8 @@ class HareBrain(Brain):
 
         for piece in file_list:
             for data in read_cvs(piece):
-                yield [[#(data['hare_x']-data['fox0_x'])/digonal,
-                        #(data['hare_y']-data['fox0_y'])/digonal,
+                yield [[(data['hare_x']-data['fox0_x'])/digonal,
+                        (data['hare_y']-data['fox0_y'])/digonal,
                         (data['hare_x']-data['carrot_x'])/digonal,
                         (data['hare_y']-data['carrot_y'])/digonal,
                         data['hare_x']/HareBrain.size[0],
