@@ -61,8 +61,7 @@ for hiddens in xrange(22, 50):
         # run commands
         call((CMD%(hiddens, eps)).split())
         print '\tTraining finished!'
-        call('python -O main --hare-b=nn --ui=simulator'.split(),
-             stdout=open(dir+'statistics'))
+        call('python -O main --hare-b=nn --ui=simulator'.split())
         print '\tBenchmarking done!'
 
         # move log files
