@@ -15,6 +15,7 @@ from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
 from libs.neuralnet.nn import NeuralNetwork, load_network
 from foxgame.controllers.output import read_cvs_skip as read_cvs
+from collections import deque
 
 from logging import getLogger
 log = getLogger('[nn]')
@@ -37,6 +38,8 @@ class HareBrain(Brain):
     epsilon = 0.35
 
     speed_normalizer = 500
+    
+    advance = 10
 
     def set_up(self):
         """
@@ -95,24 +98,33 @@ class HareBrain(Brain):
         if file_list == []:
             raise IOError('Invalid path')
 
-        digonal = sqrt(HareBrain.size[0]**2 + HareBrain.size[1]**2)
+        diagonal = sqrt(HareBrain.size[0]**2 + HareBrain.size[1]**2)
 
         log.debug('Opening %d files' % len(file_list))
 
         for piece in file_list:
+            inputs_queue = deque()
             for data in read_cvs(piece):
-                yield [[(data['hare_x']-data['fox0_x'])/digonal,
-                        (data['hare_y']-data['fox0_y'])/digonal,
-                        (data['hare_x']-data['carrot_x'])/digonal,
-                        (data['hare_y']-data['carrot_y'])/digonal,
-                        data['hare_x']/HareBrain.size[0],
-                        data['hare_y']/HareBrain.size[1],
-                        data['hare_speed_x']/HareBrain.speed_normalizer,
-                        data['hare_speed_y']/HareBrain.speed_normalizer,
-                        data['fox0_speed_x']/HareBrain.speed_normalizer,
-                        data['fox0_speed_y']/HareBrain.speed_normalizer],
-                        [(data['dir_h']+1)/2, (data['dir_v']+1)/2]
-                      ]
+                outputs = [(data['dir_h']+1)/2, (data['dir_v']+1)/2]
+                inputs = [(data['hare_x']-data['fox0_x'])/diagonal,
+                            (data['hare_y']-data['fox0_y'])/diagonal,
+                            0, # carrot x
+                            0, # carrot y
+                            data['hare_x']/HareBrain.size[0],
+                            data['hare_y']/HareBrain.size[1],
+                            data['hare_speed_x']/HareBrain.speed_normalizer,
+                            data['hare_speed_y']/HareBrain.speed_normalizer,
+                            data['fox0_speed_x']/HareBrain.speed_normalizer,
+                            data['fox0_speed_y']/HareBrain.speed_normalizer]
+                # no sense in delaying carrot position
+                carrot_pos = [(data['hare_x']-data['carrot_x'])/diagonal,
+                              (data['hare_y']-data['carrot_y'])/diagonal]
+                inputs_queue.append(inputs)
+                if len(inputs_queue) > HareBrain.advance:
+                    # delayed inputs, current outputs
+                    inputs = inputs_queue.popleft()
+                    inputs[2:4] = carrot_pos
+                    yield [inputs, outputs]
 
 
     @staticmethod
@@ -130,6 +142,7 @@ __extraopts__ = (FoxgameOption('hiddens', type='int'),
                  FoxgameOption('epochs', type='int'),
                  FoxgameOption('examples', type='string'),
                  FoxgameOption('epsilon', type='float'),
-                 FoxgameOption('error', type='float'))
+                 FoxgameOption('error', type='float'),
+                 FoxgameOption('advance', type='int'))
 
 
