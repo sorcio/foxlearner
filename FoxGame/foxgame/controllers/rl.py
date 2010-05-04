@@ -245,7 +245,7 @@ __extraopts__ = (
                  FoxgameOption('fox_reward', type='float'),
                  FoxgameOption('carrot_reward', type='float'),
                  FoxgameOption('update_rate', type='int'),
-                 FoxgameOption('net_file', type='str')
+                 FoxgameOption('net_file', type='string')
                 )
 
 
