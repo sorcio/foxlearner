@@ -38,7 +38,7 @@ class HareBrain(Brain):
     epsilon = 0.35
 
     speed_normalizer = 500
-    
+
     advance = 10
 
     def set_up(self):
@@ -133,9 +133,11 @@ class HareBrain(Brain):
         Train the network using filename as examples.
         """
         n = NeuralNetwork(*net_struct)
-        n.train(HareBrain.examples_generator, filename,
-                HareBrain.epochs, HareBrain.epsilon, HareBrain.error)
-        n.save(HareBrain._net_data)
+        try:
+            n.train(HareBrain.examples_generator, filename,
+                    HareBrain.epochs, HareBrain.epsilon, HareBrain.error)
+        except KeyboardInterrupt:
+           n.save(HareBrain._net_data)
 
 
 __extraopts__ = (FoxgameOption('hiddens', type='int'),
