@@ -16,7 +16,7 @@ class Inverted(PostFilter):
 
 class SlowDown(PostFilter):
     """
-    A simple postfilter wich slows down the dirrection given.
+    A simple postfilter which slows down the direction given.
     """
 
     delay = 1
