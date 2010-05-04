@@ -193,7 +193,7 @@ class SpritePawn(pygame.sprite.Sprite):
         self.game = pawn.game
 
         # initial values
-        self.rotated = -1
+        self.rotated = +1
         self._last_update = self.game.time_elapsed
         self.frame = 0
 
@@ -262,7 +262,7 @@ class GameField(Widget):
         # Drawing pawns
         #self._draw_tracks()
         self._draw_object(self.game.carrot)
-        #self._surf.blit(self.icarrot, self.game.carrot.pos)
+        self._surf.blit(self.icarrot, [x*self.scale for x in self.game.carrot.pos])
 
         self.impawns.update()
         self.impawns.draw(self._surf)
