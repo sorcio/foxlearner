@@ -1,0 +1,47 @@
+INTRODUCTION
+------------
+
+    This software aims to provide a simple interface in a trivial game,
+    in order to test multiple types of Artificial Intelligence implementations.
+    For more informations see <http://code.google.com/p/foxlearner/>
+
+
+
+DEPENDENCIES
+-----------
+
+    In order to run this software, you should have installed:
+        - python: 2.5 or higher
+        - pygame: 1.8.1 or higher
+        - psyco: [optional] to speed up our neuralnetwork library
+
+    As soon as possible we should implement other kinds of GUI, so pygame
+    won't be required.
+
+
+
+INSTALL
+-------
+    To run the software,
+        on windows systems: "python.exe -O main"
+        on *nix    systems: "./main" OR "python -O main"
+
+    For more informations about options, see "main --help" or "main -h"
+
+
+
+LICENSE
+-------
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; version 2 dated June, 1991.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program;  if not, write to the Free Software
+   Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.
