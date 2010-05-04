@@ -185,38 +185,31 @@ class SpritePawn(pygame.sprite.Sprite):
         self.images = [pygame.image.load(imagedir+'0%d.png'%x).convert_alpha()
                        for x in xrange(1, self.ni+1)]
         self.image = self.images[0]
-        rect = self.image.get_rect()
-        self.shift = [y-x for x, y in zip(rect, rect.center)]
+        self.rect = self.image.get_rect()
 
         # foxgame attributes
         self.pawn = pawn
         self.game = pawn.game
 
         # initial values
-        self.rotated = +1
         self._last_update = self.game.time_elapsed
         self.frame = 0
 
-    @property
-    def rect(self):
-        return [x*self.scale - shift
-                for x, shift in zip(self.pawn.pos, self.shift)]
-
     def update(self):
+        # update rect
+        self.rect.center = [x*self.scale for x in self.pawn.pos]
+
         # animated images: check if it's time to change frame
         if self.game.time_elapsed - self._last_update > self.delay:
             # update values
             self._last_update = self.game.time_elapsed
             self.frame = self.frame+1 if self.frame < self.ni-1 else 0
-            # change image
-            img = self.images[self.frame]
-        else:
-            img = self.image
+        # change image
+        img = self.images[self.frame]
 
         # images direction: check if pawn changed his direction
-        if Direction.from_vector(self.pawn.speed).hor == -self.rotated:
+        if Direction.from_vector(self.pawn.speed).hor == 1:
             img = pygame.transform.flip(img, 1, 0)
-            self.rotated = -self.rotated
 
         # use the image processed
         self.image = img
@@ -238,13 +231,15 @@ class GameField(Widget):
         self._background = pygame.transform.scale(background,
                                                   self._surf.get_size())
 
-        # load movingpawns and carrot images
+        # load movingpawns images
         self.impawns = pygame.sprite.Group()
         self.impawns.add([SpritePawn(self.scale, fox, osjoin(path, 'fox', ''))
                           for fox in self.game.foxes] +
                          [SpritePawn(self.scale, self.game.hare,
                           osjoin(path, 'hare', ''))])
+        # load carrot images
         self.icarrot = pygame.image.load(path+'carrot.png').convert_alpha()
+        self.rcarrot = self.icarrot.get_rect()
 
     def paint(self):
         """
@@ -261,9 +256,13 @@ class GameField(Widget):
 
         # Drawing pawns
         #self._draw_tracks()
-        self._draw_object(self.game.carrot)
-        self._surf.blit(self.icarrot, [x*self.scale for x in self.game.carrot.pos])
 
+        #  draw carrot
+        # self._draw_object(self.game.carrot)
+        self.rcarrot.center = [x*self.scale for x in self.game.carrot.pos]
+        self._surf.blit(self.icarrot, self.rcarrot)
+
+        #  draw mpawns
         self.impawns.update()
         self.impawns.draw(self._surf)
 
