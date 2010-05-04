@@ -232,11 +232,14 @@ class GameField(Widget):
                                                   self._surf.get_size())
 
         # load movingpawns images
-        self.impawns = pygame.sprite.LayeredUpdates()
-        self.impawns.add([SpritePawn(self.scale, fox, osjoin(path, 'fox', ''))
-                          for fox in self.game.foxes] +
-                         [SpritePawn(self.scale, self.game.hare,
-                          osjoin(path, 'hare', ''))])
+        ifoxes = [SpritePawn(self.scale, fox, osjoin(path, 'fox', ''))
+                 for fox in self.game.foxes]
+        ihare = SpritePawn(self.scale, self.game.hare,
+                           osjoin(path, 'hare', ''))
+
+        self.impawns = pygame.sprite.LayeredUpdates(ifoxes+[ihare])
+        self.impawns.move_to_back(ihare)
+
         # load carrot images
         self.icarrot = pygame.image.load(path+'carrot.png').convert_alpha()
         self.rcarrot = self.icarrot.get_rect()
