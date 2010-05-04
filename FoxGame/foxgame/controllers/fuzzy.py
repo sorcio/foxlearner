@@ -5,7 +5,7 @@ from foxgame.controller import Brain
 from foxgame.structures import Vector, Direction
 from libs.fuzzy import fuzzy, operators
 
-#operators.PRECISION = 0.25
+operators.PRECISION = 0.25
 
 import logging
 log = logging.getLogger(__name__)
@@ -22,17 +22,17 @@ class HareBrain(Brain):
         Set up the fuzzy sets and the fuzzy engine used to control the hare.
         """
         # fuzzy proximity variable
-        near = fuzzy.Set(None, 'near', 'oleft', 1, 3)
-        middle = fuzzy.Set(None, 'middle', 'triangle', 2, 3, 3.7)
+        near = fuzzy.Set(None, 'near', 'oleft', 1, 3.7)
+        # middle = fuzzy.Set(None, 'middle', 'triangle', 2, 3, 3.7)
         far = fuzzy.Set(None, 'far', 'oright', 3.6, 4)
         proximityvar = fuzzy.Variable('proximity', [(0, ), (5, )],
-                                      sets_list=[near, middle, far])
+                                      sets_list=[near, far])
         # fuzzy speed variable
-        low = fuzzy.Set(None, 'low', 'oleft', 1, 2)
-        middle = fuzzy.Set(None, 'middle', 'triangle', 2, 3, 4)
+        low = fuzzy.Set(None, 'low', 'oleft', 3, 4)
+        # middle = fuzzy.Set(None, 'middle', 'triangle', 2, 3, 4)
         high = fuzzy.Set(None, 'high', 'oright', 3, 4)
         speedvar = fuzzy.Variable('speed', [(0, ), (5, )],
-                                  sets_list=[low, middle, high])
+                                  sets_list=[low, high])
         # fuzzy risk variable
         low = fuzzy.Set(None, 'low', 'singleton', 0)
         high = fuzzy.Set(None, 'high', 'singleton', 1)
@@ -43,10 +43,10 @@ class HareBrain(Brain):
         self.engine = fuzzy.Engine([proximityvar, speedvar, riskvar])
         # adding rules
         self.engine.add_rule('IF proximity IS near THEN risk IS high')
-        self.engine.add_rule('IF proximity IS middle THEN risk IS high')
+        # self.engine.add_rule('IF proximity IS middle THEN risk IS high')
         self.engine.add_rule('IF proximity IS far THEN risk IS low')
         self.engine.add_rule('IF speed IS low THEN risk IS low')
-        self.engine.add_rule('IF speed IS middle THEN risk IS high')
+        # self.engine.add_rule('IF speed IS middle THEN risk IS high')
         self.engine.add_rule('IF speed IS high THEN risk IS high')
 
 
