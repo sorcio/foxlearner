@@ -232,7 +232,7 @@ class GameField(Widget):
                                                   self._surf.get_size())
 
         # load movingpawns images
-        self.impawns = pygame.sprite.Group()
+        self.impawns = pygame.sprite.LayeredUpdates()
         self.impawns.add([SpritePawn(self.scale, fox, osjoin(path, 'fox', ''))
                           for fox in self.game.foxes] +
                          [SpritePawn(self.scale, self.game.hare,
