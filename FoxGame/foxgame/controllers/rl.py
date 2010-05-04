@@ -44,12 +44,12 @@ class HareBrain(Brain):
     greediness = 0.70
 
     speed_normalizer = 500
-    
+
     # Rewards
     time_reward = 0.1 # per second
     carrot_reward = 1
     fox_reward = -100
-    
+
     update_rate = 10
 
     def get_state(self):
@@ -236,7 +236,8 @@ class TDLambda(NeuralNetwork):
 
 
 
-__extraopts__ = (FoxgameOption('hiddens', type='int'),
+__extraopts__ = (
+                 FoxgameOption('hiddens', type='int'),
                  FoxgameOption('gamma', type='float'),
                  FoxgameOption('trace_decay', type='float'),
                  FoxgameOption('greediness', type='float'),
@@ -244,6 +245,7 @@ __extraopts__ = (FoxgameOption('hiddens', type='int'),
                  FoxgameOption('fox_reward', type='float'),
                  FoxgameOption('carrot_reward', type='float'),
                  FoxgameOption('update_rate', type='int'),
-                 )
+                 FoxgameOption('net_file', type='str')
+                )
 
 
