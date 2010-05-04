@@ -35,10 +35,6 @@ class HareBrain(Brain):
 
     hiddens = 15
 
-    error = None
-    epochs = 6
-    epsilon = 0.35
-
     # discount rate
     gamma = 0.5
     # eligibilty trace decay (lambda)
@@ -48,25 +44,26 @@ class HareBrain(Brain):
     greediness = 0.70
 
     speed_normalizer = 500
+    
+    # Rewards
+    time_reward = 0.1 # per second
+    carrot_reward = 1
+    fox_reward = -100
+    
+    update_rate = 10
 
     def get_state(self):
         diagonal = hypot(HareBrain.size[0], HareBrain.size[1])
-        #~ return ((self.game.hare.pos.x-self.nearest_fox.pos.x)/diagonal,
-                #~ (self.game.hare.pos.y-self.nearest_fox.pos.y)/diagonal,
-                #~ (self.game.hare.pos.x-self.game.carrot.pos.x)/diagonal,
-                #~ (self.game.hare.pos.y-self.game.carrot.pos.y)/diagonal,
-                #~ self.game.hare.pos.x/HareBrain.size[0],
-                #~ self.game.hare.pos.y/HareBrain.size[1],
-                #~ self.game.hare.speed.x/HareBrain.speed_normalizer,
-                #~ self.game.hare.speed.y/HareBrain.speed_normalizer,
-                #~ self.nearest_fox.speed.x/HareBrain.speed_normalizer,
-                #~ self.nearest_fox.speed.y/HareBrain.speed_normalizer)
-        return ((self.game.hare.pos.x-self.game.carrot.pos.x)/diagonal,
+        return ((self.game.hare.pos.x-self.nearest_fox.pos.x)/diagonal,
+                (self.game.hare.pos.y-self.nearest_fox.pos.y)/diagonal,
+                (self.game.hare.pos.x-self.game.carrot.pos.x)/diagonal,
                 (self.game.hare.pos.y-self.game.carrot.pos.y)/diagonal,
                 self.game.hare.pos.x/HareBrain.size[0],
                 self.game.hare.pos.y/HareBrain.size[1],
                 self.game.hare.speed.x/HareBrain.speed_normalizer,
-                self.game.hare.speed.y/HareBrain.speed_normalizer)
+                self.game.hare.speed.y/HareBrain.speed_normalizer,
+                self.nearest_fox.speed.x/HareBrain.speed_normalizer,
+                self.nearest_fox.speed.y/HareBrain.speed_normalizer)
 
     def set_up(self):
         """
@@ -86,7 +83,6 @@ class HareBrain(Brain):
         self.update_actions(self.state)
 
         self.tick_count = 0
-        self.update_rate = 10
         self.time = 0
         self.carrots = 0
         self.reward = 0
@@ -116,17 +112,17 @@ class HareBrain(Brain):
 
         if self.game.collision:
             # large negative reward if hare got taken
-            r = -10
+            r = HareBrain.fox_reward
             log.debug('fox caught me')
         elif self.pawn.carrots > self.carrots:
             # large positive reward if got carrot
             num_carrots = (self.pawn.carrots - self.carrots)
-            r = num_carrots*1
+            r = num_carrots * HareBrain.carrot_reward
             self.carrots = self.pawn.carrots
             log.debug('I got a carrot')
         else:
             # positive reward if it is still alive
-            r = time
+            r = HareBrain.time_reward * time
 
         self.reward += r
 
@@ -169,8 +165,7 @@ class HareBrain(Brain):
     def tear_down(self):
         # hackish: update with last frame
         # needed to get negative reward on game end
-        self.tick_count += 1
-        self.update_network(1/60)
+        self.update(1/60)
 
         self.network.save(self.net_file)
 
@@ -181,7 +176,7 @@ class HareBrain(Brain):
     @staticmethod
     def init_network():
         log.info('Initializing new neural network')
-        network = TDLambda(8, HareBrain.hiddens, funct='sigmoid')
+        network = TDLambda(12, HareBrain.hiddens, funct='sigmoid')
         network.save(HareBrain.net_file)
         return network
 
@@ -242,8 +237,13 @@ class TDLambda(NeuralNetwork):
 
 
 __extraopts__ = (FoxgameOption('hiddens', type='int'),
-                 FoxgameOption('epochs', type='int'),
-                 FoxgameOption('epsilon', type='float'),
-                 FoxgameOption('error', type='float'))
+                 FoxgameOption('gamma', type='float'),
+                 FoxgameOption('trace_decay', type='float'),
+                 FoxgameOption('greediness', type='float'),
+                 FoxgameOption('time_reward', type='float'),
+                 FoxgameOption('fox_reward', type='float'),
+                 FoxgameOption('carrot_reward', type='float'),
+                 FoxgameOption('update_rate', type='int'),
+                 )
 
 
