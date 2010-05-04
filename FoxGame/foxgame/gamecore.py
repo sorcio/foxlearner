@@ -224,7 +224,7 @@ class Game(object):
         # create pawns
         self.foxes = tuple(Fox(self) for x in xrange(foxnum))
         self.hare = Hare(self)
-        self.carrot = None  # carrots are placed later
+        self.carrot = Carrot(self)  # carrots are placed later
 
         for pawn in self.pawns:
             pawn.game = self
@@ -326,7 +326,7 @@ class Game(object):
         """
         Place a new carrot on the board in a random point.
         """
-        self.carrot = Carrot(self, self._randompoint())
+        self.carrot.pos = self._randompoint()
 
     def tick(self, time):
         """

@@ -249,7 +249,7 @@ class GUI(StateMachine):
                                   color='red')
                     brainz.vector(gameobj, lambda x=gameobj:x.acc/10,
                                   color='blue')
-                    brainz.circle(gameobj, gameobj, color='black', width=1, under=True)
+                brainz.circle(gameobj, gameobj, color='black', width=1, under=True)
 
 
     #######################
