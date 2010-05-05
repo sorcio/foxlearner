@@ -89,10 +89,10 @@ class GUI(StateMachine):
         #  factories
         self.gfact = game_factory
         if not self.gfact.harefact.brain:
-            log.info("Hare takes user input")
+            log.info('Hare takes user input')
             self.gfact.harefact.brain = self.arrows_ctl_factory
         if not self.gfact.foxfact.brain:
-            log.info("Fox takes user input")
+            log.info('Fox takes user input')
             self.gfact.foxfact.brain = self.mouse_ctl_factory
 
         self.gfact.brainz_get = self.brainz_get
