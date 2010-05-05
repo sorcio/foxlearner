@@ -183,7 +183,7 @@ class SpritePawn(pygame.sprite.Sprite):
         # pygame attributes
         self.scale = scale
         self.images = [pygame.image.load(imagedir+'0%d.png'%x).convert_alpha()
-                       for x in xrange(1, self.ni+1)]
+                       for x in xrange(self.ni+1)]
         self.image = self.images[0]
         self.rect = self.image.get_rect()
 
@@ -200,10 +200,12 @@ class SpritePawn(pygame.sprite.Sprite):
         self.rect.center = [x*self.scale for x in self.pawn.pos]
 
         # animated images: check if it's time to change frame
-        if self.game.time_elapsed - self._last_update > self.delay:
+        if abs(self.pawn.speed) < 0.1:
+            self.frame = 0
+        elif self.game.time_elapsed - self._last_update > self.delay:
             # update values
             self._last_update = self.game.time_elapsed
-            self.frame = self.frame+1 if self.frame < self.ni-1 else 0
+            self.frame = self.frame+1 if self.frame < self.ni-1 else 1
         # change image
         img = self.images[self.frame]
 
