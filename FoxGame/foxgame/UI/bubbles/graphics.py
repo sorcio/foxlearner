@@ -233,19 +233,21 @@ class SpritePawn(pygame.sprite.Sprite):
 
 
 class GameField(Widget):
-    def __init__(self, rect, parent, game):
+    def __init__(self, rect, arenasize, parent, game):
         # customize subsurface creation
         super(GameField, self).__init__(rect, parent)
 
         self.game = game
         self.bz = BZManager(self)
 
-        self.rescale_arena()
+        # scaling surface for the field
+        self._bigsurf = self._surf
+        self.rescale_arena(arenasize)
 
         # load background image
         background = pygame.image.load(gfxpath+'field.png').convert()
         self._background = pygame.transform.scale(background,
-                                                  self._surf.get_size())
+                                                  self._bigsurf.get_size())
 
         # load movingpawns images
         ifoxes = [SpritePawn(self.scale, fox, osjoin(gfxpath, 'fox', ''))
@@ -264,8 +266,8 @@ class GameField(Widget):
         """
         Draw the board.
         """
-        # Fill self.arena of black
-        self._surf.blit(self._background, (0, 0))
+        # Draw the background
+        self._bigsurf.blit(self._background, (0, 0))
 
         self.bz.draw_all_under()
 
@@ -298,10 +300,9 @@ class GameField(Widget):
         scaled = vec * self.scale
         return int(scaled.x), int(scaled.y)
 
-    def rescale_arena(self):
+    def rescale_arena(self, size):
         # Fit the drawing to the screen size
-        self.scale = min(self.parent.rect.width / self.game.size.x,
-                         self.parent.rect.height / self.game.size.y)
+        self.scale = min(x/y for x, y in zip(size, self.game.size))
 
         arena_width = self.scale * self.game.size.x
         arena_height = self.scale * self.game.size.y
@@ -309,5 +310,5 @@ class GameField(Widget):
         arena = pygame.Rect(0, 0, arena_width, arena_height)
         arena.center = self.parent.rect.center
         self.rect = arena
-        self._surf = self.parent.subsurface(arena)
+        self._surf = self._bigsurf.subsurface(arena)
 
