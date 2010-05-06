@@ -264,16 +264,11 @@ class GUI(StateMachine):
         titlescreen = Image(join('images', 'gfx', 'title.png'), self.title_page)
         titlescreen.rect.center = self.title_page.rect.center
 
-        title_font = Font(None, 100)
-        title = Text((0,0,0,0), self.title_page, title_font,
-                     'FoxGame!', 'red')
-        title.rect.center = self.title_page.rect.center
-
         subtitle_font = Font(None, 50)
         subtitle = Text((0,0,0,0), self.title_page, subtitle_font,
                         'Press spacebar to start playing', 'blue')
-        subtitle.rect.centerx = title.rect.centerx
-        subtitle.rect.top = title.rect.bottom
+        subtitle.rect.centerx = self.title_page.rect.centerx
+        subtitle.rect.bottom = self.title_page.rect.bottom
 
     def welcome_main(self, time):
         self.handle_quit()
