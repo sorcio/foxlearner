@@ -170,6 +170,17 @@ class Text(Widget):
         self.parent._surf.blit(self._rendering, self.rect)
 
 
+class Image(Widget):
+    def __init__(self, imgpath, parent=None):
+        super(Image, self).__init__(parent)
+
+        self.image = pygame.image.load(imgpath).convert()
+        self.rect = self.image.get_rect()
+
+    def paint(self):
+        self._surf.blit(self.image, self.rect)
+
+
 class SpritePawn(pygame.sprite.Sprite):
     """
     A MovingPawn object on the GameField

@@ -18,7 +18,7 @@ from foxgame.machine import StateMachine
 
 from draw import draw_circle
 from bzdraw import BZManager, BZPainter
-from graphics import Font, Screen, GameField, Text, Rectangle
+from graphics import Font, Screen, GameField, Text, Rectangle, Image
 
 
 class UserBrain(Brain):
@@ -259,7 +259,10 @@ class GUI(StateMachine):
     ### welcome ###
 
     def welcome_init(self):
-        self.title_page = self._screen.add_page('title', fill_color='black')
+        self.title_page = self._screen.add_page('title')
+
+        titlescreen = Image(join('images', 'gfx', 'title.png'), self.title_page)
+        titlescreen.rect.center = self.title_page.rect.center
 
         title_font = Font(None, 100)
         title = Text((0,0,0,0), self.title_page, title_font,

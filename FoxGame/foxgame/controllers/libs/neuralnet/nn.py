@@ -150,7 +150,7 @@ class NeuralNetwork(object):
                 error += self.back_propagate(targets, eps)
 
             if epoch % 2 == 0:
-                log.info('error: %f' % error)
+                log.info('error: %f on epoch %d' % (error, epoch))
 
         log.info('Network finished training '
                   'in %dth epochs with error %e' % (epoch, error))
