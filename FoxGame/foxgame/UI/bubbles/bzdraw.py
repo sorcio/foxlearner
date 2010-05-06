@@ -50,33 +50,33 @@ class BZPainter(object):
 
     def circle(self, pos, radius, options):
         surf = self.arena._surf
-        scale = self.arena.scale
+        coords = self.arena.coords
         color = options.get('color', self.color)
         width = options.get('width', 0)
         posx, posy = pos()
         draw_circle(surf, radius(), color, posx, posy,
-                    scale=scale, width=width)
+                    coords=coords, width=width)
 
     def line(self, points, options):
         surf = self.arena._surf
-        scale = self.arena.scale
+        coords = self.arena.coords
         color = options.get('color', self.color)
-        draw_lines(surf, color, False, (p() for p in points), scale=scale)
+        draw_lines(surf, color, False, (p() for p in points), coords=coords)
 
     def vector(self, pos, vec, options):
         surf = self.arena._surf
-        scale = self.arena.scale
+        coords = self.arena.coords
         color = options.get('color', self.color)
         start = Vector(*pos())
         end = start + vec()
-        draw_line(surf, color, start.x, start.y, end.x, end.y, scale=scale)
+        draw_line(surf, color, start.x, start.y, end.x, end.y, coords=coords)
 
     def highlight(self, gameobj, options):
         surf = self.arena._surf
-        scale = self.arena.scale
+        coords = self.arena.coords
         color = options.get('color', self.color)
         gameobj = gameobj()
-        draw_circle(surf, game_obj.radius/2, color, gameobj.pos, scale=scale)
+        draw_circle(surf, game_obj.radius/2, color, gameobj.pos, coords=coords)
 
     @property
     def dir_len(self):

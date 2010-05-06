@@ -339,7 +339,7 @@ class GUI(StateMachine):
         self._screen.show_page('game')
 
     def setup_arena(self):
-        self.arena = GameField((0,0,800,600), (761, 533),
+        self.arena = GameField((0,33,800,533), (720, 480),
                                self.game_page, self.game)
         self.activate_bzdebug()
 

@@ -192,11 +192,11 @@ class SpritePawn(pygame.sprite.Sprite):
     delay = 0.1
     ni = 6    # number of images
 
-    def __init__(self, scale, pawn, imagedir):
+    def __init__(self, coords, pawn, imagedir):
         super(SpritePawn, self).__init__()
 
         # pygame attributes
-        self.scale = scale
+        self.coords = coords
         self.images = [pygame.image.load(imagedir+'0%d.png'%x).convert_alpha()
                        for x in xrange(self.ni+1)]
         self.image = self.images[0]
@@ -212,7 +212,8 @@ class SpritePawn(pygame.sprite.Sprite):
 
     def update(self):
         # update rect
-        self.rect.center = [x*self.scale for x in self.pawn.pos]
+        self.rect.center = (self.coords(self.pawn.pos.x, 0),
+                            self.coords(self.pawn.pos.y, 1))
 
         # animated images: check if it's time to change frame
         if abs(self.pawn.speed) < 0.1:
@@ -240,19 +241,22 @@ class GameField(Widget):
         self.game = game
         self.bz = BZManager(self)
 
+        # load background image
+        background = pygame.image.load(gfxpath+'field.png').convert()
+        self._background = background
+        
+        # load bottom fence image
+        self._fence = pygame.image.load(gfxpath+'fence.png').convert_alpha()
+        self._fencer = self._fence.get_rect()
+
         # scaling surface for the field
         self._bigsurf = self._surf
         self.rescale_arena(arenasize)
 
-        # load background image
-        background = pygame.image.load(gfxpath+'field.png').convert()
-        self._background = pygame.transform.scale(background,
-                                                  self._bigsurf.get_size())
-
         # load movingpawns images
-        ifoxes = [SpritePawn(self.scale, fox, osjoin(gfxpath, 'fox', ''))
+        ifoxes = [SpritePawn(self.coords, fox, osjoin(gfxpath, 'fox', ''))
                  for fox in self.game.foxes]
-        ihare = SpritePawn(self.scale, self.game.hare,
+        ihare = SpritePawn(self.coords, self.game.hare,
                            osjoin(gfxpath, 'hare', ''))
 
         self.impawns = pygame.sprite.LayeredUpdates(ifoxes+[ihare])
@@ -272,20 +276,25 @@ class GameField(Widget):
         self.bz.draw_all_under()
 
         if self.game.collision:
-            draw_circle(self._surf, self.game.hare.radius * self.scale * 3,
-                        'white', *self._coords(self.game.hare.pos))
+            draw_circle(self._surf, self.game.hare.radius*3,
+                        'white', *self.game.hare.pos,
+                        coords=self.coords)
 
         # Drawing pawns
         #self._draw_tracks()
 
         #  draw carrot
         # self._draw_object(self.game.carrot)
-        self.rcarrot.center = [x*self.scale for x in self.game.carrot.pos]
+        self.rcarrot.center = (self.coords(self.game.carrot.pos.x, 0),
+                                self.coords(self.game.carrot.pos.y, 1))
         self._surf.blit(self.icarrot, self.rcarrot)
 
         #  draw mpawns
         self.impawns.update()
         self.impawns.draw(self._surf)
+        
+        # draw bottom fence over pawns
+        self._surf.blit(self._fence, self._fencer)
 
         self.bz.draw_all_over()
 
@@ -293,22 +302,31 @@ class GameField(Widget):
         """
         Draw a GameObject with circular shape on the screen.
         """
-        draw_circle(self._surf, pawn.radius * self.scale,
-                    pawn.color, *self._coords(pawn.pos))
+        draw_circle(self._surf, pawn.radius * self.scale, pawn.color,
+                    self.coords(pawn.pos.x, 0), self.coords(pawn.pos.y, 1))
 
-    def _coords(self, vec):
-        scaled = vec * self.scale
-        return int(scaled.x), int(scaled.y)
+    def coords(self, x, dim=0, abs=1):
+        """
+        Transforms from game coordinates to screen coordinates
+        """
+        scaled = x * self.scale
+        return abs*self.offset[dim] + int(scaled)
 
     def rescale_arena(self, size):
         # Fit the drawing to the screen size
         self.scale = min(x/y for x, y in zip(size, self.game.size))
+            
+        bigrect = self._bigsurf.get_rect()
 
         arena_width = self.scale * self.game.size.x
         arena_height = self.scale * self.game.size.y
 
         arena = pygame.Rect(0, 0, arena_width, arena_height)
-        arena.center = self.parent.rect.center
+        arena.center = bigrect.center
+
         self.rect = arena
-        self._surf = self._bigsurf.subsurface(arena)
+        self.offset = arena.topleft
+        
+        self._fencer.centerx = bigrect.centerx + 3
+        self._fencer.bottom = bigrect.bottom
 
