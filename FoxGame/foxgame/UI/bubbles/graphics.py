@@ -13,6 +13,10 @@ from foxgame.structures import Direction
 import logging
 log = logging.getLogger(__name__)
 
+# base path for graphical effects
+gfxpath = __file__.split('foxgame')[0] + osjoin('images', 'gfx', '')
+
+
 class Widget(object):
     def __init__(self, rect=(0,0,0,0), parent=None):
         self.child = False
@@ -237,24 +241,23 @@ class GameField(Widget):
         self.bz = BZManager(self)
 
         self.rescale_arena()
-        path = __file__.split('foxgame')[0] + osjoin('images', 'gfx', '')
 
         # load background image
-        background = pygame.image.load(path+'field.png').convert()
+        background = pygame.image.load(gfxpath+'field.png').convert()
         self._background = pygame.transform.scale(background,
                                                   self._surf.get_size())
 
         # load movingpawns images
-        ifoxes = [SpritePawn(self.scale, fox, osjoin(path, 'fox', ''))
+        ifoxes = [SpritePawn(self.scale, fox, osjoin(gfxpath, 'fox', ''))
                  for fox in self.game.foxes]
         ihare = SpritePawn(self.scale, self.game.hare,
-                           osjoin(path, 'hare', ''))
+                           osjoin(gfxpath, 'hare', ''))
 
         self.impawns = pygame.sprite.LayeredUpdates(ifoxes+[ihare])
         self.impawns.move_to_back(ihare)
 
         # load carrot images
-        self.icarrot = pygame.image.load(path+'carrot.png').convert_alpha()
+        self.icarrot = pygame.image.load(gfxpath+'carrot.png').convert_alpha()
         self.rcarrot = self.icarrot.get_rect()
 
     def paint(self):

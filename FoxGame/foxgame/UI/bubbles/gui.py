@@ -5,7 +5,6 @@ bubbles.py: simple funny interface with pygame using bubbles.
 
 from __future__ import division
 import pygame
-from os.path import join
 from traceback import format_exc
 
 import logging
@@ -19,6 +18,7 @@ from foxgame.machine import StateMachine
 from draw import draw_circle
 from bzdraw import BZManager, BZPainter
 from graphics import Font, Screen, GameField, Text, Rectangle, Image
+from graphics import gfxpath
 
 
 class UserBrain(Brain):
@@ -261,7 +261,7 @@ class GUI(StateMachine):
     def welcome_init(self):
         self.title_page = self._screen.add_page('title')
 
-        titlescreen = Image(join('images', 'gfx', 'title.png'), self.title_page)
+        titlescreen = Image(gfxpath+'title.png', self.title_page)
         titlescreen.rect.center = self.title_page.rect.center
 
         subtitle_font = Font(None, 50)
@@ -415,11 +415,8 @@ def main(gfact):
     App's main function.
     """
     from foxgame import __path__
-    path = __file__.split('foxgame')[0]
-    logo = join('images','foxgame.png')
-
     pygame.init()
-    pygame.display.set_icon(pygame.image.load(join(path, logo)))
+    pygame.display.set_icon(pygame.image.load(gfxpath+'logo.png'))
 
     ui = GUI(gfact)
     ui.run()
