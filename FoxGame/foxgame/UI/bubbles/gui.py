@@ -275,7 +275,6 @@ class GUI(StateMachine):
         subtitle.rect.centerx = title.rect.centerx
         subtitle.rect.top = title.rect.bottom
 
-
     def welcome_main(self, time):
         self.handle_quit()
 

@@ -172,13 +172,13 @@ class Text(Widget):
 
 class Image(Widget):
     def __init__(self, imgpath, parent=None):
-        super(Image, self).__init__(parent)
+        super(Image, self).__init__(parent=parent)
 
-        self.image = pygame.image.load(imgpath).convert()
-        self.rect = self.image.get_rect()
+        self.img = pygame.image.load(imgpath).convert()
+        self.rect = self.img.get_rect()
 
     def paint(self):
-        self._surf.blit(self.image, self.rect)
+        self.parent._surf.blit(self.img, self.rect)
 
 
 class SpritePawn(pygame.sprite.Sprite):
