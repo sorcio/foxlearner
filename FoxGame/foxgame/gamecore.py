@@ -326,7 +326,7 @@ class Game(object):
         """
         Place a new carrot on the board in a random point.
         """
-        self.carrot.pos = self._randompoint()
+        self.carrot.pos = self._randompoint(wall_dist=10)
 
     def tick(self, time):
         """
