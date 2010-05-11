@@ -39,6 +39,9 @@ extra_options = defaultdict(dict)
 
 
 def extra_option(option, opt_str, value, parser):
+    """
+    Parse extraoptions for the option 'option'.
+    """
 
     # set the main option
     setattr(parser.values, option.dest, value)
@@ -138,15 +141,16 @@ for argv in args:
 # logger
 
 #  file logger
-logging.basicConfig(level=(5 - options.flog_level)*10,
-                    format='%(asctime)s %(name)-30s %(levelname)-8s %(message)s',
-                    datefmt='%m-%d %H:%M',
+logging.basicConfig(level=(5-options.flog_level)*10,
+                    format='%(asctime)s %(name)-20s '
+                           '%(levelname)-8s %(message)s',
+                    datefmt='%d %H:%M',
                     filename=__appname__+'.log',
                     filemode='w')
 
 #  stderr logger
 console = logging.StreamHandler()
-console.setLevel((5 - options.slog_level)*10)
+console.setLevel((5-options.slog_level)*10)
 # set a format which is simpler for console use
 formatter = logging.Formatter('%(name)-30s: %(levelname)-8s %(message)s')
 # tell the handler to use this format
