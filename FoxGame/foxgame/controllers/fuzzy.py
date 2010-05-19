@@ -45,7 +45,6 @@ class HareBrain(Brain):
         self.engine.add_rule('IF speed IS low THEN risk IS low')
         self.engine.add_rule('IF speed IS high THEN risk IS high')
 
-
     def update(self, time):
         """
         Hare's aim is to get away from the fox, so it should go to the opposite
@@ -61,5 +60,6 @@ class HareBrain(Brain):
         target = self.nearest_fox.pos + self.nearest_fox.speed/2
         fdir = -self.navigate(target)
 
-        dir = Direction([(x+round(y*risk, 0)) if x != y else x for x, y in zip(fdir, cdir)])
+        dir = Direction([(x+round(y*risk, 0)) if x != y else x
+                         for x, y in zip(fdir, cdir)])
         return dir

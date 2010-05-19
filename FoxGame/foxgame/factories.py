@@ -68,6 +68,7 @@ def load_extraopts(module, klass, options):
                           if opt.name in options):
         setattr(klass, option.name, option(value))
 
+
 def load_brain(brain_name, cls_name='Brain', extraopts=None):
     """
     Dynamically loads brain class with given name.
@@ -83,6 +84,7 @@ def load_brain(brain_name, cls_name='Brain', extraopts=None):
     if extraopts:
         load_extraopts(brain_module, brain, extraopts)
     return brain
+
 
 def load_postfilters(pfilter_names):
     """
@@ -115,6 +117,7 @@ def load_ui(ui_name, main_name='main', extraopts=None):
     if extraopts:
         load_extraopts(ui_module, ui_module.GUI, extraopts)
     return ui_main
+
 
 def load_task(task_name, taskcls):
     """

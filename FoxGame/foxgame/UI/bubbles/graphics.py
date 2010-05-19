@@ -244,7 +244,7 @@ class GameField(Widget):
         # load background image
         background = pygame.image.load(gfxpath+'field.png').convert()
         self._background = background
-        
+
         # load bottom fence image
         self._fence = pygame.image.load(gfxpath+'fence.png').convert_alpha()
         self._fencer = self._fence.get_rect()
@@ -292,7 +292,7 @@ class GameField(Widget):
         #  draw mpawns
         self.impawns.update()
         self.impawns.draw(self._surf)
-        
+
         # draw bottom fence over pawns
         self._surf.blit(self._fence, self._fencer)
 
@@ -315,7 +315,7 @@ class GameField(Widget):
     def rescale_arena(self, size):
         # Fit the drawing to the screen size
         self.scale = min(x/y for x, y in zip(size, self.game.size))
-            
+
         bigrect = self._bigsurf.get_rect()
 
         arena_width = self.scale * self.game.size.x
@@ -326,7 +326,6 @@ class GameField(Widget):
 
         self.rect = arena
         self.offset = arena.topleft
-        
+
         self._fencer.centerx = bigrect.centerx + 3
         self._fencer.bottom = bigrect.bottom
-

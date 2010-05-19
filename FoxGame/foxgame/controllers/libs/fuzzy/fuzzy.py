@@ -73,7 +73,6 @@ class Set(object):
 
         return all(u_x <= u_y for (x, u_x), (y, u_y) in zip(self, other))
 
-
     def __lt__(self, other):
         if self.parent != other.parent:
             raise ValueError('Comparing fuzzy set of '

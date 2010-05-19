@@ -29,7 +29,6 @@ class BZManager(object):
         if name in self.contexts:
             del self.contexts[name]
 
-
     def draw_all_under(self):
         for ctx in self.contexts.itervalues():
             ctx.draw_under()

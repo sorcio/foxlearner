@@ -30,7 +30,7 @@ class TestVector(TestCase):
     def test_cmp(self):
         self.assertTrue(Vector(1, 1) > Vector(0, 0))
         self.assertFalse(Vector(0, 0) < Vector(-1, -1))
-        self.assertTrue(Vector(10, 1) <= Vector (10, 2))
+        self.assertTrue(Vector(10, 1) <= Vector(10, 2))
         self.assertFalse(Vector(10, 1) >= Vector(11, 1))
 
     def test_operators(self):

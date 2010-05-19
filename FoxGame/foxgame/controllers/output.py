@@ -119,7 +119,8 @@ def read_cvs(filename, delimiter=',', comment='#'):
             row[k] = float(row[k])
         yield row
 
-def read_cvs_skip(filename, delimiter=',', comment='#', skipstart=50, skipend=200):
+def read_cvs_skip(filename, delimiter=',', comment='#',
+                  skipstart=50, skipend=200):
     """
     A generator which parses CVS data skipping lines
     from the head and the tail of each file.

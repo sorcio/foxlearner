@@ -24,7 +24,7 @@ def draw_circle_gfx(surf, radius, color, pos_x, pos_y, coords=ident, width=0):
             colors[color])
     if width == 0:
         filled_circle(*args)
-    aacircle(*args)    
+    aacircle(*args)
 
 
 def draw_circle_old(surf, radius, color, pos_x, pos_y, coords=ident, width=0):

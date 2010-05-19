@@ -199,7 +199,8 @@ class TDLambda(NeuralNetwork):
         Q_new = self.put(inputs1)[0]
         Q_old = self.put(inputs0)[0]
 
-        self.trace_bp(reward + gamma*Q_new, trace_decay=trace_decay, gamma=gamma, eps=0.1)
+        self.trace_bp(reward + gamma*Q_new, trace_decay=trace_decay,
+                      gamma=gamma, eps=0.1)
 
         # update weights between input and hidden layer
         for i in range(self.ni):
@@ -233,7 +234,6 @@ class TDLambda(NeuralNetwork):
             for j in xrange(self.nh):
                 self.trace_wi[i][j] = step*self.trace_wi[i][j]  + \
                                          eps * hidden_deltas[j] * self.ai[i]
-
 
 
 __extraopts__ = (

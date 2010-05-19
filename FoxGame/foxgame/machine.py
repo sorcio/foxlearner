@@ -1,9 +1,9 @@
 
+
 class StateMachine(object):
     """
     Simple finite state machine with stateful methods.
     """
-
     def __init__(self):
         # Registered states
         self.states = dict()

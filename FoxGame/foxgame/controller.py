@@ -122,7 +122,7 @@ class Brain(object):
         Return the most efficient Direction of target respectively to self
         """
         route = target - self.pawn.pos
-        correction = self.pawn.bspeed*route.normalize() - self.pawn.speed
+        correction = self.pawn.bspeed * route.normalize() - self.pawn.speed
         return Direction.from_vector(correction)
 
     @property
@@ -171,7 +171,6 @@ class PostFilter(object):
         """
         self.tear_down()
 
-
     def set_up(self):
         """
         The method set_up is called when a new game is instantiated.
@@ -183,7 +182,6 @@ class PostFilter(object):
         The method tear_down is called when the game is ended.
         """
         pass
-
 
     #########################################################################
     ## here starts common functions useful for an easy implementation of a ##
@@ -197,5 +195,3 @@ class PostFilter(object):
         """
         return min(self.game.foxes,
                    key=lambda x: x.pos.distance(self.game.hare.pos))
-
-

@@ -202,7 +202,7 @@ class GUI(StateMachine):
 
     def update_arrows_ctl(self):
         if self.arrows_ctl:
-            inp = self.arrows_ctl.inputs # shortcutting
+            inp = self.arrows_ctl.inputs    # shortcutting
             inp[Direction.UP] = pygame.K_UP in self.pressed_keys
             inp[Direction.DOWN] = pygame.K_DOWN in self.pressed_keys
             inp[Direction.LEFT] = pygame.K_LEFT in self.pressed_keys
@@ -210,7 +210,7 @@ class GUI(StateMachine):
 
     def update_wasd_ctl(self):
         if self.wasd_ctl:
-            inp = self.wasd_ctl.inputs # shortcutting
+            inp = self.wasd_ctl.inputs    # shortcutting
             inp[Direction.UP] = pygame.K_w in self.pressed_keys
             inp[Direction.DOWN] = pygame.K_s in self.pressed_keys
             inp[Direction.LEFT] = pygame.K_a in self.pressed_keys
@@ -249,8 +249,8 @@ class GUI(StateMachine):
                                   color='red')
                     brainz.vector(gameobj, lambda x=gameobj:x.acc/10,
                                   color='blue')
-                brainz.circle(gameobj, gameobj, color='black', width=1, under=True)
-
+                brainz.circle(gameobj, gameobj, color='black',
+                              width=1, under=True)
 
     #######################
     ### States handlers ###
@@ -283,7 +283,6 @@ class GUI(StateMachine):
         # Slowdown, no animation here!
         self.frame_rate = 5
 
-
     ### running ###
 
     def running_init(self):
@@ -308,7 +307,6 @@ class GUI(StateMachine):
         self.bzdebug = False
 
         self.arena = None
-
 
     def running_main(self, time):
         self.handle_quit()
@@ -342,7 +340,6 @@ class GUI(StateMachine):
         self.arena = GameField((0,33,800,533), (720, 480),
                                self.game_page, self.game)
         self.activate_bzdebug()
-
 
     ### dead ###
 
@@ -385,7 +382,6 @@ class GUI(StateMachine):
         self.paused_subtext.rect.top = self.paused_text.rect.bottom
         self.paused_subtext.rect.centerx = self.paused_page.rect.centerx
 
-
     def paused_main(self, time):
         self.handle_quit()
         #self._paint_gamefield()
@@ -404,7 +400,6 @@ class GUI(StateMachine):
 
     def paused_exit(self, newstate):
         self.game_page.show_page('')
-
 
     def handle_quit(self):
         if pygame.K_ESCAPE in self.pressed_keys:

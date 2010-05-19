@@ -238,7 +238,6 @@ class Game(object):
             fox.controller = fcfact.new_controller(fox)
         self.hare.controller = hcfact.new_controller(self.hare)
 
-
         # starting up time elapsed
         self.time_elapsed = 0
 
@@ -289,8 +288,7 @@ class Game(object):
             must_retry = self.hare.distance(fox) < hare_dist
             may_retry = (must_retry or
                          any(fox.distance(other) < fox_dist
-                             for other in self.foxes[:i])
-                        )
+                             for other in self.foxes[:i]))
             while must_retry or (retries_left > 0 and may_retry):
                 if not must_retry and may_retry:
                     retries_left -= 1
@@ -298,8 +296,7 @@ class Game(object):
                 must_retry = self.hare.distance(fox) < hare_dist
                 may_retry = (must_retry or
                              any(fox.distance(other) < fox_dist
-                                 for other in self.foxes[:i])
-                            )
+                                 for other in self.foxes[:i]))
 
         # log.debug('Random location of foxes, %d retries',
         #           max_retries - retries_left)
@@ -357,5 +354,3 @@ class Game(object):
             self.ended = True
             for pawn in self.pawns:
                 pawn.controller.destroy()
-
-

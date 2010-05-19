@@ -96,4 +96,3 @@ def task(task_func):
     # TODO
     # ensure task_func is a task? (func_name.startswith('task_'), ...)
     return staticmethod(task_func)
-

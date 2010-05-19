@@ -22,13 +22,14 @@ def average(samples):
     """
     return sum(samples) / len(samples) if samples else 0
 
+
 def deviation(samples):
     """
     Computes the deviation of a list of numbers.
     """
     samplemid = average(samples)
-    return sqrt(sum((x - samplemid)**2
-                for x in samples)/len(samples))
+    return sqrt(sum((x-samplemid)**2
+                for x in samples) / len(samples))
 
 ##########
 ## JOBS ##

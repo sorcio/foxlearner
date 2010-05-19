@@ -49,7 +49,6 @@ class HareBrain(Brain):
 
         self.network = load_network(self._net_data)
 
-
     @task
     def task_train():
         _net_struct = HareBrain.inputs, HareBrain.hiddens
@@ -59,7 +58,6 @@ class HareBrain(Brain):
             log.debug('Removing old net data.')
             remove(HareBrain._net_data)
         HareBrain.train_network(_net_struct, HareBrain.examples)
-
 
     def update(self, time):
         """
@@ -125,7 +123,6 @@ class HareBrain(Brain):
                     inputs = inputs_queue.popleft()
                     inputs[2:4] = carrot_pos
                     yield [inputs, outputs]
-
 
     @staticmethod
     def train_network(net_struct, filename):
