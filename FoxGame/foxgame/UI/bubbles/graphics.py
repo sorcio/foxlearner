@@ -276,8 +276,8 @@ class GameField(Widget):
         self.bz.draw_all_under()
 
         if self.game.collision:
-            draw_circle(self._surf, self.game.hare.radius*3,
-                        'white', *self.game.hare.pos,
+            draw_circle(self._surf, self.game.hare.radius*3, 'white',
+                        self.game.hare.pos.x, self.game.hare.pos.y,
                         coords=self.coords)
 
         # Drawing pawns
