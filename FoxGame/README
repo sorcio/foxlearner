@@ -20,8 +20,8 @@ DEPENDENCIES
 
 
 
-INSTALL
--------
+PLAY
+----
     To run the software,
         on windows systems: "python.exe -O main"
         on *nix    systems: "./main" OR "python -O main"

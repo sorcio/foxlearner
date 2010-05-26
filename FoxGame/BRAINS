@@ -1,0 +1,119 @@
+What is a brain?
+----------------
+
+FoxGame is developed in order to give unexperienced users the occasion of
+developing machine learning techniques.
+
+
+How do I use a brain?
+---------------------
+
+Brains are dinamically loaded by the ./main file, with --fox-brain and
+--hare-brain arguments (see ./main --help for more informations); but you can
+also simply type "--hare-b=BRAIN" or "--fox-b=BRAIN".
+
+BRAIN is the name of a module located in ./foxgame/controllers/: from there,
+depending on the argument, "FoxBrain" or "HareBrain" class will be loaded.
+
+e.g.
+ ./main  --fox-b=traditional --hare-b=examples
+    ^          ^                   ^
+ launcher    fox's brain       hare's brain
+             __________
+                 |
+                 |
+                 V
+        foxgame/controllers/traditional.py : FoxBrain
+               ^                               ^
+            controller file                  Brain class
+
+
+
+How is a brain structured?
+--------------------------
+
+    BASICS
+    ------
+
+    *Brain classes inherits the main structure from the foxgame.controller.Brain
+    class, and are mainly composed of 3 methods:
+
+     - update(self, time)              return a new direction for each game 'tick'.
+                                       deafult: raise NotImplementedError
+     - set_up(self)       [optional]   called when a new game is created
+                                       default: pass
+     - tear_down(self)    [optional]   called when a game is destroyed
+                                       default: pass
+
+    e.g
+    from foxgame.controller import Brain # import the main Brain structure
+    from foxgame.structures import Direction # import useful structures such as directions
+
+    class Brain(Brain):
+        def update(self, time):
+            return Direction(Direction.NULL)
+
+
+
+    Now you are ready to develop a new controller!
+     You can start using as model  './foxgame/controllers/examples.py' or
+     './foxgame/controllers/void.py', or continue reading here for some
+     advanced usage of brains.
+
+    EXTRAOPTIONS
+    ------------
+
+    In order to pass an option to the brain from the command line, we
+    introduced "extraoptions". In the brain file, you can simply define an
+    "__extraopts__" list of the attributes you would like to change from
+    command-line.
+
+    e.g.
+
+    File: spam.py
+
+    # [...]
+    from foxgame.options import FoxgameOption # class for managing extraoptions
+
+    # [BRAINS HERE]
+    class HareBrain(Brain):
+
+    foo = 1  # Brain attribute we would like to change from command-line
+
+    #   blablabla...
+
+    # extraoptions
+    __extraopts__ = [FoxgameOption('foo', type='int')]
+    #                                 ^       ^
+    #                        extraoption     attribute type
+    #                                             \-> currently avaible types:
+    #                                                  int, string, bool,
+    #                                                  float, vector, direction
+
+    Usage:
+      ./main --hare-b=spam foo:100
+
+
+    TASKS
+    -----
+
+    "Tasks" are jobs brains should do before a play, such as training tasks
+    for supervised learning. You can use them symply with a decorator.
+
+    e.g.
+
+    File: spam.py
+
+    # [...]
+    from foxgame.options import task  # our decorator
+    # [BRAINS HERE]
+    class FoxBrain(Brain):
+
+    @task
+    def task_job1():
+        pass
+
+    #   blablabla...
+
+    Usage:
+     ./task --fox-b=spam job1
