@@ -1,0 +1,30 @@
+What is an UI?
+--------------
+
+UIS are an interface between FoxGame and the users. They are placed in
+./foxgame/UI/ and are dinamically loaded with the "-i GUI" option.
+
+e.g.
+ ./main -i bubbles
+           ^
+        "bubbles" gui: foxgame.UI.bubbles module.
+
+Currently, 2 uis are avaible:
+ - bubbles: user-friendly interface, written using pygame;
+ - simulator: benchmark/testing interface,
+
+How are UIs structured?
+-----------------------
+
+The ./main file (... talk about main function)
+
+
+    gamecore
+    --------
+
+    extraoptions
+    ------------
+
+    [extraoptions in simulator]
+
+
