@@ -13,18 +13,32 @@ Currently, 2 uis are avaible:
  - bubbles: user-friendly interface, written using pygame;
  - simulator: benchmark/testing interface,
 
+
 How are UIs structured?
 -----------------------
 
-The ./main file (... talk about main function)
-
+The ./main file, after loading Controllers, launchs a main() function who
+handles the main loop of the game.
 
     gamecore
     --------
 
+    gamecore.py provides a objects like Fox, Hare and Carrot, but also a class
+    Game. gamecore.Game has all you need to set up a basical game physics: time
+    elapsed, collisions, moves, etc.
+
+    See foxgame/UI/simulator.py and help(foxgame.gamecore.Game) for more
+    informations.
+
     extraoptions
     ------------
 
-    [extraoptions in simulator]
+    Like brains, for UIs also there are extraoptions avaible.
 
+    e.g.
+    I need to test the Brain I've just finished for the hare, and see its
+    performance in 10,000 games.
 
+    $ ./main -i simulator games:10000 --hare-b=<mybrain>
+                            ^
+                        UI extraoption
