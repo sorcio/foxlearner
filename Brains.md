@@ -1,0 +1,221 @@
+This short guide is meant to introduce the basics of brains development. You will learn how to write a brain file, how to run it and some tip to get it working right. Refer to the project documentation (still uncomplete, in the meanwhile just use the users mailing list) for operating details.
+
+
+
+# What is a brain? #
+
+FoxGame has been developed in order to give both unexperienced and advanced
+users the occasion to develop machine learning techniques and still have a lot
+of fun - yeah, trying to beat your own AI while developing it may be addictive.
+
+To make things easy for developers, FoxGame dinamically loads the AI modules
+which contain the essential implementation of the intelligence of foxes and
+hares. These implementations are called "brains" and in their basic form are
+made of a Brain class which implements a single `update` method.
+
+The `update` method is called at each tick of the game (as decided by the UI,
+the tick frequency may be equivalent to the frame rate) and takes the full
+game state and the duration of the tick. The basic way to interact with the
+game environment is for the method to return a `Direction`, that could be seen
+as a description of the arrow keys the AI would take in a given moment.
+
+
+# How do I use a brain? #
+
+Brains are dinamically loaded by the `./main` file, with `--fox-brain` and
+`--hare-brain` arguments (see `./main --help` for more information); you can
+also simply type `--hare-b=BRAIN` or `--fox-b=BRAIN`.
+
+Here BRAIN is the name of a module located in ./foxgame/controllers/: from there,
+depending on the argument, the `FoxBrain` or `HareBrain` class will be loaded.
+
+e.g.
+```
+ ./main  --fox-b=traditional --hare-b=examples
+    ^          ^                   ^
+ launcher    fox brain         hare brain
+             __________
+                 |
+                 |
+                 V
+        foxgame/controllers/traditional.py : FoxBrain
+                        ^                       ^
+                 controller file            Brain class
+```
+Windows users have to explicitly specify the Python interpreter on the command
+line, so assuming that you have python.exe in the path:
+```
+ python main --fox-b=traditional --hare-b=examples
+```
+
+# How is a brain structured? #
+
+## Basics ##
+
+Brain classes inherit the main structure from the `foxgame.controller.Brain`
+class, and are mainly composed of 3 methods:
+```
+ def update(self, time)     # return a new direction for each game 'tick'.
+                            # default: raise NotImplementedError
+ def set_up(self)           # called when a new game is created
+                            # default: pass [optional]
+ def tear_down(self)        # called when a game is destroyed
+                            # default: pass [optional]
+```
+e.g.
+```
+from foxgame.controller import Brain     # main Brain structure
+from foxgame.structures import Direction # useful structures
+
+class FoxBrain(Brain):
+    def update(self, time):
+        return Direction(Direction.NULL)
+```
+
+
+Now you are ready to develop a new controller!
+As a reference you can start using './foxgame/controllers/examples.py' or
+'./foxgame/controllers/void.py', or continue reading below for advanced
+instructions on the implementation and usage of brains.
+
+
+## The `update()` method ##
+
+The `update` method is the core decision maker of your brain. A little care
+must be taken in order to let the brain behave just as you designed it.
+
+The `time` argument is the duration of the current game tick. When the
+`update` method is called for the first time in a game, `time` seconds will
+have passed since the start of the game, so `self.game.time_elapsed` will
+be equal to `time`. If you want to go the easy way, you can (almost) safely
+assume every tick will have the same duration, although different games
+will have different tick frequency - e.g. a game run by the GUI generally
+has a greater tick frequency than a game run by the simulator. As a
+general design advice, it is better to always consider the `time` argument
+in your calculations.
+
+More interestingly, there are a handful ways to let the method return a
+meaningful `Direction`, and hopefully there will be more while we gather
+coding experience by ourselves and the other brain developers!
+  * directly return a `Direction` instance: mostly useful if you are taking
+> > a tabled or discrete actions approach.
+> > Examples:
+```
+   return Direction(Direction.UP)
+   return Direction(Direction.LEFT)
+   return Direction(Direction.UPRIGHT)
+   return Direction(Direction.DOWN) | Direction(Direction.RIGHT)
+```
+
+  * like the previous one, but passing your own (hor, vert) tuple. Each
+> > value of the tuple is one in -1, 0, 1, where (-1, -1) means UP|RIGHT
+> > and (1, 1) means DOWN|LEFT, and (0, 0) is no direction.
+> > Example:
+```
+   return Direction((0, 1))  # just like Direction.LEFT
+```
+
+  * discretizing a direction Vector, where the x and y component could be
+> > any floating point value. This is mostly useful if your approach favors
+> > continously varying actions.
+> > Examples:
+```
+   return Direction.from_vector((0.1, -0.5))
+   return Direction.from_vector(Vector(-0.5, 0.32))
+   return Direction.from_vector(self.carrot.pos - self.pawn.pos)
+```
+
+
+> Please note that the simple discretization applied here only takes into
+> account the sign of each component of the direction. This can lead to
+> some oscillation in the movement of the pawn when following a straight
+> line. While this is generally not a practical problem, some may need a
+> stabilized output. That would require a stateful filter on the output
+> which is not currently implemented in FoxGame.
+
+  * moving towards a point in the game field. The `navigate()` method takes
+> > care of this for you, taking into account the inertia of the pawn and
+> > moving as to approach the target point at full speed.
+> > Examples:
+```
+   return self.navigate(self.game.hare.pos) # run towards the hare
+   return -self.navigate(self.game.fox.pos) # run in the opposite direction of the fox
+```
+
+
+> Note that this shows the same oscillation problems as the `from_vector`
+> method, which although generally not a practical concern may need a
+> special way to deal with.
+> Also note that `navigate()` focuses on approaching the
+> target at full speed, not on accurately stepping onto the target and stopping there,
+> or on accurately tracking a fast moving target. Take a glance at the
+> traditional.py `FoxBrain` to see a way to deal with moving targets.
+
+
+## Extra options ##
+
+In order to pass an option to the brain from the command line, we
+introduced "extraoptions". In the brain file, you can simply define an
+`__extraopts__` list of the attributes you would like to change from
+command-line.
+
+e.g.
+```
+File: spam.py
+
+# [...]
+from foxgame.options import FoxgameOption # class for defining extraoptions
+
+# [BRAINS HERE]
+class HareBrain(Brain):
+
+foo = 1  # Brain attribute we would like to change from the command line
+
+#   blablabla...
+
+# extraoptions
+__extraopts__ = [FoxgameOption('foo', type='int')]
+#                                 ^       ^
+#                        extraoption     attribute type
+#                                             \-> currently available types:
+#                                                  int, string, bool,
+#                                                  float, vector, direction
+```
+Usage:
+```
+ ./main --hare-b=spam foo:100
+```
+Or if you are on Windows:
+```
+ python main --hare-b=spam foo:100
+```
+
+
+## Tasks ##
+
+By "tasks" we mean those tasks brains need to perform outside of a game
+session, e.g. supervised learning training. In order to define a task you
+simply need to add a decorated method to the brain class.
+
+e.g.
+```
+File: spam.py
+
+# [...]
+from foxgame.options import task  # our decorator
+# [BRAINS HERE]
+class FoxBrain(Brain):
+    @task
+    def task_job1():
+        pass
+
+    #   blablabla...
+```
+Usage:
+```
+ ./task --fox-b=spam job1
+```
+Or if you are on Windows:
+```
+ python task --fox-b=spam job1
+```
